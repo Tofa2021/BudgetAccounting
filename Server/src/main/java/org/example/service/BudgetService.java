@@ -14,11 +14,11 @@ public class BudgetService {
 
     public void processPlusOperation(OperationRequest request) {
         PlusBudgetOperation operation = new PlusBudgetOperation(request.getAmount(), request.getCategory());
-        budget.plus(operation.getAmount());
+        budget.setAmount(budget.getAmount() + operation.getAmount());
     }
 
     public void processMinusOperation(OperationRequest request) {
         MinusBudgetOperation operation = new MinusBudgetOperation(request.getAmount(), request.getCategory());
-        budget.minus(operation.getAmount());
+        budget.setAmount(budget.getAmount() - operation.getAmount());
     }
 }

@@ -27,6 +27,10 @@ public abstract class BudgetOperation implements Serializable {
     @Column(nullable = false)
     private OperationCategory category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public BudgetOperation(Integer amount, OperationCategory category) {
         this.amount = amount;
         this.category = category;

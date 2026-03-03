@@ -16,7 +16,6 @@ public class RRManager {
     public RRManager() {
         responseQueue = new SynchronousQueue<>();
         clientConnection = new ClientConnection(responseQueue);
-        System.out.println("Last constructor");
     }
 
     public int getAmount() {

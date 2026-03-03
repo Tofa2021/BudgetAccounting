@@ -1,31 +1,24 @@
 package org.example.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Entity
+@Table(name = "budgets")
 @Getter
+@Setter
+@NoArgsConstructor
 public class Budget {
-    private int amount = 0;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public void plus(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Amount to add cannot be negative: " + amount);
-        }
+    @Column(nullable = false)
+    private Integer amount = 0;
 
-        this.amount += amount;
-        System.out.println("New budget amount: " + this.amount);
-    }
-
-    public void minus(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Amount to subtract cannot be negative: " + amount);
-        }
-
-        int newAmount = this.amount - amount;
-        if (newAmount < 0) {
-            throw new IllegalArgumentException("Final amount cannot be negative");
-        }
-
-        this.amount = newAmount;
-        System.out.println("New budget amount: " + this.amount);
-    }
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
 }
