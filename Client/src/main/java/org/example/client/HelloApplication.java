@@ -1,57 +1,95 @@
 package org.example.client;
 
 import javafx.application.Application;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.dto.Request;
-import org.example.dto.Response;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.net.SocketException;
-import java.util.Map;
-import java.util.Scanner;
 
 public class HelloApplication extends Application {
-    private static final Scanner scanner = new Scanner(System.in);
+    private final RRManager rrManager = new RRManager();
+    private final IntegerProperty balanceProperty = new SimpleIntegerProperty(0);
+
+    public HelloApplication() {
+    }
 
     public static void main(String[] args) {
         launch();
     }
 
     @Override
-    public void start(Stage stage) throws InterruptedException {
-        while (true) {
-            try (Socket clientSocket = new Socket("localhost", 8080);
-                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-                 ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())
-            ) {
-                while (true) {
-                    String word = scanner.nextLine();
-                    if (word.equals("stop")) {
-                        out.writeObject(new Request("Stop", Map.of()));
-                        out.flush();
-                        System.exit(10);
-                    }
+    public void start(Stage stage) {
+        loadInitialBalance();
 
-                    out.writeObject(new Request("Print", Map.of("Text", word)));
-                    out.flush();
+        stage.setTitle("BudgetAccounting");
 
-                    Response response = (Response) in.readObject();
-                    System.out.println(response.getStatus());
-                }
-            } catch (SocketException e) {
-                if (e instanceof ConnectException || e.getMessage().equals("Connection reset by peer")) {
-                    System.out.println("Cannot connect to server");
-                    Thread.sleep(1000);
-                } else {
-                    throw new RuntimeException(e);
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        Label balanceLabel = new Label();
+        balanceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        balanceLabel.textProperty().bind(
+                balanceProperty.asString("Текущий баланс: $%d")
+        );
+
+        TextField amountField = new TextField();
+        amountField.setPromptText("Введите сумму");
+        amountField.setMaxWidth(150);
+
+        Label amountLabel = new Label("Сумма:");
+
+        Button increaseButton = new Button("Увеличить баланс");
+        Button decreaseButton = new Button("Уменьшить баланс");
+        increaseButton.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 14px;");
+        decreaseButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px;");
+        increaseButton.setPrefWidth(150);
+        decreaseButton.setPrefWidth(150);
+
+        increaseButton.setOnAction(e -> {
+            increaseBalance(Integer.parseInt(amountField.getText()));
+        });
+        decreaseButton.setOnAction(e -> {
+            decreaseBalance(Integer.parseInt(amountField.getText()));
+        });
+
+        HBox inputBox = new HBox(10, amountLabel, amountField);
+        inputBox.setAlignment(Pos.CENTER);
+
+        HBox buttonBox = new HBox(20, increaseButton, decreaseButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox root = new VBox(20);
+        root.setPadding(new Insets(20));
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().addAll(balanceLabel, inputBox, buttonBox);
+
+        Scene scene = new Scene(root, 500, 250);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    private void loadInitialBalance() {
+        int amount = rrManager.getAmount();
+        balanceProperty.set(amount);
+    }
+
+    private void increaseBalance(int amount) {
+        rrManager.increaseBudget(amount);
+        refreshBalance();
+    }
+
+    private void decreaseBalance(int amount) {
+        rrManager.decreaseBudget(amount);
+        refreshBalance();
+    }
+
+    private void refreshBalance() {
+        int amount = rrManager.getAmount();
+        balanceProperty.set(amount);
     }
 }

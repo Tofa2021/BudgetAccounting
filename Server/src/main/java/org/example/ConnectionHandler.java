@@ -16,6 +16,7 @@ public class ConnectionHandler implements Runnable {
     private final Controller controller;
 
     public ConnectionHandler(Socket socket, Controller controller) throws IOException {
+        System.out.println("Start ConnectionHandler");
         clientSocket = socket;
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
