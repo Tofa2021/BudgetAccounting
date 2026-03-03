@@ -3,7 +3,8 @@ package org.example.client;
 import org.example.dto.Request;
 import org.example.dto.RequestAction;
 import org.example.dto.Response;
-import org.example.model.Operation;
+import org.example.model.MinusBudgetOperation;
+import org.example.model.PlusBudgetOperation;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -24,11 +25,11 @@ public class RRManager {
     }
 
     public void increaseBudget(int amount) {
-        putRequest(new Request(RequestAction.BUDGET_OPERATION, Map.of("Body", new Operation(amount, "Plus"))));
+        putRequest(new Request(RequestAction.PLUS_BUDGET_OPERATION, Map.of("Body", new PlusBudgetOperation(amount))));
     }
 
     public void decreaseBudget(int amount) {
-        putRequest(new Request(RequestAction.BUDGET_OPERATION, Map.of("Body", new Operation(amount, "Minus"))));
+        putRequest(new Request(RequestAction.MINUS_BUDGET_OPERATION, Map.of("Body", new MinusBudgetOperation(amount))));
     }
 
     public Response putRequest(Request request) {

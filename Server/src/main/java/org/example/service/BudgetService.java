@@ -1,7 +1,8 @@
 package org.example.service;
 
 import org.example.model.Budget;
-import org.example.model.Operation;
+import org.example.model.MinusBudgetOperation;
+import org.example.model.PlusBudgetOperation;
 
 public class BudgetService {
     private final Budget budget = new Budget();
@@ -10,11 +11,11 @@ public class BudgetService {
         return budget.getAmount();
     }
 
-    public void processOperation(Operation operation) {
-        if (operation.getType().equals("Plus")) {
-            budget.plus(operation.getAmount());
-        } else {
-            budget.minus(operation.getAmount());
-        }
+    public void processPlusOperation(PlusBudgetOperation operation) {
+        budget.plus(operation.getAmount());
+    }
+
+    public void processMinusOperation(MinusBudgetOperation operation) {
+        budget.minus(operation.getAmount());
     }
 }

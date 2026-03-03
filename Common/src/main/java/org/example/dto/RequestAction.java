@@ -2,5 +2,6 @@ package org.example.dto;
 
 public enum RequestAction {
     GET_BUDGET_AMOUNT,
-    BUDGET_OPERATION,
+    PLUS_BUDGET_OPERATION,
+    MINUS_BUDGET_OPERATION,
 }

@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor
-public class Operation implements Serializable {
+public abstract class BudgetOperation implements Serializable {
     private int amount;
-    private String type;
 }

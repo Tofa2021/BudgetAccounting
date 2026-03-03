@@ -4,7 +4,8 @@ import org.example.dto.Request;
 import org.example.dto.RequestAction;
 import org.example.dto.Response;
 import org.example.dto.Status;
-import org.example.model.Operation;
+import org.example.model.MinusBudgetOperation;
+import org.example.model.PlusBudgetOperation;
 import org.example.service.BudgetService;
 import org.example.service.Service;
 
@@ -22,8 +23,10 @@ public class Controller {
                     case RequestAction.GET_BUDGET_AMOUNT -> budgetService.getAmount();
                     default -> {
                         switch (action) {
-                            case RequestAction.BUDGET_OPERATION ->
-                                    budgetService.processOperation((Operation) request.getParams().get("Body"));
+                            case RequestAction.PLUS_BUDGET_OPERATION ->
+                                    budgetService.processPlusOperation((PlusBudgetOperation) request.getParams().get("Body"));
+                            case RequestAction.MINUS_BUDGET_OPERATION ->
+                                    budgetService.processMinusOperation((MinusBudgetOperation) request.getParams().get("Body"));
                             default -> throw new NoSuchElementException();
                         }
                         yield null;
