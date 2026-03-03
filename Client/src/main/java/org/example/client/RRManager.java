@@ -1,12 +1,11 @@
 package org.example.client;
 
-import org.example.dto.Request;
+import org.example.dto.OperationCategory;
 import org.example.dto.RequestAction;
 import org.example.dto.Response;
-import org.example.model.MinusBudgetOperation;
-import org.example.model.PlusBudgetOperation;
+import org.example.dto.request.OperationRequest;
+import org.example.dto.request.Request;
 
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -21,15 +20,15 @@ public class RRManager {
     }
 
     public int getAmount() {
-        return (int) putRequest(new Request(RequestAction.GET_BUDGET_AMOUNT, Map.of())).getBody();
+        return (int) putRequest(new Request(RequestAction.GET_BUDGET_AMOUNT)).getBody();
     }
 
-    public void increaseBudget(int amount) {
-        putRequest(new Request(RequestAction.PLUS_BUDGET_OPERATION, Map.of("Body", new PlusBudgetOperation(amount))));
+    public void increaseBudget(int amount, OperationCategory category) {
+        putRequest(new OperationRequest(RequestAction.PLUS_BUDGET_OPERATION, amount, category));
     }
 
-    public void decreaseBudget(int amount) {
-        putRequest(new Request(RequestAction.MINUS_BUDGET_OPERATION, Map.of("Body", new MinusBudgetOperation(amount))));
+    public void decreaseBudget(int amount, OperationCategory category) {
+        putRequest(new OperationRequest(RequestAction.MINUS_BUDGET_OPERATION, amount, category));
     }
 
     public Response putRequest(Request request) {

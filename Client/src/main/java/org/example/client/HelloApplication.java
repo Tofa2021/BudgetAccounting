@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.dto.OperationCategory;
 
 public class HelloApplication extends Application {
     private final RRManager rrManager = new RRManager();
@@ -79,12 +80,12 @@ public class HelloApplication extends Application {
     }
 
     private void increaseBalance(int amount) {
-        rrManager.increaseBudget(amount);
+        rrManager.increaseBudget(amount, OperationCategory.FOOD);
         refreshBalance();
     }
 
     private void decreaseBalance(int amount) {
-        rrManager.decreaseBudget(amount);
+        rrManager.decreaseBudget(amount, OperationCategory.TRANSPORT);
         refreshBalance();
     }
 
