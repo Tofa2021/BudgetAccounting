@@ -1,6 +1,7 @@
 package org.example.client;
 
 import org.example.dto.Request;
+import org.example.dto.RequestAction;
 import org.example.dto.Response;
 import org.example.model.Operation;
 
@@ -19,15 +20,15 @@ public class RRManager {
     }
 
     public int getAmount() {
-        return (int) putRequest(new Request("GetBudgetAmount", Map.of())).getBody();
+        return (int) putRequest(new Request(RequestAction.GET_BUDGET_AMOUNT, Map.of())).getBody();
     }
 
     public void increaseBudget(int amount) {
-        putRequest(new Request("BudgetOperation", Map.of("Body", new Operation(amount, "Plus"))));
+        putRequest(new Request(RequestAction.BUDGET_OPERATION, Map.of("Body", new Operation(amount, "Plus"))));
     }
 
     public void decreaseBudget(int amount) {
-        putRequest(new Request("BudgetOperation", Map.of("Body", new Operation(amount, "Minus"))));
+        putRequest(new Request(RequestAction.BUDGET_OPERATION, Map.of("Body", new Operation(amount, "Minus"))));
     }
 
     public Response putRequest(Request request) {

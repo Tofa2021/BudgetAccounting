@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.dto.Request;
+import org.example.dto.RequestAction;
 import org.example.dto.Response;
 import org.example.dto.Status;
 import org.example.model.Operation;
@@ -14,14 +15,14 @@ public class Controller {
     private final BudgetService budgetService = new BudgetService();
 
     public Response redirect(Request request) {
-        String action = request.getAction();
+        RequestAction action = request.getAction();
         return new Response(
                 Status.OK,
                 switch (action) {
-                    case "GetBudgetAmount" -> budgetService.getAmount();
+                    case RequestAction.GET_BUDGET_AMOUNT -> budgetService.getAmount();
                     default -> {
                         switch (action) {
-                            case "BudgetOperation" ->
+                            case RequestAction.BUDGET_OPERATION ->
                                     budgetService.processOperation((Operation) request.getParams().get("Body"));
                             default -> throw new NoSuchElementException();
                         }

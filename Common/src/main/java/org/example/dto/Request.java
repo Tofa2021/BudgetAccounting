@@ -9,6 +9,6 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public class Request implements Serializable {
-    private final String action;
+    private final RequestAction action;
     private final Map<String, Object> params;
 }
