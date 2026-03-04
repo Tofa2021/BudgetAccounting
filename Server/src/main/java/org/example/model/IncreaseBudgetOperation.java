@@ -1,18 +1,22 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.dto.IncreaseBudgetCategory;
+import lombok.Setter;
+import org.example.dto.IncreaseOperationCategory;
 
 @Entity
 @DiscriminatorValue("PLUS")
+@Getter
+@Setter
 @NoArgsConstructor
 public class IncreaseBudgetOperation extends BudgetOperation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private IncreaseBudgetCategory category;
+    private IncreaseOperationCategory category;
 
-    public IncreaseBudgetOperation(Integer amount, IncreaseBudgetCategory category) {
+    public IncreaseBudgetOperation(Integer amount, IncreaseOperationCategory category) {
         super(amount);
         this.category = category;
     }

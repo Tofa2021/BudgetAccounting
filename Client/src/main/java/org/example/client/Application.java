@@ -13,11 +13,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseBudgetCategory;
+import org.example.dto.IncreaseOperationCategory;
 
 public class Application extends javafx.application.Application {
     private final RRManager rrManager = new RRManager();
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(0);
+    private Long userId;
 
     public Application() {
     }
@@ -28,6 +29,8 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) {
+        userId = rrManager.signin("Anton", "1234");
+
         loadInitialBalance();
 
         stage.setTitle("BudgetAccounting");
@@ -47,11 +50,11 @@ public class Application extends javafx.application.Application {
         decreseCategoryComboBox.setPromptText("Выберите категорию");
         decreseCategoryComboBox.setPrefWidth(150);
 
-        ComboBox<IncreaseBudgetCategory> increseCategoryComboBox = new ComboBox<>();
+        ComboBox<IncreaseOperationCategory> increseCategoryComboBox = new ComboBox<>();
         increseCategoryComboBox.getItems().addAll(
-                IncreaseBudgetCategory.values()
+                IncreaseOperationCategory.values()
         );
-        increseCategoryComboBox.setValue(IncreaseBudgetCategory.SALARY);
+        increseCategoryComboBox.setValue(IncreaseOperationCategory.SALARY);
         increseCategoryComboBox.setPromptText("Выберите категорию");
         increseCategoryComboBox.setPrefWidth(150);
 
@@ -94,22 +97,22 @@ public class Application extends javafx.application.Application {
     }
 
     private void loadInitialBalance() {
-        int amount = rrManager.getAmount();
+        int amount = rrManager.getAmount(userId);
         balanceProperty.set(amount);
     }
 
-    private void increaseBalance(int amount, IncreaseBudgetCategory category) {
-        rrManager.increaseBudget(amount, category);
+    private void increaseBalance(int amount, IncreaseOperationCategory category) {
+        rrManager.increaseBudget(amount, userId, category);
         refreshBalance();
     }
 
     private void decreaseBalance(int amount, DecreaseOperationCategory category) {
-        rrManager.decreaseBudget(amount, category);
+        rrManager.decreaseBudget(amount, userId, category);
         refreshBalance();
     }
 
     private void refreshBalance() {
-        int amount = rrManager.getAmount();
+        int amount = rrManager.getAmount(userId);
         balanceProperty.set(amount);
     }
 }

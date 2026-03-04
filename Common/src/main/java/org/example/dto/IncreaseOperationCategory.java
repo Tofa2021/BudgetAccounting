@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum IncreaseBudgetCategory {
+public enum IncreaseOperationCategory {
     SALARY("Зарплата"),
     ;
 

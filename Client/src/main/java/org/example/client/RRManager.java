@@ -1,13 +1,12 @@
 package org.example.client;
 
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseBudgetCategory;
+import org.example.dto.IncreaseOperationCategory;
 import org.example.dto.RequestAction;
 import org.example.dto.Response;
-import org.example.dto.request.DecreaseOperationRequest;
-import org.example.dto.request.IncreaseOperationRequest;
-import org.example.dto.request.Request;
+import org.example.dto.request.*;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
@@ -20,16 +19,24 @@ public class RRManager {
         clientConnection = new ClientConnection(responseQueue);
     }
 
-    public int getAmount() {
-        return (int) putRequest(new Request(RequestAction.GET_BUDGET_AMOUNT)).getBody();
+    public int getAmount(Long userId) {
+        return (int) putRequest(new ParamsRequest(RequestAction.GET_BUDGET_AMOUNT, Map.of("userId", userId))).getBody();
     }
 
-    public void increaseBudget(int amount, IncreaseBudgetCategory category) {
-        putRequest(new IncreaseOperationRequest(amount, category));
+    public Long signup(String username, String password) {
+        return (Long) putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password)).getBody();
     }
 
-    public void decreaseBudget(int amount, DecreaseOperationCategory category) {
-        putRequest(new DecreaseOperationRequest(amount, category));
+    public Long signin(String username, String password) {
+        return (Long) putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password)).getBody();
+    }
+
+    public void increaseBudget(int amount, Long userId, IncreaseOperationCategory category) {
+        putRequest(new IncreaseOperationRequest(amount, userId, category));
+    }
+
+    public void decreaseBudget(int amount, Long userId, DecreaseOperationCategory category) {
+        putRequest(new DecreaseOperationRequest(amount, userId, category));
     }
 
     public Response putRequest(Request request) {
