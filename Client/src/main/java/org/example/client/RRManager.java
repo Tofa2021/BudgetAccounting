@@ -1,9 +1,11 @@
 package org.example.client;
 
-import org.example.dto.OperationCategory;
+import org.example.dto.DecreaseOperationCategory;
+import org.example.dto.IncreaseBudgetCategory;
 import org.example.dto.RequestAction;
 import org.example.dto.Response;
-import org.example.dto.request.OperationRequest;
+import org.example.dto.request.DecreaseOperationRequest;
+import org.example.dto.request.IncreaseOperationRequest;
 import org.example.dto.request.Request;
 
 import java.util.concurrent.BlockingQueue;
@@ -22,12 +24,12 @@ public class RRManager {
         return (int) putRequest(new Request(RequestAction.GET_BUDGET_AMOUNT)).getBody();
     }
 
-    public void increaseBudget(int amount, OperationCategory category) {
-        putRequest(new OperationRequest(RequestAction.PLUS_BUDGET_OPERATION, amount, category));
+    public void increaseBudget(int amount, IncreaseBudgetCategory category) {
+        putRequest(new IncreaseOperationRequest(amount, category));
     }
 
-    public void decreaseBudget(int amount, OperationCategory category) {
-        putRequest(new OperationRequest(RequestAction.MINUS_BUDGET_OPERATION, amount, category));
+    public void decreaseBudget(int amount, DecreaseOperationCategory category) {
+        putRequest(new DecreaseOperationRequest(amount, category));
     }
 
     public Response putRequest(Request request) {

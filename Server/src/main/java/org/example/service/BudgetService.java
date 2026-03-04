@@ -1,9 +1,10 @@
 package org.example.service;
 
-import org.example.dto.request.OperationRequest;
+import org.example.dto.request.DecreaseOperationRequest;
+import org.example.dto.request.IncreaseOperationRequest;
 import org.example.model.Budget;
-import org.example.model.MinusBudgetOperation;
-import org.example.model.PlusBudgetOperation;
+import org.example.model.DecreaseBudgetOperation;
+import org.example.model.IncreaseBudgetOperation;
 
 public class BudgetService {
     private final Budget budget = new Budget();
@@ -12,13 +13,15 @@ public class BudgetService {
         return budget.getAmount();
     }
 
-    public void processPlusOperation(OperationRequest request) {
-        PlusBudgetOperation operation = new PlusBudgetOperation(request.getAmount(), request.getCategory());
+    public void processIncreaseOperation(IncreaseOperationRequest request) {
+        IncreaseBudgetOperation operation = new IncreaseBudgetOperation(request.getAmount(), request.getCategory());
+        System.out.println(request.getCategory());
         budget.setAmount(budget.getAmount() + operation.getAmount());
     }
 
-    public void processMinusOperation(OperationRequest request) {
-        MinusBudgetOperation operation = new MinusBudgetOperation(request.getAmount(), request.getCategory());
+    public void processDecreaseOperation(DecreaseOperationRequest request) {
+        DecreaseBudgetOperation operation = new DecreaseBudgetOperation(request.getAmount(), request.getCategory());
+        System.out.println(request.getCategory());
         budget.setAmount(budget.getAmount() - operation.getAmount());
     }
 }

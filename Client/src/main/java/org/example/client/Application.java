@@ -1,24 +1,25 @@
 package org.example.client;
 
-import javafx.application.Application;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.dto.OperationCategory;
+import org.example.dto.DecreaseOperationCategory;
+import org.example.dto.IncreaseBudgetCategory;
 
-public class HelloApplication extends Application {
+public class Application extends javafx.application.Application {
     private final RRManager rrManager = new RRManager();
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(0);
 
-    public HelloApplication() {
+    public Application() {
     }
 
     public static void main(String[] args) {
@@ -38,6 +39,24 @@ public class HelloApplication extends Application {
                 balanceProperty.asString("Текущий баланс: $%d")
         );
 
+        ComboBox<DecreaseOperationCategory> decreseCategoryComboBox = new ComboBox<>();
+        decreseCategoryComboBox.getItems().addAll(
+                DecreaseOperationCategory.values()
+        );
+        decreseCategoryComboBox.setValue(DecreaseOperationCategory.FOOD);
+        decreseCategoryComboBox.setPromptText("Выберите категорию");
+        decreseCategoryComboBox.setPrefWidth(150);
+
+        ComboBox<IncreaseBudgetCategory> increseCategoryComboBox = new ComboBox<>();
+        increseCategoryComboBox.getItems().addAll(
+                IncreaseBudgetCategory.values()
+        );
+        increseCategoryComboBox.setValue(IncreaseBudgetCategory.SALARY);
+        increseCategoryComboBox.setPromptText("Выберите категорию");
+        increseCategoryComboBox.setPrefWidth(150);
+
+        HBox categoryBox = new HBox(20, increseCategoryComboBox, decreseCategoryComboBox);
+
         TextField amountField = new TextField();
         amountField.setPromptText("Введите сумму");
         amountField.setMaxWidth(150);
@@ -52,10 +71,10 @@ public class HelloApplication extends Application {
         decreaseButton.setPrefWidth(150);
 
         increaseButton.setOnAction(e -> {
-            increaseBalance(Integer.parseInt(amountField.getText()));
+            increaseBalance(Integer.parseInt(amountField.getText()), increseCategoryComboBox.getValue());
         });
         decreaseButton.setOnAction(e -> {
-            decreaseBalance(Integer.parseInt(amountField.getText()));
+            decreaseBalance(Integer.parseInt(amountField.getText()), decreseCategoryComboBox.getValue());
         });
 
         HBox inputBox = new HBox(10, amountLabel, amountField);
@@ -67,7 +86,7 @@ public class HelloApplication extends Application {
         VBox root = new VBox(20);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(balanceLabel, inputBox, buttonBox);
+        root.getChildren().addAll(balanceLabel, inputBox, buttonBox, categoryBox);
 
         Scene scene = new Scene(root, 500, 250);
         stage.setScene(scene);
@@ -79,13 +98,13 @@ public class HelloApplication extends Application {
         balanceProperty.set(amount);
     }
 
-    private void increaseBalance(int amount) {
-        rrManager.increaseBudget(amount, OperationCategory.FOOD);
+    private void increaseBalance(int amount, IncreaseBudgetCategory category) {
+        rrManager.increaseBudget(amount, category);
         refreshBalance();
     }
 
-    private void decreaseBalance(int amount) {
-        rrManager.decreaseBudget(amount, OperationCategory.TRANSPORT);
+    private void decreaseBalance(int amount, DecreaseOperationCategory category) {
+        rrManager.decreaseBudget(amount, category);
         refreshBalance();
     }
 

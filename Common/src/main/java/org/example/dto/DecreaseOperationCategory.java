@@ -1,9 +1,11 @@
 package org.example.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
-public enum OperationCategory {
+public enum DecreaseOperationCategory {
     FOOD("Еда"),
     TRANSPORT("Транспорт"),
     ;
