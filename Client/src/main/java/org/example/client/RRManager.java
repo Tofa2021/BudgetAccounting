@@ -2,41 +2,47 @@ package org.example.client;
 
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.Pair;
 import org.example.dto.RequestAction;
-import org.example.dto.Response;
 import org.example.dto.request.*;
+import org.example.dto.response.Response;
 
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 public class RRManager {
     private final ClientConnection clientConnection;
     private final BlockingQueue<Response> responseQueue;
+    private String assessToken = "";
+    private String refreshToken = "";
 
     public RRManager() {
         responseQueue = new SynchronousQueue<>();
         clientConnection = new ClientConnection(responseQueue);
     }
 
-    public int getAmount(Long userId) {
-        return (int) putRequest(new ParamsRequest(RequestAction.GET_BUDGET_AMOUNT, Map.of("userId", userId))).getBody();
+    public int getAmount() {
+        return (int) putRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken)).getBody();
     }
 
-    public Long signup(String username, String password) {
-        return (Long) putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password)).getBody();
+    public void signup(String username, String password) {
+        Pair<String, String> tokens = (Pair<String, String>) putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password)).getBody();
+        assessToken = tokens.first();
+        refreshToken = tokens.second();
     }
 
-    public Long signin(String username, String password) {
-        return (Long) putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password)).getBody();
+    public void signin(String username, String password) {
+        Pair<String, String> tokens = (Pair<String, String>) putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password)).getBody();
+        assessToken = tokens.first();
+        refreshToken = tokens.second();
     }
 
-    public void increaseBudget(int amount, Long userId, IncreaseOperationCategory category) {
-        putRequest(new IncreaseOperationRequest(amount, userId, category));
+    public void increaseBudget(int amount, IncreaseOperationCategory category) {
+        putRequest(new IncreaseOperationRequest(assessToken, amount, category));
     }
 
-    public void decreaseBudget(int amount, Long userId, DecreaseOperationCategory category) {
-        putRequest(new DecreaseOperationRequest(amount, userId, category));
+    public void decreaseBudget(int amount, DecreaseOperationCategory category) {
+        putRequest(new DecreaseOperationRequest(assessToken, amount, category));
     }
 
     public Response putRequest(Request request) {

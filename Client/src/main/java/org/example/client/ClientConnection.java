@@ -1,8 +1,8 @@
 package org.example.client;
 
-import org.example.dto.Response;
 import org.example.dto.Status;
 import org.example.dto.request.Request;
+import org.example.dto.response.Response;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -1,7 +1,7 @@
 package org.example;
 
-import org.example.dto.Response;
 import org.example.dto.request.Request;
+import org.example.dto.response.Response;
 
 import java.io.EOFException;
 import java.io.IOException;

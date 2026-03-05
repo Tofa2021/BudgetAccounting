@@ -6,3 +6,4 @@ log
 !**/src/**/log/
 
 **.iml
+Server/src/main/resources/application-secret.properties

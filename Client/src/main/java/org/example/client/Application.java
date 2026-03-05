@@ -18,7 +18,6 @@ import org.example.dto.IncreaseOperationCategory;
 public class Application extends javafx.application.Application {
     private final RRManager rrManager = new RRManager();
     private final IntegerProperty balanceProperty = new SimpleIntegerProperty(0);
-    private Long userId;
 
     public Application() {
     }
@@ -29,7 +28,7 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) {
-        userId = rrManager.signin("Anton", "1234");
+        rrManager.signin("Anton", "1234");
 
         loadInitialBalance();
 
@@ -97,22 +96,22 @@ public class Application extends javafx.application.Application {
     }
 
     private void loadInitialBalance() {
-        int amount = rrManager.getAmount(userId);
+        int amount = rrManager.getAmount();
         balanceProperty.set(amount);
     }
 
     private void increaseBalance(int amount, IncreaseOperationCategory category) {
-        rrManager.increaseBudget(amount, userId, category);
+        rrManager.increaseBudget(amount, category);
         refreshBalance();
     }
 
     private void decreaseBalance(int amount, DecreaseOperationCategory category) {
-        rrManager.decreaseBudget(amount, userId, category);
+        rrManager.decreaseBudget(amount, category);
         refreshBalance();
     }
 
     private void refreshBalance() {
-        int amount = rrManager.getAmount(userId);
+        int amount = rrManager.getAmount();
         balanceProperty.set(amount);
     }
 }

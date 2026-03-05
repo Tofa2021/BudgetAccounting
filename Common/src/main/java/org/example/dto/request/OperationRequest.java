@@ -4,13 +4,11 @@ import lombok.Getter;
 import org.example.dto.RequestAction;
 
 @Getter
-public class OperationRequest extends Request {
+public class OperationRequest extends AuthorizedRequest {
     private final int amount;
-    private final Long userId;
 
-    public OperationRequest(RequestAction action, Long userId, int amount) {
-        super(action);
+    public OperationRequest(RequestAction action, String token, int amount) {
+        super(action, token);
         this.amount = amount;
-        this.userId = userId;
     }
 }

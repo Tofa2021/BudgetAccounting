@@ -40,9 +40,8 @@ public class BudgetService {
         });
     }
 
-    public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request) {
+    public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
-            Long userId = request.getUserId();
             int amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
@@ -61,9 +60,8 @@ public class BudgetService {
         });
     }
 
-    public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request) {
+    public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
-            Long userId = request.getUserId();
             int amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)

@@ -8,8 +8,8 @@ import org.example.dto.RequestAction;
 public class IncreaseOperationRequest extends OperationRequest {
     private final IncreaseOperationCategory category;
 
-    public IncreaseOperationRequest(int amount, Long userId, IncreaseOperationCategory category) {
-        super(RequestAction.INCREASE_BUDGET_OPERATION, userId, amount);
+    public IncreaseOperationRequest(String token, int amount, IncreaseOperationCategory category) {
+        super(RequestAction.INCREASE_BUDGET_OPERATION, token, amount);
         this.category = category;
     }
 }

@@ -2,23 +2,24 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.TransactionUtils;
-import org.example.dao.BudgetDAO;
 import org.example.dao.RoleDAO;
 import org.example.dao.UserDAO;
+import org.example.dto.Pair;
 import org.example.dto.request.AuthRequest;
 import org.example.model.Budget;
 import org.example.model.Role;
 import org.example.model.User;
+import org.example.security.JwtProvider;
 
 import java.util.Set;
 
 @RequiredArgsConstructor
 public class UserService {
+    private final JwtProvider jwtProvider;
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
-    private final BudgetDAO budgetDAO;
 
-    public Long signup(AuthRequest request) {
+    public Pair<String, String> signup(AuthRequest request) {
         return TransactionUtils.executeInTransaction(session -> {
             String username = request.getUsername();
 
@@ -40,19 +41,21 @@ public class UserService {
             budget.setUser(user);
             session.persist(budget);
 
-            return user.getId();
+            Long userId = user.getId();
+            return new Pair<>(jwtProvider.generateAccessToken(userId), jwtProvider.generateRefreshToken(userId));
         });
     }
 
-    public Long signin(AuthRequest request) { // TODO token for auth
+    public Pair<String, String> signin(AuthRequest request) { // TODO token for auth
         return TransactionUtils.executeInTransaction(session -> {
             String username = request.getUsername();
 
             User user = userDAO.findByUsername(session, username)
                     .orElseThrow(() -> new RuntimeException("User not found with username = " + username));
+            Long userId = user.getId();
 
             if (user.getPassword().equals(request.getPassword())) {
-                return user.getId();
+                return new Pair<>(jwtProvider.generateAccessToken(userId), jwtProvider.generateRefreshToken(userId));
             }
 
             throw new RuntimeException("Invalid password");
