@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type")
-public abstract class BudgetOperation implements Serializable {
+public abstract class Operation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +26,7 @@ public abstract class BudgetOperation implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public BudgetOperation(Integer amount) {
+    public Operation(Integer amount) {
         this.amount = amount;
     }
 }

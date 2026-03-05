@@ -8,8 +8,8 @@ import org.example.dao.UserDAO;
 import org.example.dto.request.DecreaseOperationRequest;
 import org.example.dto.request.IncreaseOperationRequest;
 import org.example.model.Budget;
-import org.example.model.DecreaseBudgetOperation;
-import org.example.model.IncreaseBudgetOperation;
+import org.example.model.DecreaseOperation;
+import org.example.model.IncreaseOperation;
 import org.example.model.User;
 import org.hibernate.Session;
 
@@ -40,14 +40,14 @@ public class BudgetService {
         });
     }
 
-    public IncreaseBudgetOperation processIncreaseOperation(IncreaseOperationRequest request) {
+    public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request) {
         return TransactionUtils.executeInTransaction(session -> {
             Long userId = request.getUserId();
             int amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
 
-            IncreaseBudgetOperation operation = new IncreaseBudgetOperation();
+            IncreaseOperation operation = new IncreaseOperation();
             operation.setAmount(amount);
             operation.setUser(user);
             operation.setCategory(request.getCategory());
@@ -61,7 +61,7 @@ public class BudgetService {
         });
     }
 
-    public DecreaseBudgetOperation processDecreaseOperation(DecreaseOperationRequest request) {
+    public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request) {
         return TransactionUtils.executeInTransaction(session -> {
             Long userId = request.getUserId();
             int amount = request.getAmount();
@@ -69,7 +69,7 @@ public class BudgetService {
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
 
-            DecreaseBudgetOperation operation = new DecreaseBudgetOperation();
+            DecreaseOperation operation = new DecreaseOperation();
             operation.setAmount(amount);
             operation.setUser(user);
             operation.setCategory(request.getCategory());

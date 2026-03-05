@@ -22,9 +22,9 @@
         <mapping class="org.example.model.User"/>
         <mapping class="org.example.model.Role"/>
         <mapping class="org.example.model.Budget"/>
-        <mapping class="org.example.model.BudgetOperation"/>
-        <mapping class="org.example.model.IncreaseBudgetOperation"/>
-        <mapping class="org.example.model.DecreaseBudgetOperation"/>
+        <mapping class="org.example.model.Operation"/>
+        <mapping class="org.example.model.IncreaseOperation"/>
+        <mapping class="org.example.model.DecreaseOperation"/>
 
     </session-factory>
 </hibernate-configuration>

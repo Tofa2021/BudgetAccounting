@@ -11,12 +11,12 @@ import org.example.dto.IncreaseOperationCategory;
 @Getter
 @Setter
 @NoArgsConstructor
-public class IncreaseBudgetOperation extends BudgetOperation {
+public class IncreaseOperation extends Operation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private IncreaseOperationCategory category;
 
-    public IncreaseBudgetOperation(Integer amount, IncreaseOperationCategory category) {
+    public IncreaseOperation(Integer amount, IncreaseOperationCategory category) {
         super(amount);
         this.category = category;
     }
