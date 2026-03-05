@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class HibernateUtils {
+public class Hibernate {
     @Getter
     private static final SessionFactory sessionFactory = buildSessionFactory();
 
@@ -12,7 +12,7 @@ public class HibernateUtils {
         try {
             return new Configuration().configure().buildSessionFactory();
         } catch (Throwable e) {
-            System.err.println("SessionFactory creation failed: " + e);
+            System.err.println("SessionFactory creation failed" + e);
             throw new ExceptionInInitializerError(e);
         }
     }

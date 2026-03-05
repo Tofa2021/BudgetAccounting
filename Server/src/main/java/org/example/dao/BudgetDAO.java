@@ -1,6 +1,5 @@
 package org.example.dao;
 
-import org.example.HibernateUtils;
 import org.example.model.Budget;
 import org.hibernate.Session;
 
@@ -11,13 +10,11 @@ public class BudgetDAO extends DAO<Budget, Long> {
         super(Budget.class);
     }
 
-    public Optional<Budget> findByUserId(Long userId) {
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            Budget budget = session.createQuery(
-                            "FROM Budget WHERE user.id = :userId", Budget.class)
-                    .setParameter("userId", userId)
-                    .uniqueResult();
-            return Optional.ofNullable(budget);
-        }
+    public Optional<Budget> findByUserId(Session session, Long userId) {
+        Budget budget = session.createQuery(
+                        "FROM Budget WHERE user.id = :userId", Budget.class)
+                .setParameter("userId", userId)
+                .uniqueResult();
+        return Optional.ofNullable(budget);
     }
 }

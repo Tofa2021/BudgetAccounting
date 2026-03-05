@@ -33,7 +33,7 @@ public class Controller {
                     case RequestAction.GET_BUDGET_AMOUNT ->
                             budgetService.getAmount((Long) ((ParamsRequest) request).getParams().get("userId"));
                     case RequestAction.SIGN_IN -> userService.signin((AuthRequest) request);
-                    case RequestAction.SIGN_UP -> userService.create((AuthRequest) request);
+                    case RequestAction.SIGN_UP -> userService.signup((AuthRequest) request);
                     default -> {
                         switch (action) {
                             case RequestAction.INCREASE_BUDGET_OPERATION ->

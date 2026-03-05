@@ -16,7 +16,7 @@ public class ConnectionManager {
                 executor.execute(new ConnectionHandler(clientSocket, controller));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

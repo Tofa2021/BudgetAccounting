@@ -1,8 +1,6 @@
 package org.example.dao;
 
-import org.example.HibernateUtils;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,75 +12,51 @@ public abstract class DAO<T, ID> {
         this.modelClass = modelClass;
     }
 
-    public void save(T model) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
+    public void save(Session session, T model) {
+        try {
             session.persist(model);
-            transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new RuntimeException(e);
         }
     }
 
-    public Optional<T> findById(ID id) {
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+    public Optional<T> findById(Session session, ID id) {
+        try {
             T model = session.get(modelClass, id);
             return Optional.ofNullable(model);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public List<T> findAll() {
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
+    public List<T> findAll(Session session) {
+        try {
             return session.createQuery("FROM " + modelClass.getSimpleName(), modelClass).list();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void update(T model) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
+    public void update(Session session, T model) {
+        try {
             session.merge(model);
-            transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new RuntimeException(e);
         }
     }
 
-    public void delete(T model) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
+    public void delete(Session session, T model) {
+        try {
             session.remove(model);
-            transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new RuntimeException(e);
         }
     }
 
-    public void deleteById(ID id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtils.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            T model = session.get(modelClass, id);
-            if (model != null) {
-                session.remove(model);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new RuntimeException(e);
-        }
+    public void deleteById(Session session, ID id) {
+        session.createMutationQuery(
+                        "DELETE FROM " + modelClass.getSimpleName() + " WHERE id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 }
