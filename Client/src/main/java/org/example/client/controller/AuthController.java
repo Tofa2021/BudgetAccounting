@@ -1,6 +1,7 @@
 package org.example.client.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.example.client.viewModel.AuthViewModel;
 
@@ -9,6 +10,8 @@ public class AuthController extends BaseController<AuthViewModel> {
     private TextField usernameField;
     @FXML
     private TextField passwordField;
+    @FXML
+    private Label errorField;
 
     @Override
     public void initialize() {
@@ -22,6 +25,10 @@ public class AuthController extends BaseController<AuthViewModel> {
 
         passwordField.textProperty().bindBidirectional(
                 viewModel.getPasswordInput()
+        );
+
+        errorField.textProperty().bindBidirectional(
+                viewModel.getErrorInput()
         );
     }
 
