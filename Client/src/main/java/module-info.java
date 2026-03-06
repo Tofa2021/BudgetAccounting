@@ -9,7 +9,10 @@ module org.example.client {
     requires javafx.graphics;
     requires org.example.common;
     requires java.xml;
+    requires static lombok;
 
     opens org.example.client to javafx.fxml;
     exports org.example.client;
+    exports org.example.client.controller;
+    opens org.example.client.controller to javafx.fxml;
 }

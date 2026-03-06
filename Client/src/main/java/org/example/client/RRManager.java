@@ -49,7 +49,7 @@ public class RRManager {
         try {
             clientConnection.putRequest(request);
             Response response = responseQueue.take();
-            System.out.println(response.getStatus());
+            System.out.println(request.getAction() + " " + response.getStatus());
             return response;
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted", e);

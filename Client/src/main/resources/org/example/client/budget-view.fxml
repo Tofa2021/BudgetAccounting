@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.Scene?>
+<Scene xmlns:fx="http://javafx.com/fxml" width="500" height="250"
+       xmlns="http://javafx.com/javafx"
+       fx:controller="org.example.client.controller.BudgetController">
+
+    <VBox fx:id="root" spacing="20" alignment="CENTER">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <Label fx:id="balanceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+        <HBox fx:id="inputBox" spacing="10" alignment="CENTER">
+            <Label text="Сумма:"/>
+            <TextField fx:id="amountField" promptText="Введите сумму" maxWidth="150"/>
+        </HBox>
+
+        <HBox fx:id="buttonBox" spacing="20" alignment="CENTER">
+            <Button fx:id="increaseButton"
+                    text="Увеличить баланс"
+                    prefWidth="150"
+                    style="-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleIncrease"/>
+
+            <Button fx:id="decreaseButton"
+                    text="Уменьшить баланс"
+                    prefWidth="150"
+                    style="-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px;"
+                    onAction="#handleDecrease"/>
+        </HBox>
+
+        <HBox fx:id="categoryBox" spacing="20" alignment="CENTER">
+            <ComboBox fx:id="increaseCategoryComboBox"
+                      promptText="Выберите категорию"
+                      prefWidth="150"/>
+
+            <ComboBox fx:id="decreaseCategoryComboBox"
+                      promptText="Выберите категорию"
+                      prefWidth="150"/>
+        </HBox>
+
+    </VBox>
+</Scene>
