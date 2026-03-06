@@ -7,6 +7,8 @@ import org.example.dao.BudgetDAO;
 import org.example.dao.UserDAO;
 import org.example.dto.request.DecreaseOperationRequest;
 import org.example.dto.request.IncreaseOperationRequest;
+import org.example.exception.BudgetNotFoundException;
+import org.example.exception.UserNotFoundException;
 import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
@@ -21,7 +23,7 @@ public class BudgetService {
     public int getAmount(Long userId) {
         try (Session session = Hibernate.getSessionFactory().openSession()) {
             Budget budget = budgetDAO.findByUserId(session, userId)
-                    .orElseThrow(() -> new RuntimeException("Budget not found for user " + userId));
+                    .orElseThrow(() -> new BudgetNotFoundException(userId));
             return budget.getAmount();
         }
     }
@@ -29,7 +31,7 @@ public class BudgetService {
     public Budget create(Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
             User user = userDAO.findById(session, userId)
-                    .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
+                    .orElseThrow(() -> new UserNotFoundException(userId));
 
             Budget budget = new Budget();
             budget.setAmount(0);
@@ -44,7 +46,7 @@ public class BudgetService {
         return TransactionUtils.executeInTransaction(session -> {
             int amount = request.getAmount();
             User user = userDAO.findById(session, userId)
-                    .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
+                    .orElseThrow(() -> new UserNotFoundException(userId));
 
             IncreaseOperation operation = new IncreaseOperation();
             operation.setAmount(amount);
@@ -53,7 +55,7 @@ public class BudgetService {
             session.persist(operation);
 
             Budget budget = budgetDAO.findByUserId(session, userId)
-                    .orElseThrow(() -> new RuntimeException("Budget not found for user " + userId));
+                    .orElseThrow(() -> new BudgetNotFoundException(userId));
             budget.setAmount(budget.getAmount() + amount);
 
             return operation;
@@ -65,7 +67,7 @@ public class BudgetService {
             int amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)
-                    .orElseThrow(() -> new RuntimeException("User not found with id = " + userId));
+                    .orElseThrow(() -> new UserNotFoundException(userId));
 
             DecreaseOperation operation = new DecreaseOperation();
             operation.setAmount(amount);
@@ -74,7 +76,7 @@ public class BudgetService {
             session.persist(operation);
 
             Budget budget = budgetDAO.findByUserId(session, userId)
-                    .orElseThrow(() -> new RuntimeException("Budget not found for user " + userId));
+                    .orElseThrow(() -> new BudgetNotFoundException(userId));
             budget.setAmount(budget.getAmount() - amount);
 
             return operation;

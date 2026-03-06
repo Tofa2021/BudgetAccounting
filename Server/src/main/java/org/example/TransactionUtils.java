@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.exception.BusinessException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -14,6 +15,10 @@ public class TransactionUtils {
             action.accept(session);
             transaction.commit();
         } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                throw e;
+            }
+
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -29,6 +34,9 @@ public class TransactionUtils {
             transaction.commit();
             return result;
         } catch (Exception e) {
+            if (e instanceof BusinessException) {
+                throw e;
+            }
             if (transaction != null) {
                 transaction.rollback();
             }

@@ -1,9 +1,6 @@
 package org.example.client;
 
-import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
-import org.example.dto.Pair;
-import org.example.dto.RequestAction;
+import org.example.dto.*;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 
@@ -32,7 +29,13 @@ public class RRManager {
     }
 
     public void signin(String username, String password) {
-        Pair<String, String> tokens = (Pair<String, String>) putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password)).getBody();
+        Response response = putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
+        if (response.getStatus() != Status.OK) {
+            System.out.println("Ошибка авторизации");
+            return;
+        }
+
+        Pair<String, String> tokens = (Pair<String, String>) response.getBody();
         assessToken = tokens.first();
         refreshToken = tokens.second();
     }
