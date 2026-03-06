@@ -1,12 +1,8 @@
 package org.example.client;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.example.client.controller.AuthController;
-import org.example.client.viewModel.AuthViewModel;
-
-import java.io.IOException;
+import org.example.client.scene.Scene;
+import org.example.client.scene.SceneManager;
 
 public class Application extends javafx.application.Application {
     public Application() {
@@ -17,23 +13,7 @@ public class Application extends javafx.application.Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/org/example/client/auth-view.fxml")
-        );
-
-        Scene scene = loader.load();
-
-//        BudgetViewModel budgetViewModel = new BudgetViewModel();
-//        BudgetController budgetController = loader.getController();
-//        budgetController.setBudgetViewModel(budgetViewModel);
-
-        AuthViewModel authViewModel = new AuthViewModel();
-        AuthController authController = loader.getController();
-        authController.setAuthViewModel(authViewModel);
-
-        stage.setTitle("BudgetAccounting");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage stage) {
+        SceneManager.getInstance().init(stage, new RRManager(), Scene.AUTH);
     }
 }

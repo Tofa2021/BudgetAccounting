@@ -1,5 +1,7 @@
 package org.example.client;
 
+import org.example.client.scene.Scene;
+import org.example.client.scene.SceneManager;
 import org.example.dto.*;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
@@ -23,7 +25,12 @@ public class RRManager {
     }
 
     public void signup(String username, String password) {
-        Pair<String, String> tokens = (Pair<String, String>) putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password)).getBody();
+        Response response = putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
+        if (response.getStatus() != Status.OK) {
+            System.out.println("Auth error");
+        }
+
+        Pair<String, String> tokens = (Pair<String, String>) response.getBody();
         assessToken = tokens.first();
         refreshToken = tokens.second();
     }
@@ -31,13 +38,15 @@ public class RRManager {
     public void signin(String username, String password) {
         Response response = putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
         if (response.getStatus() != Status.OK) {
-            System.out.println("Ошибка авторизации");
+            System.out.println("Auth error");
             return;
         }
 
         Pair<String, String> tokens = (Pair<String, String>) response.getBody();
         assessToken = tokens.first();
         refreshToken = tokens.second();
+
+        SceneManager.getInstance().loadScene(Scene.BUDGET);
     }
 
     public void increaseBudget(int amount, IncreaseOperationCategory category) {

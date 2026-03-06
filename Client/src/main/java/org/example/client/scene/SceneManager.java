@@ -1,0 +1,61 @@
+package org.example.client.scene;
+
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
+import org.example.client.RRManager;
+import org.example.client.controller.BaseController;
+import org.example.client.viewModel.AuthViewModel;
+import org.example.client.viewModel.BaseViewModel;
+import org.example.client.viewModel.BudgetViewModel;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SceneManager {
+    private static SceneManager instance;
+    private final Map<Scene, SceneInfo> scenes = new HashMap<>();
+    private Stage stage;
+
+    private SceneManager() {
+    }
+
+    public static SceneManager getInstance() {
+        if (instance == null) {
+            instance = new SceneManager();
+        }
+        return instance;
+    }
+
+    public void init(Stage stage, RRManager rrManager, Scene firstScene) {
+        this.stage = stage;
+
+        stage.setTitle("BudgetAccounting");
+
+        scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/auth-view.fxml", new AuthViewModel(rrManager)));
+        scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/budget-view.fxml", new BudgetViewModel(rrManager)));
+
+        loadScene(firstScene);
+    }
+
+    public void loadScene(Scene loadScene) {
+        try {
+            SceneInfo sceneInfo = scenes.get(loadScene);
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(sceneInfo.fxmlPath())
+            );
+
+            javafx.scene.Scene scene = loader.load();
+
+            BaseController<BaseViewModel> controller = loader.getController();
+            controller.setViewModel(sceneInfo.viewModel());
+
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load scene " + loadScene.name(), e);
+        }
+    }
+}

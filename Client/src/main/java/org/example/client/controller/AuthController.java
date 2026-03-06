@@ -4,19 +4,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import org.example.client.viewModel.AuthViewModel;
 
-public class AuthController {
-    private AuthViewModel viewModel;
+public class AuthController extends BaseController<AuthViewModel> {
     @FXML
     private TextField usernameField;
     @FXML
     private TextField passwordField;
 
-    public void setAuthViewModel(AuthViewModel viewModel) {
-        this.viewModel = viewModel;
-        bindViewModel();
+    @Override
+    public void initialize() {
     }
 
-    private void bindViewModel() {
+    @Override
+    protected void bindViewModel() {
         usernameField.textProperty().bindBidirectional(
                 viewModel.getUsernameInput()
         );

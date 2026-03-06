@@ -9,8 +9,7 @@ import org.example.client.viewModel.BudgetViewModel;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
 
-public class BudgetController {
-    private BudgetViewModel viewModel;
+public class BudgetController extends BaseController<BudgetViewModel> {
     @FXML
     private Label balanceLabel;
     @FXML
@@ -24,11 +23,6 @@ public class BudgetController {
     @FXML
     private ComboBox<DecreaseOperationCategory> decreaseCategoryComboBox;
 
-    public void setBudgetViewModel(BudgetViewModel viewModel) {
-        this.viewModel = viewModel;
-        bindViewModel();
-    }
-
     @FXML
     public void initialize() {
         increaseCategoryComboBox.getItems().setAll(IncreaseOperationCategory.values());
@@ -38,7 +32,7 @@ public class BudgetController {
         decreaseCategoryComboBox.setValue(DecreaseOperationCategory.FOOD);
     }
 
-    private void bindViewModel() {
+    protected void bindViewModel() {
         balanceLabel.textProperty().bind(
                 viewModel.getBalance().asString("Текущий баланс: $%d")
         );

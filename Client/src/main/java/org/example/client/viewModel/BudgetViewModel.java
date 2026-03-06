@@ -2,15 +2,12 @@ package org.example.client.viewModel;
 
 import javafx.beans.property.*;
 import lombok.Getter;
-import org.example.client.ApplicationContext;
 import org.example.client.RRManager;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
 
 @Getter
-public class BudgetViewModel {
-    private final RRManager rrManager = ApplicationContext.getInstance().getRrManager();
-
+public class BudgetViewModel extends BaseViewModel {
     private final IntegerProperty balance = new SimpleIntegerProperty(0);
     private final StringProperty amountInput = new SimpleStringProperty("");
     private final StringProperty statusMessage = new SimpleStringProperty("");
@@ -19,8 +16,13 @@ public class BudgetViewModel {
     private final ObjectProperty<DecreaseOperationCategory> selectedDecreaseCategory =
             new SimpleObjectProperty<>();
 
-    public BudgetViewModel() {
-        rrManager.signin("Anton", "1234");
+
+    public BudgetViewModel(RRManager rrManager) {
+        super(rrManager);
+    }
+
+    @Override
+    public void init() {
         refreshBalance();
     }
 
