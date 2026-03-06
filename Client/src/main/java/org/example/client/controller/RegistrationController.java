@@ -6,11 +6,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.example.client.scene.Scene;
 import org.example.client.scene.SceneManager;
-import org.example.client.viewModel.AuthViewModel;
+import org.example.client.viewModel.RegistrationViewModel;
 
-public class AuthController extends BaseController<AuthViewModel> {
+public class RegistrationController extends BaseController<RegistrationViewModel> {
     @FXML
-    public Button signInButton;
+    public Button signUpButton;
     @FXML
     private TextField usernameField;
     @FXML
@@ -38,13 +38,13 @@ public class AuthController extends BaseController<AuthViewModel> {
     }
 
     @FXML
-    private void handleSignIn() {
-        viewModel.signIn(usernameField.getText(), passwordField.getText());
+    private void handleSignUp() {
+        viewModel.signUp(usernameField.getText(), passwordField.getText());
         passwordField.clear();
     }
 
     @FXML
-    private void handleSignUpLink() {
-        SceneManager.getInstance().loadScene(Scene.REGISTRATION);
+    private void handleSignInLink() {
+        SceneManager.getInstance().loadScene(Scene.AUTH);
     }
 }

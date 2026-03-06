@@ -22,15 +22,16 @@ public class RRManager {
         return (int) putRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken)).getBody();
     }
 
-    public void signup(String username, String password) {
+    public boolean signup(String username, String password) {
         Response response = putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
         if (response.getStatus() != Status.OK) {
-            System.out.println("Auth error");
+            return false;
         }
 
         Pair<String, String> tokens = (Pair<String, String>) response.getBody();
         assessToken = tokens.first();
         refreshToken = tokens.second();
+        return true;
     }
 
     public boolean signin(String username, String password) {

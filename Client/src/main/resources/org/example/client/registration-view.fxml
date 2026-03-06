@@ -8,13 +8,13 @@
 <?import javafx.scene.text.Font?>
 <Scene xmlns:fx="http://javafx.com/fxml" width="500" height="250"
        xmlns="http://javafx.com/javafx"
-       fx:controller="org.example.client.controller.AuthController">
+       fx:controller="org.example.client.controller.RegistrationController">
     <VBox fx:id="root" spacing="20" alignment="CENTER">
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        <Label text="Вход в аккаунт">
+        <Label text="Регистрация">
             <font>
                 <Font name="System Bold" size="24"/>
             </font>
@@ -32,23 +32,24 @@
 
         <Label fx:id="errorField" wrapText="true" style="-fx-text-fill: red;"/>
 
-        <Button fx:id="signInButton"
-                text="Войти в аккаунт"
+        <Button fx:id="signUpButton"
+                text="Зарегистрироваться"
                 prefWidth="150"
                 style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
-                onAction="#handleSignIn"/>
+                onAction="#handleSignUp"/>
 
         <HBox alignment="CENTER" spacing="5">
-            <Label text="Нет аккаунта?" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            <Label text="Уже есть аккаунт?" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
             <Hyperlink fx:id="signUpLink"
-                       text="Зарегистрироваться"
+                       text="Войти"
                        style="-fx-font-size: 12px; -fx-text-fill: #3498db; -fx-border-color: transparent;"
-                       onAction="#handleSignUpLink">
+                       onAction="#handleSignInLink">
                 <font>
                     <Font name="System Bold" size="12"/>
                 </font>
             </Hyperlink>
         </HBox>
+
     </VBox>
 
 </Scene>
