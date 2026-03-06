@@ -1,13 +1,15 @@
-package org.example.client;
+package org.example.client.viewModel;
 
 import javafx.beans.property.*;
 import lombok.Getter;
+import org.example.client.ApplicationContext;
+import org.example.client.RRManager;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
 
 @Getter
 public class BudgetViewModel {
-    private final RRManager rrManager;
+    private final RRManager rrManager = ApplicationContext.getInstance().getRrManager();
 
     private final IntegerProperty balance = new SimpleIntegerProperty(0);
     private final StringProperty amountInput = new SimpleStringProperty("");
@@ -18,7 +20,6 @@ public class BudgetViewModel {
             new SimpleObjectProperty<>();
 
     public BudgetViewModel() {
-        rrManager = new RRManager();
         rrManager.signin("Anton", "1234");
         refreshBalance();
     }
