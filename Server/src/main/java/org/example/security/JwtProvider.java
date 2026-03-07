@@ -3,7 +3,7 @@ package org.example.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.example.PropertiesLoader;
+import org.example.util.PropertiesLoader;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;

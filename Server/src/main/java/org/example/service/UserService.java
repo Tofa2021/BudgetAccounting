@@ -1,7 +1,6 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.TransactionUtils;
 import org.example.dao.RoleDAO;
 import org.example.dao.UserDAO;
 import org.example.dto.Pair;
@@ -15,6 +14,7 @@ import org.example.model.Budget;
 import org.example.model.Role;
 import org.example.model.User;
 import org.example.security.JwtProvider;
+import org.example.util.TransactionUtils;
 
 import java.util.Set;
 

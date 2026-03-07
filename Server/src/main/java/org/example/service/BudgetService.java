@@ -1,8 +1,6 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.Hibernate;
-import org.example.TransactionUtils;
 import org.example.dao.BudgetDAO;
 import org.example.dao.UserDAO;
 import org.example.dto.request.DecreaseOperationRequest;
@@ -13,6 +11,8 @@ import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.User;
+import org.example.util.Hibernate;
+import org.example.util.TransactionUtils;
 import org.hibernate.Session;
 
 @RequiredArgsConstructor

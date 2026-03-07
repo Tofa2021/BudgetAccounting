@@ -1,4 +1,4 @@
-package org.example;
+package org.example.util;
 
 import org.example.exception.BusinessException;
 import org.hibernate.Session;
