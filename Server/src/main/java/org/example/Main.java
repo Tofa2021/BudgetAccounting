@@ -24,7 +24,7 @@ public class Main {
 
         BudgetService budgetService = new BudgetService(budgetDAO, userDAO);
         UserService userService = new UserService(jwtProvider, userDAO, roleDAO);
-        OperationService operationService = new OperationService(operationDAO);
+        OperationService operationService = new OperationService(operationDAO, budgetDAO);
 
         Controller controller = new Controller(budgetService, userService, operationService, jwtProvider);
         Hibernate.getSessionFactory();

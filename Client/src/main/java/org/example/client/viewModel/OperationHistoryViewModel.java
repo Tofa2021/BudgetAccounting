@@ -25,4 +25,8 @@ public class OperationHistoryViewModel extends BaseViewModel {
             operations.setAll(result.getData().reversed());
         }
     }
+
+    public void delete(Long id) {
+        rrManager.deleteOperation(id);
+    }
 }
