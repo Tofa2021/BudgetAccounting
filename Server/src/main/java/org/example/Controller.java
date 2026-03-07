@@ -1,9 +1,6 @@
 package org.example;
 
-import org.example.dao.BudgetDAO;
-import org.example.dao.OperationDAO;
-import org.example.dao.RoleDAO;
-import org.example.dao.UserDAO;
+import lombok.AllArgsConstructor;
 import org.example.dto.RequestAction;
 import org.example.dto.Status;
 import org.example.dto.request.*;
@@ -17,23 +14,12 @@ import org.example.service.UserService;
 
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 public class Controller {
     private final BudgetService budgetService;
     private final UserService userService;
-    private final JwtProvider jwtProvider;
     private final OperationService operationService;
-
-    public Controller() {
-        BudgetDAO budgetDAO = new BudgetDAO();
-        RoleDAO roleDAO = new RoleDAO();
-        UserDAO userDAO = new UserDAO();
-        OperationDAO operationDAO = new OperationDAO();
-
-        jwtProvider = new JwtProvider();
-        budgetService = new BudgetService(budgetDAO, userDAO);
-        userService = new UserService(jwtProvider, userDAO, roleDAO);
-        operationService = new OperationService(operationDAO);
-    }
+    private final JwtProvider jwtProvider;
 
     public Response process(Request request) {
         RequestAction action = request.getAction();
