@@ -22,10 +22,11 @@ public class RegistrationViewModel extends BaseViewModel {
     }
 
     public void signUp(String username, String password) {
-        if (rrManager.signup(username, password)) {
+        var result = rrManager.signUp(username, password);
+        if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
-        } else {
-            errorInput.setValue("Логин занят");
         }
+        errorInput.setValue(result.getErrorMessage());
+
     }
 }

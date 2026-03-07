@@ -1,6 +1,17 @@
 package org.example.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-public record Pair<T, V>(T first, V second) implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Pair<T, V> implements Serializable {
+    private T first;
+    private V second;
 }

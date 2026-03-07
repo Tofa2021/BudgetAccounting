@@ -22,10 +22,11 @@ public class AuthViewModel extends BaseViewModel {
     }
 
     public void signIn(String username, String password) {
-        if (rrManager.signin(username, password)) {
+        var result = rrManager.signIn(username, password);
+        if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
-        } else {
-            errorInput.setValue("Неправильный логин или пароль");
         }
+        errorInput.setValue(result.getErrorMessage());
+
     }
 }

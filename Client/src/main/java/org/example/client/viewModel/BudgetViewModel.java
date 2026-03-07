@@ -27,26 +27,24 @@ public class BudgetViewModel extends BaseViewModel {
     }
 
     public void increase(int amount, IncreaseOperationCategory category) {
-        try {
-            rrManager.increaseBudget(amount, category);
+        var result = rrManager.increaseBudget(amount, category);
+        if (result.isSuccess()) {
             refreshBalance();
-            statusMessage.set("Доход добавлен");
-        } catch (Exception e) {
-            statusMessage.set("Ошибка: " + e.getMessage());
         }
     }
 
     public void decrease(int amount, DecreaseOperationCategory category) {
-        try {
-            rrManager.decreaseBudget(amount, category);
+        var result = rrManager.decreaseBudget(amount, category);
+        if (result.isSuccess()) {
             refreshBalance();
-            statusMessage.set("Расход добавлен");
-        } catch (Exception e) {
-            statusMessage.set("Ошибка: " + e.getMessage());
         }
     }
 
     private void refreshBalance() {
-        balance.set(rrManager.getAmount());
+        var result = rrManager.getAmount();
+        if (result.isSuccess()) {
+            balance.set(result.getData());
+        }
+        statusMessage.setValue(result.getErrorMessage());
     }
 }
