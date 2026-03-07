@@ -11,7 +11,7 @@ import org.example.client.scene.SceneManager;
 public class AuthViewModel extends BaseViewModel {
     private final StringProperty usernameInput = new SimpleStringProperty("");
     private final StringProperty passwordInput = new SimpleStringProperty("");
-    private final StringProperty errorInput = new SimpleStringProperty("");
+    private final StringProperty errorMessage = new SimpleStringProperty("");
 
     public AuthViewModel(RRManager rrManager) {
         super(rrManager);
@@ -22,11 +22,32 @@ public class AuthViewModel extends BaseViewModel {
     }
 
     public void signIn(String username, String password) {
+        if (!isValidatedInput()) {
+            return;
+        }
+
         var result = rrManager.signIn(username, password);
         if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
         }
-        errorInput.setValue(result.getErrorMessage());
+        errorMessage.setValue(result.getErrorMessage());
 
+    }
+
+    private boolean isValidatedInput() {
+        String usernameValue = usernameInput.getValue();
+        String passwordValue = passwordInput.getValue();
+
+        if (usernameValue.isEmpty()) {
+            errorMessage.setValue("Логин не может быть пустым");
+            return false;
+        }
+
+        if (passwordValue.isEmpty()) {
+            errorMessage.setValue("Пароль не может быть пустым");
+            return false;
+        }
+
+        return true;
     }
 }

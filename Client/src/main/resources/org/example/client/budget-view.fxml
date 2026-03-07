@@ -45,5 +45,7 @@
                       prefWidth="150"/>
         </HBox>
 
+        <Label fx:id="errorLabel" style="-fx-text-fill: red"/>
+
     </VBox>
 </Scene>

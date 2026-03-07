@@ -16,7 +16,7 @@ public class AuthController extends BaseController<AuthViewModel> {
     @FXML
     private TextField passwordField;
     @FXML
-    private Label errorField;
+    private Label errorLabel;
 
     @Override
     public void initialize() {
@@ -32,8 +32,8 @@ public class AuthController extends BaseController<AuthViewModel> {
                 viewModel.getPasswordInput()
         );
 
-        errorField.textProperty().bindBidirectional(
-                viewModel.getErrorInput()
+        errorLabel.textProperty().bindBidirectional(
+                viewModel.getErrorMessage()
         );
     }
 

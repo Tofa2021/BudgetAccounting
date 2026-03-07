@@ -22,6 +22,8 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     private ComboBox<IncreaseOperationCategory> increaseCategoryComboBox;
     @FXML
     private ComboBox<DecreaseOperationCategory> decreaseCategoryComboBox;
+    @FXML
+    private Label errorLabel;
 
     @FXML
     public void initialize() {
@@ -48,6 +50,9 @@ public class BudgetController extends BaseController<BudgetViewModel> {
         decreaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedDecreaseCategory()
         );
+
+        errorLabel.textProperty().bind(
+                viewModel.getErrorMessage());
     }
 
     @FXML

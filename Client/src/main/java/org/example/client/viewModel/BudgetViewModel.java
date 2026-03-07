@@ -10,7 +10,7 @@ import org.example.dto.IncreaseOperationCategory;
 public class BudgetViewModel extends BaseViewModel {
     private final IntegerProperty balance = new SimpleIntegerProperty(0);
     private final StringProperty amountInput = new SimpleStringProperty("");
-    private final StringProperty statusMessage = new SimpleStringProperty("");
+    private final StringProperty errorMessage = new SimpleStringProperty("");
     private final ObjectProperty<IncreaseOperationCategory> selectedIncreaseCategory =
             new SimpleObjectProperty<>();
     private final ObjectProperty<DecreaseOperationCategory> selectedDecreaseCategory =
@@ -27,6 +27,12 @@ public class BudgetViewModel extends BaseViewModel {
     }
 
     public void increase(int amount, IncreaseOperationCategory category) {
+        errorMessage.setValue("");
+        if (category == null) {
+            errorMessage.setValue("Выберите категорию");
+            return;
+        }
+
         var result = rrManager.increaseBudget(amount, category);
         if (result.isSuccess()) {
             refreshBalance();
@@ -34,6 +40,12 @@ public class BudgetViewModel extends BaseViewModel {
     }
 
     public void decrease(int amount, DecreaseOperationCategory category) {
+        errorMessage.setValue("");
+        if (category == null) {
+            errorMessage.setValue("Выберите категорию");
+            return;
+        }
+
         var result = rrManager.decreaseBudget(amount, category);
         if (result.isSuccess()) {
             refreshBalance();
@@ -45,6 +57,6 @@ public class BudgetViewModel extends BaseViewModel {
         if (result.isSuccess()) {
             balance.set(result.getData());
         }
-        statusMessage.setValue(result.getErrorMessage());
+        errorMessage.setValue(result.getErrorMessage());
     }
 }
