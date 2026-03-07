@@ -32,10 +32,10 @@ public class Controller {
         jwtProvider = new JwtProvider();
         budgetService = new BudgetService(budgetDAO, userDAO);
         userService = new UserService(jwtProvider, userDAO, roleDAO);
-        operationService = new OperationService(operationDAO, userDAO);
+        operationService = new OperationService(operationDAO);
     }
 
-    public Response redirect(Request request) {
+    public Response process(Request request) {
         RequestAction action = request.getAction();
 
         try {
@@ -56,10 +56,12 @@ public class Controller {
 
                             default -> {
                                 switch (action) {
-                                    case RequestAction.INCREASE_BUDGET_OPERATION ->
+                                    case RequestAction.INCREASE_OPERATION ->
                                             budgetService.processIncreaseOperation((IncreaseOperationRequest) request, userId);
-                                    case RequestAction.DECREASE_BUDGET_OPERATION ->
+                                    case RequestAction.DECREASE_OPERATION ->
                                             budgetService.processDecreaseOperation((DecreaseOperationRequest) request, userId);
+                                    case RequestAction.DELETE_OPERATION ->
+                                            operationService.deleteById((AuthorizedModelIdRequest) request);
                                     default -> throw new NoSuchElementException();
                                 }
                                 yield null;

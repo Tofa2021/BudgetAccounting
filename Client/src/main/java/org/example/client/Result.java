@@ -29,6 +29,6 @@ public class Result<T> {
         if (isSuccess()) {
             return data;
         }
-        throw new IllegalStateException("Data is null");
+        throw new IllegalStateException("Error response. Data is null");
     }
 }

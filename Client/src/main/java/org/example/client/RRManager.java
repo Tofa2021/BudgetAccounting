@@ -31,16 +31,22 @@ public class RRManager {
 
     public Result<Object> signUp(String username, String password) {
         Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
-        assessToken = result.getData().getFirst();
-        refreshToken = result.getData().getSecond();
-        return Result.success(null);
+        if (result.isSuccess()) {
+            assessToken = result.getData().getFirst();
+            refreshToken = result.getData().getSecond();
+            return Result.success(null);
+        }
+        return Result.error(result.getStatus(), result.getErrorMessage());
     }
 
     public Result<Object> signIn(String username, String password) {
         Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
-        assessToken = result.getData().getFirst();
-        refreshToken = result.getData().getSecond();
-        return Result.success(null);
+        if (result.isSuccess()) {
+            assessToken = result.getData().getFirst();
+            refreshToken = result.getData().getSecond();
+            return Result.success(null);
+        }
+        return Result.error(result.getStatus(), result.getErrorMessage());
     }
 
     public Result<Object> increaseBudget(int amount, IncreaseOperationCategory category) {
@@ -49,6 +55,11 @@ public class RRManager {
 
     public Result<Object> decreaseBudget(int amount, DecreaseOperationCategory category) {
         return processRequest(new DecreaseOperationRequest(assessToken, amount, category));
+    }
+
+    public Result<Object> deleteOperation(Long id) {
+        processRequest(new AuthorizedModelIdRequest(id, RequestAction.DELETE_OPERATION, assessToken));
+        return Result.success(null);
     }
 
     public Response putRequest(Request request) {
@@ -67,6 +78,7 @@ public class RRManager {
             case Status.NOT_FOUND -> "Не найдено";
             case Status.ALREADY_EXISTS -> "Уже существует";
             case Status.SERVER_ERROR -> "Неизвестная ошибка сервера";
+            case Status.INVALID_TOKEN -> "Неверный токен";
             default -> throw new NoSuchElementException();
         };
     }
@@ -75,7 +87,6 @@ public class RRManager {
         Response response = putRequest(request);
         Status status = response.getStatus();
         if (status == Status.OK) {
-            System.out.println(response.getBody());
             return Result.success((T) response.getBody());
         }
         return Result.error(status, getErrorMessage(status));

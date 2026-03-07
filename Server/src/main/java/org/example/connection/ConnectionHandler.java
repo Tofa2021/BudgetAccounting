@@ -28,7 +28,7 @@ public class ConnectionHandler implements Runnable {
         try {
             while (true) {
                 Request request = (Request) in.readObject();
-                send(controller.redirect(request));
+                send(controller.process(request));
             }
         } catch (EOFException e) {
             System.out.println("Client disconnected normally");
@@ -39,7 +39,7 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
-    public void disconnect() {
+    private void disconnect() {
         try {
             in.close();
             out.close();
@@ -53,7 +53,7 @@ public class ConnectionHandler implements Runnable {
     }
 
 
-    public void send(Response response) {
+    private void send(Response response) {
         try {
             out.writeObject(response);
             out.flush();

@@ -8,6 +8,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 public abstract class OperationDTO implements Serializable {
+    private final Long id;
     private final Integer amount;
     private final Long userId;
 }

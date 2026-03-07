@@ -7,8 +7,8 @@ import org.example.dto.IncreaseOperationCategory;
 public class IncreaseOperationDTO extends OperationDTO {
     private final IncreaseOperationCategory category;
 
-    public IncreaseOperationDTO(Integer amount, Long userId, IncreaseOperationCategory category) {
-        super(amount, userId);
+    public IncreaseOperationDTO(Long id, Integer amount, Long userId, IncreaseOperationCategory category) {
+        super(id, amount, userId);
         this.category = category;
     }
 }

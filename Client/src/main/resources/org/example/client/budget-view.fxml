@@ -48,7 +48,7 @@
         <Button fx:id="openOperationHistoryButton"
                 text="История операций"
                 prefWidth="150"
-                style="-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 14px;"
+                style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
                 onAction="#handleOpenOperationHistory"/>
 
         <Label fx:id="errorLabel" style="-fx-text-fill: red"/>

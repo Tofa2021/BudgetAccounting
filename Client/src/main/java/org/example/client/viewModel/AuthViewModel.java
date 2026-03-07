@@ -22,7 +22,7 @@ public class AuthViewModel extends BaseViewModel {
     }
 
     public void signIn(String username, String password) {
-        if (!isValidatedInput()) {
+        if (!isInputCorrect()) {
             return;
         }
 
@@ -31,10 +31,9 @@ public class AuthViewModel extends BaseViewModel {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
         }
         errorMessage.setValue(result.getErrorMessage());
-
     }
 
-    private boolean isValidatedInput() {
+    private boolean isInputCorrect() {
         String usernameValue = usernameInput.getValue();
         String passwordValue = passwordInput.getValue();
 

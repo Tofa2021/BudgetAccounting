@@ -9,7 +9,7 @@ public class IncreaseOperationRequest extends OperationRequest {
     private final IncreaseOperationCategory category;
 
     public IncreaseOperationRequest(String token, int amount, IncreaseOperationCategory category) {
-        super(RequestAction.INCREASE_BUDGET_OPERATION, token, amount);
+        super(RequestAction.INCREASE_OPERATION, token, amount);
         this.category = category;
     }
 }
