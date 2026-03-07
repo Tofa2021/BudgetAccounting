@@ -1,12 +1,14 @@
 package org.example.client.viewModel;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.Getter;
 import org.example.client.RRManager;
 import org.example.dto.model.OperationDTO;
 
-import java.util.List;
-
+@Getter
 public class OperationHistoryViewModel extends BaseViewModel {
-    private List<OperationDTO> operations;
+    private final ObservableList<OperationDTO> operations = FXCollections.observableArrayList();
 
     public OperationHistoryViewModel(RRManager rrManager) {
         super(rrManager);
@@ -18,7 +20,9 @@ public class OperationHistoryViewModel extends BaseViewModel {
     }
 
     private void refreshOperations() {
-        operations = rrManager.getUserOperations().getData();
-        System.out.println(operations);
+        var result = rrManager.getUserOperations();
+        if (result.isSuccess()) {
+            operations.setAll(result.getData().reversed());
+        }
     }
 }

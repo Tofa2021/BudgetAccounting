@@ -6,7 +6,6 @@ import org.example.dao.RoleDAO;
 import org.example.dao.UserDAO;
 import org.example.dto.RequestAction;
 import org.example.dto.Status;
-import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 import org.example.exception.BusinessException;
@@ -16,7 +15,6 @@ import org.example.service.BudgetService;
 import org.example.service.OperationService;
 import org.example.service.UserService;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Controller {
@@ -52,15 +50,9 @@ public class Controller {
                         Status.OK,
                         switch (action) {
                             case RequestAction.GET_BUDGET_AMOUNT -> budgetService.getAmount(userId);
-                            case RequestAction.GET_USER_OPERATIONS -> {
-                                List<Operation> operations = operationService.getAllByUserId(userId);
-                                List<OperationDTO> dtos = operations.stream()
-                                        .map(Operation::toDTO)
-                                        .toList();
-                                System.out.println(dtos);
-                                System.out.println(operations);
-                                yield dtos;
-                            }
+                            case RequestAction.GET_USER_OPERATIONS -> operationService.getAllByUserId(userId).stream()
+                                    .map(Operation::toDTO)
+                                    .toList();
 
                             default -> {
                                 switch (action) {

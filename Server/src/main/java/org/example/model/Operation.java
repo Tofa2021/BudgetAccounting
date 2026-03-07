@@ -31,7 +31,5 @@ public abstract class Operation implements Serializable {
         this.amount = amount;
     }
 
-    public OperationDTO toDTO() {
-        return new OperationDTO(amount, user.getId());
-    }
+    public abstract OperationDTO toDTO();
 }

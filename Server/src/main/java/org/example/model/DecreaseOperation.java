@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.dto.DecreaseOperationCategory;
+import org.example.dto.model.DecreaseOperationDTO;
+import org.example.dto.model.OperationDTO;
 
 @Entity
 @DiscriminatorValue("MINUS")
@@ -19,5 +21,10 @@ public class DecreaseOperation extends Operation {
     public DecreaseOperation(Integer amount, DecreaseOperationCategory category) {
         super(amount);
         this.category = category;
+    }
+
+    @Override
+    public OperationDTO toDTO() {
+        return new DecreaseOperationDTO(getAmount(), getUser().getId(), category);
     }
 }
