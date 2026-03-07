@@ -6,6 +6,8 @@ import lombok.Getter;
 import org.example.client.RRManager;
 import org.example.dto.model.OperationDTO;
 
+import java.util.Objects;
+
 @Getter
 public class OperationHistoryViewModel extends BaseViewModel {
     private final ObservableList<OperationDTO> operations = FXCollections.observableArrayList();
@@ -19,14 +21,29 @@ public class OperationHistoryViewModel extends BaseViewModel {
         refreshOperations();
     }
 
-    private void refreshOperations() {
+    public void refreshOperations() {
         var result = rrManager.getUserOperations();
         if (result.isSuccess()) {
             operations.setAll(result.getData().reversed());
         }
     }
 
-    public void delete(Long id) {
-        rrManager.deleteOperation(id);
+    public void delete(OperationDTO operationDTO) {
+        var result = rrManager.deleteOperation(operationDTO.getId());
+        if (result.isSuccess()) {
+            operations.remove(operationDTO);
+        }
+    }
+
+    public void update(OperationDTO operationDTO) {
+        if (rrManager.updateOperation(operationDTO).isSuccess()) {
+            operations.stream()
+                    .filter(operationDTO1 -> !Objects.equals(operationDTO1.getId(), operationDTO.getId()))
+                    .findFirst()
+                    .ifPresent(oldOperation -> {
+                        int index = operations.indexOf(oldOperation);
+                        operations.set(index, operationDTO);
+                    });
+        }
     }
 }

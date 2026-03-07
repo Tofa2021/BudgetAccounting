@@ -3,6 +3,7 @@ package org.example;
 import lombok.AllArgsConstructor;
 import org.example.dto.RequestAction;
 import org.example.dto.Status;
+import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 import org.example.exception.BusinessException;
@@ -48,6 +49,8 @@ public class Controller {
                                             budgetService.processDecreaseOperation((DecreaseOperationRequest) request, userId);
                                     case RequestAction.DELETE_OPERATION ->
                                             operationService.deleteById((AuthorizedModelIdRequest) request);
+                                    case RequestAction.UPDATE_OPERATION ->
+                                            operationService.update((UpdateRequest<OperationDTO>) request);
                                     default -> throw new NoSuchElementException();
                                 }
                                 yield null;

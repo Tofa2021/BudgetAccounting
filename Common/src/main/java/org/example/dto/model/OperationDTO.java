@@ -2,13 +2,15 @@ package org.example.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 @AllArgsConstructor
+@Setter
 @Getter
 public abstract class OperationDTO implements Serializable {
-    private final Long id;
-    private final Integer amount;
-    private final Long userId;
+    private Long id;
+    private Integer amount;
+    private Long userId;
 }

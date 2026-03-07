@@ -23,18 +23,10 @@ public class Budget {
     private User user;
 
     public void increase(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Argument must be positive");
-        }
-        
         this.amount = this.amount + amount;
     }
 
     public void decrease(int amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Argument must be positive");
-        }
-
         int result = this.amount - amount;
         if (result < 0) {
             throw new IllegalArgumentException("Amount cannot be negative");

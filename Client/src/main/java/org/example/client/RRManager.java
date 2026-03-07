@@ -62,6 +62,10 @@ public class RRManager {
         return Result.success(null);
     }
 
+    public Result<Object> updateOperation(OperationDTO operationDTO) {
+        return processRequest(new UpdateRequest<OperationDTO>(RequestAction.UPDATE_OPERATION, assessToken, operationDTO));
+    }
+
     public Response putRequest(Request request) {
         try {
             clientConnection.putRequest(request);
