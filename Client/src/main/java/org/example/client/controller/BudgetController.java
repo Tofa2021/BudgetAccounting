@@ -26,7 +26,7 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     private Label errorLabel;
 
     @FXML
-    public void initialize() {
+    public void init() {
         increaseCategoryComboBox.getItems().setAll(IncreaseOperationCategory.values());
         decreaseCategoryComboBox.getItems().setAll(DecreaseOperationCategory.values());
 

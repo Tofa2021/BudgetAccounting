@@ -1,9 +1,11 @@
 package org.example.client;
 
 import org.example.dto.*;
+import org.example.dto.model.OperationDto;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -20,54 +22,33 @@ public class RRManager {
     }
 
     public Result<Integer> getAmount() {
-        Response response = putRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken));
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            return Result.success((Integer) response.getBody());
-        }
-        return Result.error(status, getErrorMessage(status));
+        return processRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken));
+    }
+
+    public Result<List<OperationDto>> getUserOperations() {
+        return processRequest(new AuthorizedRequest(RequestAction.GET_USER_OPERATIONS, assessToken));
     }
 
     public Result<Object> signUp(String username, String password) {
-        Response response = putRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            Pair<String, String> tokens = (Pair<String, String>) response.getBody();
-            assessToken = tokens.getFirst();
-            refreshToken = tokens.getSecond();
-            return Result.success(null);
-        }
-        return Result.error(status, getErrorMessage(status));
+        Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
+        assessToken = result.getData().getFirst();
+        refreshToken = result.getData().getSecond();
+        return null;
     }
 
     public Result<Object> signIn(String username, String password) {
-        Response response = putRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            Pair<String, String> tokens = (Pair<String, String>) response.getBody();
-            assessToken = tokens.getFirst();
-            refreshToken = tokens.getSecond();
-            return Result.success(null);
-        }
-        return Result.error(status, getErrorMessage(status));
+        Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
+        assessToken = result.getData().getFirst();
+        refreshToken = result.getData().getSecond();
+        return null;
     }
 
     public Result<Object> increaseBudget(int amount, IncreaseOperationCategory category) {
-        Response response = putRequest(new IncreaseOperationRequest(assessToken, amount, category));
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            return Result.success(null);
-        }
-        return Result.error(status, getErrorMessage(status));
+        return processRequest(new IncreaseOperationRequest(assessToken, amount, category));
     }
 
     public Result<Object> decreaseBudget(int amount, DecreaseOperationCategory category) {
-        Response response = putRequest(new DecreaseOperationRequest(assessToken, amount, category));
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            return Result.success(null);
-        }
-        return Result.error(status, getErrorMessage(status));
+        return processRequest(new DecreaseOperationRequest(assessToken, amount, category));
     }
 
     public Response putRequest(Request request) {
@@ -88,5 +69,14 @@ public class RRManager {
             case Status.SERVER_ERROR -> "Неизвестная ошибка сервера";
             default -> throw new NoSuchElementException();
         };
+    }
+
+    private <T> Result<T> processRequest(Request request) {
+        Response response = putRequest(request);
+        Status status = response.getStatus();
+        if (status == Status.OK) {
+            return Result.success((T) response.getBody());
+        }
+        return Result.error(status, getErrorMessage(status));
     }
 }

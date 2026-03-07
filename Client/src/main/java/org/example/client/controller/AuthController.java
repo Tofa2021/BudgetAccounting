@@ -19,7 +19,7 @@ public class AuthController extends BaseController<AuthViewModel> {
     private Label errorLabel;
 
     @Override
-    public void initialize() {
+    public void init() {
     }
 
     @Override

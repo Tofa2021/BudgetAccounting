@@ -19,7 +19,7 @@ public class RegistrationController extends BaseController<RegistrationViewModel
     private Label errorField;
 
     @Override
-    public void initialize() {
+    public void init() {
     }
 
     @Override

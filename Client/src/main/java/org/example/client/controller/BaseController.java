@@ -9,7 +9,7 @@ public abstract class BaseController<T extends BaseViewModel> {
     protected T viewModel;
 
     @FXML
-    public abstract void initialize();
+    public abstract void init();
 
     public void setViewModel(T viewModel) {
         this.viewModel = viewModel;
