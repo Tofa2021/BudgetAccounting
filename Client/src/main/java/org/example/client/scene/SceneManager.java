@@ -4,10 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import org.example.client.RRManager;
 import org.example.client.controller.BaseController;
-import org.example.client.viewModel.AuthViewModel;
-import org.example.client.viewModel.BaseViewModel;
-import org.example.client.viewModel.BudgetViewModel;
-import org.example.client.viewModel.RegistrationViewModel;
+import org.example.client.viewModel.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,6 +33,7 @@ public class SceneManager {
         scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/auth-view.fxml", new AuthViewModel(rrManager)));
         scenes.put(Scene.REGISTRATION, new SceneInfo("/org/example/client/registration-view.fxml", new RegistrationViewModel(rrManager)));
         scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/budget-view.fxml", new BudgetViewModel(rrManager)));
+        scenes.put(Scene.OPERATION_HISTORY, new SceneInfo("/org/example/client/operation-history-view.fxml", new OperationHistoryViewModel(rrManager)));
 
         loadScene(firstScene);
     }

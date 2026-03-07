@@ -4,4 +4,5 @@ public enum Scene {
     AUTH,
     REGISTRATION,
     BUDGET,
+    OPERATION_HISTORY,
 }

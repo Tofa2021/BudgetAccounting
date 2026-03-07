@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.example.client.scene.Scene;
+import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.BudgetViewModel;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
@@ -27,11 +29,6 @@ public class BudgetController extends BaseController<BudgetViewModel> {
 
     @FXML
     public void init() {
-        increaseCategoryComboBox.getItems().setAll(IncreaseOperationCategory.values());
-        decreaseCategoryComboBox.getItems().setAll(DecreaseOperationCategory.values());
-
-        increaseCategoryComboBox.setValue(IncreaseOperationCategory.SALARY);
-        decreaseCategoryComboBox.setValue(DecreaseOperationCategory.FOOD);
     }
 
     protected void bindViewModel() {
@@ -43,10 +40,12 @@ public class BudgetController extends BaseController<BudgetViewModel> {
                 viewModel.getAmountInput()
         );
 
+        increaseCategoryComboBox.getItems().setAll(IncreaseOperationCategory.values());
         increaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedIncreaseCategory()
         );
 
+        decreaseCategoryComboBox.getItems().setAll(DecreaseOperationCategory.values());
         decreaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedDecreaseCategory()
         );
@@ -85,5 +84,10 @@ public class BudgetController extends BaseController<BudgetViewModel> {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    @FXML
+    public void handleOpenOperationHistory() {
+        SceneManager.getInstance().loadScene(Scene.OPERATION_HISTORY);
     }
 }

@@ -1,32 +1,40 @@
 package org.example;
 
 import org.example.dao.BudgetDAO;
+import org.example.dao.OperationDAO;
 import org.example.dao.RoleDAO;
 import org.example.dao.UserDAO;
 import org.example.dto.RequestAction;
 import org.example.dto.Status;
+import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 import org.example.exception.BusinessException;
+import org.example.model.Operation;
 import org.example.security.JwtProvider;
 import org.example.service.BudgetService;
+import org.example.service.OperationService;
 import org.example.service.UserService;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Controller {
     private final BudgetService budgetService;
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final OperationService operationService;
 
     public Controller() {
         BudgetDAO budgetDAO = new BudgetDAO();
         RoleDAO roleDAO = new RoleDAO();
         UserDAO userDAO = new UserDAO();
+        OperationDAO operationDAO = new OperationDAO();
 
         jwtProvider = new JwtProvider();
         budgetService = new BudgetService(budgetDAO, userDAO);
         userService = new UserService(jwtProvider, userDAO, roleDAO);
+        operationService = new OperationService(operationDAO, userDAO);
     }
 
     public Response redirect(Request request) {
@@ -44,6 +52,15 @@ public class Controller {
                         Status.OK,
                         switch (action) {
                             case RequestAction.GET_BUDGET_AMOUNT -> budgetService.getAmount(userId);
+                            case RequestAction.GET_USER_OPERATIONS -> {
+                                List<Operation> operations = operationService.getAllByUserId(userId);
+                                List<OperationDTO> dtos = operations.stream()
+                                        .map(Operation::toDTO)
+                                        .toList();
+                                System.out.println(dtos);
+                                System.out.println(operations);
+                                yield dtos;
+                            }
 
                             default -> {
                                 switch (action) {

@@ -12,9 +12,9 @@ public class BudgetViewModel extends BaseViewModel {
     private final StringProperty amountInput = new SimpleStringProperty("");
     private final StringProperty errorMessage = new SimpleStringProperty("");
     private final ObjectProperty<IncreaseOperationCategory> selectedIncreaseCategory =
-            new SimpleObjectProperty<>();
+            new SimpleObjectProperty<>(IncreaseOperationCategory.SALARY);
     private final ObjectProperty<DecreaseOperationCategory> selectedDecreaseCategory =
-            new SimpleObjectProperty<>();
+            new SimpleObjectProperty<>(DecreaseOperationCategory.FOOD);
 
 
     public BudgetViewModel(RRManager rrManager) {

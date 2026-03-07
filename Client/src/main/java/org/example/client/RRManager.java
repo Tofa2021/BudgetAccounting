@@ -1,7 +1,7 @@
 package org.example.client;
 
 import org.example.dto.*;
-import org.example.dto.model.OperationDto;
+import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 
@@ -25,7 +25,7 @@ public class RRManager {
         return processRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken));
     }
 
-    public Result<List<OperationDto>> getUserOperations() {
+    public Result<List<OperationDTO>> getUserOperations() {
         return processRequest(new AuthorizedRequest(RequestAction.GET_USER_OPERATIONS, assessToken));
     }
 
@@ -33,14 +33,14 @@ public class RRManager {
         Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_UP, username, password));
         assessToken = result.getData().getFirst();
         refreshToken = result.getData().getSecond();
-        return null;
+        return Result.success(null);
     }
 
     public Result<Object> signIn(String username, String password) {
         Result<Pair<String, String>> result = processRequest(new AuthRequest(RequestAction.SIGN_IN, username, password));
         assessToken = result.getData().getFirst();
         refreshToken = result.getData().getSecond();
-        return null;
+        return Result.success(null);
     }
 
     public Result<Object> increaseBudget(int amount, IncreaseOperationCategory category) {
@@ -75,6 +75,7 @@ public class RRManager {
         Response response = putRequest(request);
         Status status = response.getStatus();
         if (status == Status.OK) {
+            System.out.println(response.getBody());
             return Result.success((T) response.getBody());
         }
         return Result.error(status, getErrorMessage(status));

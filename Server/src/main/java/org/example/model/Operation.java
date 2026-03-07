@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.dto.model.OperationDTO;
 
 import java.io.Serializable;
 
@@ -28,5 +29,9 @@ public abstract class Operation implements Serializable {
 
     public Operation(Integer amount) {
         this.amount = amount;
+    }
+
+    public OperationDTO toDTO() {
+        return new OperationDTO(amount, user.getId());
     }
 }
