@@ -11,6 +11,8 @@ import org.example.client.viewModel.BudgetViewModel;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
 
+import java.util.Arrays;
+
 public class BudgetController extends BaseController<BudgetViewModel> {
     @FXML
     private Label balanceLabel;
@@ -21,9 +23,9 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     @FXML
     private Button decreaseButton;
     @FXML
-    private ComboBox<IncreaseOperationCategory> increaseCategoryComboBox;
+    private ComboBox<String> increaseCategoryComboBox;
     @FXML
-    private ComboBox<DecreaseOperationCategory> decreaseCategoryComboBox;
+    private ComboBox<String> decreaseCategoryComboBox;
     @FXML
     private Label errorLabel;
 
@@ -40,12 +42,16 @@ public class BudgetController extends BaseController<BudgetViewModel> {
                 viewModel.getAmountInput()
         );
 
-        increaseCategoryComboBox.getItems().setAll(IncreaseOperationCategory.values());
+        increaseCategoryComboBox.getItems().setAll(Arrays.stream(IncreaseOperationCategory.values())
+                .map(IncreaseOperationCategory::getName)
+                .toList());
         increaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedIncreaseCategory()
         );
 
-        decreaseCategoryComboBox.getItems().setAll(DecreaseOperationCategory.values());
+        decreaseCategoryComboBox.getItems().setAll(Arrays.stream(DecreaseOperationCategory.values())
+                .map(DecreaseOperationCategory::getName)
+                .toList());
         decreaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedDecreaseCategory()
         );
@@ -58,7 +64,12 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     private void handleIncrease() {
         if (isValidatedInput()) {
             int amount = Integer.parseInt(amountField.getText());
-            viewModel.increase(amount, increaseCategoryComboBox.getValue());
+            String categoryString = increaseCategoryComboBox.getValue();
+            IncreaseOperationCategory category = Arrays.stream(IncreaseOperationCategory.values())
+                    .filter(cat -> cat.getName().equals(categoryString))
+                    .findFirst()
+                    .get();
+            viewModel.increase(amount, category);
             amountField.clear();
         }
     }
@@ -67,7 +78,12 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     private void handleDecrease() {
         if (isValidatedInput()) {
             int amount = Integer.parseInt(amountField.getText());
-            viewModel.decrease(amount, decreaseCategoryComboBox.getValue());
+            String categoryString = decreaseCategoryComboBox.getValue();
+            DecreaseOperationCategory category = Arrays.stream(DecreaseOperationCategory.values())
+                    .filter(cat -> cat.getName().equals(categoryString))
+                    .findFirst()
+                    .get();
+            viewModel.decrease(amount, category);
             amountField.clear();
         }
     }

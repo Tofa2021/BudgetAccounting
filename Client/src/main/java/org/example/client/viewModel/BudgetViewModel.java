@@ -1,6 +1,9 @@
 package org.example.client.viewModel;
 
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import lombok.Getter;
 import org.example.client.RRManager;
 import org.example.dto.DecreaseOperationCategory;
@@ -11,10 +14,10 @@ public class BudgetViewModel extends BaseViewModel {
     private final IntegerProperty balance = new SimpleIntegerProperty(0);
     private final StringProperty amountInput = new SimpleStringProperty("");
     private final StringProperty errorMessage = new SimpleStringProperty("");
-    private final ObjectProperty<IncreaseOperationCategory> selectedIncreaseCategory =
-            new SimpleObjectProperty<>(IncreaseOperationCategory.SALARY);
-    private final ObjectProperty<DecreaseOperationCategory> selectedDecreaseCategory =
-            new SimpleObjectProperty<>(DecreaseOperationCategory.FOOD);
+    private final StringProperty selectedIncreaseCategory =
+            new SimpleStringProperty(IncreaseOperationCategory.SALARY.getName());
+    private final StringProperty selectedDecreaseCategory =
+            new SimpleStringProperty(DecreaseOperationCategory.FOOD.getName());
 
 
     public BudgetViewModel(RRManager rrManager) {

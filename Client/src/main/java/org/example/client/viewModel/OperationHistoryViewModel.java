@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.example.client.RRManager;
 import org.example.dto.model.OperationDTO;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 @Getter
@@ -24,7 +25,10 @@ public class OperationHistoryViewModel extends BaseViewModel {
     public void refreshOperations() {
         var result = rrManager.getUserOperations();
         if (result.isSuccess()) {
-            operations.setAll(result.getData().reversed());
+            operations.setAll(result.getData().stream()
+                    .sorted(Comparator.comparing(OperationDTO::getDateTime))
+                    .toList()
+                    .reversed());
         }
     }
 
@@ -38,7 +42,7 @@ public class OperationHistoryViewModel extends BaseViewModel {
     public void update(OperationDTO operationDTO) {
         if (rrManager.updateOperation(operationDTO).isSuccess()) {
             operations.stream()
-                    .filter(operationDTO1 -> !Objects.equals(operationDTO1.getId(), operationDTO.getId()))
+                    .filter(operationDTO1 -> Objects.equals(operationDTO1.getId(), operationDTO.getId()))
                     .findFirst()
                     .ifPresent(oldOperation -> {
                         int index = operations.indexOf(oldOperation);
