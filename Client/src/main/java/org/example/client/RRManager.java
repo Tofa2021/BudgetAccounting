@@ -71,6 +71,56 @@ public class RRManager {
         return processRequest(new IntegerAuthorizedRequest(RequestAction.GET_RECENT_OPERATIONS, assessToken, days));
     }
 
+    public Result<List<OperationDTO>> getFilteredOperations(
+            String type,
+            String categoryString,
+            Instant dateFrom,
+            Instant dateTo,
+            Integer minAmount,
+            Integer maxAmount
+    ) {
+        OperationFilterRequest request = switch (type) {
+            case "+" -> {
+                IncreaseOperationCategory category = null;
+                if (!categoryString.equals("Все категории")) {
+                    category = IncreaseOperationCategory.getByName(categoryString);
+                }
+
+                yield new IncreaseOperationFilterRequest(
+                        assessToken,
+                        maxAmount,
+                        minAmount,
+                        dateFrom,
+                        dateTo,
+                        category
+                );
+            }
+            case "-" -> {
+                DecreaseOperationCategory category = null;
+                if (!categoryString.equals("Все категории")) {
+                    category = DecreaseOperationCategory.getByName(categoryString);
+                }
+
+                yield new DecreaseOperationFilterRequest(
+                        assessToken,
+                        maxAmount,
+                        minAmount,
+                        dateFrom,
+                        dateTo,
+                        category
+                );
+            }
+            default -> new OperationFilterRequest(
+                    assessToken,
+                    maxAmount,
+                    minAmount,
+                    dateFrom,
+                    dateTo
+            );
+        };
+        return processRequest(request);
+    }
+
     public Response putRequest(Request request) {
         try {
             clientConnection.putRequest(request);

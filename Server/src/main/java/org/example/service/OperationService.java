@@ -6,9 +6,7 @@ import org.example.dao.OperationDAO;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
-import org.example.dto.request.AuthorizedModelIdRequest;
-import org.example.dto.request.IntegerAuthorizedRequest;
-import org.example.dto.request.UpdateRequest;
+import org.example.dto.request.*;
 import org.example.exception.BudgetNotFoundException;
 import org.example.exception.OperationNotFoundException;
 import org.example.model.Budget;
@@ -96,6 +94,41 @@ public class OperationService {
             }
             System.out.println(existingOperation.getAmount());
             operationDAO.update(session, existingOperation);
+        });
+    }
+
+    public List<Operation> getFilteredOperations(Long userId, OperationFilterRequest request) {
+        return TransactionUtils.executeInTransaction(session -> {
+            if (request instanceof IncreaseOperationFilterRequest increaseRequest) {
+                return operationDAO.findFilteredOperations(
+                        session,
+                        userId,
+                        increaseRequest.getMinAmount(),
+                        increaseRequest.getMaxAmount(),
+                        increaseRequest.getDateFrom(),
+                        increaseRequest.getDateTo(),
+                        increaseRequest.getCategory()
+                );
+            } else if (request instanceof DecreaseOperationFilterRequest decreaseRequest) {
+                return operationDAO.findFilteredOperations(
+                        session,
+                        userId,
+                        decreaseRequest.getMinAmount(),
+                        decreaseRequest.getMaxAmount(),
+                        decreaseRequest.getDateFrom(),
+                        decreaseRequest.getDateTo(),
+                        decreaseRequest.getCategory()
+                );
+            } else {
+                return operationDAO.findFilteredOperations(
+                        session,
+                        userId,
+                        request.getMinAmount(),
+                        request.getMaxAmount(),
+                        request.getDateFrom(),
+                        request.getDateTo()
+                );
+            }
         });
     }
 }

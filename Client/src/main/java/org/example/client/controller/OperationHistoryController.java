@@ -12,16 +12,41 @@ import javafx.util.Callback;
 import org.example.client.scene.Scene;
 import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.OperationHistoryViewModel;
+import org.example.dto.DecreaseOperationCategory;
+import org.example.dto.IncreaseOperationCategory;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class OperationHistoryController extends BaseController<OperationHistoryViewModel> {
     @FXML
+    public ComboBox<String> categoryFilterComboBox;
+    @FXML
+    public ComboBox<String> typeFilterComboBox;
+    @FXML
+    public DatePicker dateFromPicker;
+    @FXML
+    public DatePicker dateToPicker;
+    @FXML
+    public Button clearDateButton;
+    @FXML
+    public TextField minAmountField;
+    @FXML
+    public TextField maxAmountField;
+    @FXML
+    public Button applyFiltersButton;
+    @FXML
+    public Button clearFiltersButton;
+    @FXML
+    public Label filterResultsLabel;
+
+    @FXML
     private TableView<OperationDTO> operationTableView;
+
     @FXML
     private ToggleButton weekButton;
     @FXML
@@ -41,13 +66,42 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
 
     @Override
     public void init() {
-        setupPeriodSelector();
     }
 
     @Override
     protected void bindViewModel() {
+        setupPeriodSelector();
         setupTableView();
         operationTableView.setItems(viewModel.getOperations());
+
+        typeFilterComboBox.getItems().setAll("Все", "+", "-");
+        typeFilterComboBox.setValue("Все");
+
+        categoryFilterComboBox.getItems().setAll("Все категории");
+        categoryFilterComboBox.setValue("Все категории");
+
+        typeFilterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            updateCategoryFilter(newVal);
+        });
+    }
+
+    private void updateCategoryFilter(String type) {
+        categoryFilterComboBox.getItems().clear();
+        categoryFilterComboBox.getItems().add("Все категории");
+
+        switch (type) {
+            case "+" -> {
+                categoryFilterComboBox.getItems().addAll(Arrays.stream(
+                                IncreaseOperationCategory.values())
+                        .map(IncreaseOperationCategory::getName)
+                        .toList());
+            }
+            case "-" -> categoryFilterComboBox.getItems().addAll(Arrays.stream(
+                            DecreaseOperationCategory.values())
+                    .map(DecreaseOperationCategory::getName)
+                    .toList());
+        }
+        categoryFilterComboBox.setValue("Все категории");
     }
 
     private void setupPeriodSelector() {
@@ -71,17 +125,20 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
             }
         });
 
-        allButton.setSelected(true);
+        weekButton.setSelected(true);
 
-        updatePeriodInfo("Все время", null);
+        updatePeriodInfo("последние 7 дней", 7);
     }
 
     @FXML
     private void handlePeriodClick(ActionEvent event) {
-        ToggleButton clickedButton = (ToggleButton) event.getSource();
+        processPeriodToggleButton((ToggleButton) event.getSource());
+    }
+
+    private void processPeriodToggleButton(ToggleButton toggleButton) {
         resetButtonStyles();
-        clickedButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-        loadOperationsForPeriod(clickedButton);
+        toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        loadOperationsForPeriod(toggleButton);
     }
 
     private void resetButtonStyles() {
@@ -149,7 +206,8 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
                 }
             }
         });
-        indexColumn.setPrefWidth(50);
+        indexColumn.setPrefWidth(20);
+        indexColumn.setSortable(false);
 
         TableColumn<OperationDTO, String> typeColumn = new TableColumn<>("Тип");
         typeColumn.setCellValueFactory(cellData -> {
@@ -237,6 +295,7 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
             }
         });
         actionsColumn.setPrefWidth(200);
+        actionsColumn.setSortable(false);
 
         operationTableView.getColumns().addAll(
                 indexColumn, typeColumn, amountColumn, categoryColumn, dateTimeColumn, actionsColumn
@@ -281,5 +340,47 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         );
 
         overlay.show();
+    }
+
+    @FXML
+    private void handleApplyFilters() {
+        String type = typeFilterComboBox.getValue();
+        String category = categoryFilterComboBox.getValue();
+        Instant dateFrom = dateFromPicker.getValue() != null
+                ? dateFromPicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                : null;
+        Instant dateTo = dateToPicker.getValue() != null
+                ? dateToPicker.getValue().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
+                : null;
+        Integer minAmount = minAmountField.getText().isEmpty()
+                ? null
+                : Integer.parseInt(minAmountField.getText());
+
+        Integer maxAmount = maxAmountField.getText().isEmpty()
+                ? null
+                : Integer.parseInt(maxAmountField.getText());
+
+        viewModel.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
+
+        resetButtonStyles();
+    }
+
+    @FXML
+    private void handleClearFilters() {
+        categoryFilterComboBox.getSelectionModel().selectFirst();
+        typeFilterComboBox.getSelectionModel().selectFirst();
+        dateFromPicker.setValue(null);
+        dateToPicker.setValue(null);
+        minAmountField.clear();
+        maxAmountField.clear();
+        operationTableView.setItems(viewModel.getOperations());
+
+        processPeriodToggleButton((ToggleButton) periodToggleGroup.getSelectedToggle());
+    }
+
+    @FXML
+    public void handleClearDates() {
+        dateFromPicker.setValue(null);
+        dateToPicker.setValue(null);
     }
 }

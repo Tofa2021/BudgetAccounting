@@ -19,6 +19,51 @@
             </font>
         </Label>
 
+        <TitledPane text="Фильтры" expanded="false">
+            <VBox spacing="10">
+                <padding>
+                    <Insets top="10" right="10" bottom="10" left="10"/>
+                </padding>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Тип:" minWidth="80"/>
+                    <ComboBox fx:id="typeFilterComboBox" prefWidth="150"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Категория:" minWidth="80"/>
+                    <ComboBox fx:id="categoryFilterComboBox" prefWidth="150"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Дата:" minWidth="80"/>
+                    <DatePicker fx:id="dateFromPicker" promptText="С даты" prefWidth="130"/>
+                    <Label text="-"/>
+                    <DatePicker fx:id="dateToPicker" promptText="По дату" prefWidth="130"/>
+                    <Button fx:id="clearDateButton" text="✕" prefWidth="30"
+                            style="-fx-background-color: #999; -fx-text-fill: white;"
+                            onAction="#handleClearDates"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Сумма:" minWidth="80"/>
+                    <TextField fx:id="minAmountField" promptText="От" prefWidth="100"/>
+                    <Label text="-"/>
+                    <TextField fx:id="maxAmountField" promptText="До" prefWidth="100"/>
+                </HBox>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="applyFiltersButton" text="Применить фильтры"
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white;"
+                            onAction="#handleApplyFilters"/>
+                    <Button fx:id="clearFiltersButton" text="Сбросить все"
+                            style="-fx-background-color: #999; -fx-text-fill: white;"
+                            onAction="#handleClearFilters"/>
+                    <Label fx:id="filterResultsLabel" style="-fx-font-style: italic; -fx-text-fill: #666;"/>
+                </HBox>
+            </VBox>
+        </TitledPane>
+
         <VBox spacing="10" VBox.vgrow="NEVER">
             <Label text="Период:" style="-fx-font-weight: bold;"/>
             <HBox spacing="10" alignment="CENTER">

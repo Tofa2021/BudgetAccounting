@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.example.client.RRManager;
 import org.example.dto.model.OperationDTO;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -19,7 +20,6 @@ public class OperationHistoryViewModel extends BaseViewModel {
 
     @Override
     public void init() {
-        refreshOperations();
     }
 
     public void refreshOperations() {
@@ -53,6 +53,22 @@ public class OperationHistoryViewModel extends BaseViewModel {
 
     public void loadRecentOperations(int days) {
         var result = rrManager.getRecentOperations(days);
+        if (result.isSuccess()) {
+            operations.setAll(result.getData());
+        }
+    }
+
+    public void getFilteredOperations(
+            String type,
+            String category,
+            Instant dateFrom,
+            Instant dateTo,
+            Integer minAmount,
+            Integer maxAmount
+    ) {
+
+
+        var result = rrManager.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
         if (result.isSuccess()) {
             operations.setAll(result.getData());
         }

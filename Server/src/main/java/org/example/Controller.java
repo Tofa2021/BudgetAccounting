@@ -44,6 +44,10 @@ public class Controller {
                                     operationService.getRecentOperations(userId, (IntegerAuthorizedRequest) request).stream()
                                             .map(Operation::toDTO)
                                             .toList();
+                            case RequestAction.GET_FILTERED_OPERATIONS ->
+                                    operationService.getFilteredOperations(userId, (OperationFilterRequest) request).stream()
+                                            .map(Operation::toDTO)
+                                            .toList();
 
                             default -> {
                                 switch (action) {

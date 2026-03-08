@@ -9,6 +9,7 @@ public enum RequestAction {
     GET_RECENT_OPERATIONS,
     UPDATE_OPERATION,
     DELETE_OPERATION,
+    GET_FILTERED_OPERATIONS,
 
     SIGN_UP,
     SIGN_IN,
