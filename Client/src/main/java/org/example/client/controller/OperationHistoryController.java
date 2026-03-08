@@ -1,6 +1,7 @@
 package org.example.client.controller;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -15,23 +16,117 @@ import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class OperationHistoryController extends BaseController<OperationHistoryViewModel> {
     @FXML
     private TableView<OperationDTO> operationTableView;
+    @FXML
+    private ToggleButton weekButton;
+    @FXML
+    private ToggleButton monthButton;
+    @FXML
+    private ToggleButton threeMonthsButton;
+    @FXML
+    private ToggleButton halfYearButton;
+    @FXML
+    private ToggleButton yearButton;
+    @FXML
+    private ToggleButton allButton;
+    @FXML
+    private Label periodInfoLabel;
+
+    private ToggleGroup periodToggleGroup;
 
     @Override
     public void init() {
+        setupPeriodSelector();
     }
 
     @Override
     protected void bindViewModel() {
         setupTableView();
         operationTableView.setItems(viewModel.getOperations());
+    }
+
+    private void setupPeriodSelector() {
+        periodToggleGroup = new ToggleGroup();
+
+        weekButton.setToggleGroup(periodToggleGroup);
+        monthButton.setToggleGroup(periodToggleGroup);
+        threeMonthsButton.setToggleGroup(periodToggleGroup);
+        halfYearButton.setToggleGroup(periodToggleGroup);
+        yearButton.setToggleGroup(periodToggleGroup);
+        allButton.setToggleGroup(periodToggleGroup);
+
+        periodToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle != null) {
+                resetButtonStyles();
+
+                ToggleButton selectedButton = (ToggleButton) newToggle;
+                selectedButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+
+                loadOperationsForPeriod(selectedButton);
+            }
+        });
+
+        allButton.setSelected(true);
+
+        updatePeriodInfo("Все время", null);
+    }
+
+    @FXML
+    private void handlePeriodClick(ActionEvent event) {
+        ToggleButton clickedButton = (ToggleButton) event.getSource();
+        resetButtonStyles();
+        clickedButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
+        loadOperationsForPeriod(clickedButton);
+    }
+
+    private void resetButtonStyles() {
+        String defaultStyle = "-fx-background-color: #e0e0e0; -fx-text-fill: black;";
+        weekButton.setStyle(defaultStyle);
+        monthButton.setStyle(defaultStyle);
+        threeMonthsButton.setStyle(defaultStyle);
+        halfYearButton.setStyle(defaultStyle);
+        yearButton.setStyle(defaultStyle);
+        allButton.setStyle(defaultStyle);
+    }
+
+    private void loadOperationsForPeriod(ToggleButton selectedButton) {
+        if (selectedButton == weekButton) {
+            viewModel.loadRecentOperations(7);
+            updatePeriodInfo("последние 7 дней", 7);
+        } else if (selectedButton == monthButton) {
+            viewModel.loadRecentOperations(30);
+            updatePeriodInfo("последние 30 дней", 30);
+        } else if (selectedButton == threeMonthsButton) {
+            viewModel.loadRecentOperations(90);
+            updatePeriodInfo("последние 90 дней", 90);
+        } else if (selectedButton == halfYearButton) {
+            viewModel.loadRecentOperations(180);
+            updatePeriodInfo("полгода", 180);
+        } else if (selectedButton == yearButton) {
+            viewModel.loadRecentOperations(365);
+            updatePeriodInfo("год", 365);
+        } else if (selectedButton == allButton) {
+            viewModel.refreshOperations();
+            updatePeriodInfo("все время", null);
+        }
+    }
+
+    private void updatePeriodInfo(String periodName, Integer days) {
+        if (days != null) {
+            LocalDate fromDate = LocalDate.now().minusDays(days);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            periodInfoLabel.setText(String.format("Показаны операции с %s по %s (за %s)",
+                    fromDate.format(formatter),
+                    LocalDate.now().format(formatter),
+                    periodName));
+        } else {
+            periodInfoLabel.setText("Показаны все операции");
+        }
     }
 
     @FXML
@@ -92,6 +187,12 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
             Instant dateTime = operation.getDateTime();
             ZonedDateTime userDateTime = dateTime.atZone(ZoneId.systemDefault());
             return new SimpleStringProperty(userDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+        });
+        dateTimeColumn.setComparator((dateStr1, dateStr2) -> {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+            LocalDateTime date1 = LocalDateTime.parse(dateStr1, formatter);
+            LocalDateTime date2 = LocalDateTime.parse(dateStr2, formatter);
+            return date1.compareTo(date2);
         });
 
         TableColumn<OperationDTO, Void> actionsColumn = new TableColumn<>("Действия");

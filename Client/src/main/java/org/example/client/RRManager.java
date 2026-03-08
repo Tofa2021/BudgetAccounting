@@ -67,6 +67,10 @@ public class RRManager {
         return processRequest(new UpdateRequest<OperationDTO>(RequestAction.UPDATE_OPERATION, assessToken, operationDTO));
     }
 
+    public Result<List<OperationDTO>> getRecentOperations(int days) {
+        return processRequest(new IntegerAuthorizedRequest(RequestAction.GET_RECENT_OPERATIONS, assessToken, days));
+    }
+
     public Response putRequest(Request request) {
         try {
             clientConnection.putRequest(request);

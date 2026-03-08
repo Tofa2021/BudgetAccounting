@@ -50,4 +50,11 @@ public class OperationHistoryViewModel extends BaseViewModel {
                     });
         }
     }
+
+    public void loadRecentOperations(int days) {
+        var result = rrManager.getRecentOperations(days);
+        if (result.isSuccess()) {
+            operations.setAll(result.getData());
+        }
+    }
 }

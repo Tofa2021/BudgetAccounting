@@ -40,6 +40,10 @@ public class Controller {
                             case RequestAction.GET_USER_OPERATIONS -> operationService.getAllByUserId(userId).stream()
                                     .map(Operation::toDTO)
                                     .toList();
+                            case RequestAction.GET_RECENT_OPERATIONS ->
+                                    operationService.getRecentOperations(userId, (IntegerAuthorizedRequest) request).stream()
+                                            .map(Operation::toDTO)
+                                            .toList();
 
                             default -> {
                                 switch (action) {

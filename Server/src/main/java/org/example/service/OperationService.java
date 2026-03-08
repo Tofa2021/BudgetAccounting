@@ -7,6 +7,7 @@ import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 import org.example.dto.request.AuthorizedModelIdRequest;
+import org.example.dto.request.IntegerAuthorizedRequest;
 import org.example.dto.request.UpdateRequest;
 import org.example.exception.BudgetNotFoundException;
 import org.example.exception.OperationNotFoundException;
@@ -16,6 +17,8 @@ import org.example.model.IncreaseOperation;
 import org.example.model.Operation;
 import org.example.util.TransactionUtils;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,6 +29,13 @@ public class OperationService {
     public List<Operation> getAllByUserId(Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
             return operationDAO.findAllByUserId(session, userId);
+        });
+    }
+
+    public List<Operation> getRecentOperations(Long userId, IntegerAuthorizedRequest request) {
+        return TransactionUtils.executeInTransaction(session -> {
+            Instant cutoff = Instant.now().minus(request.getInteger(), ChronoUnit.DAYS);
+            return operationDAO.findRecentOperations(session, userId, cutoff);
         });
     }
 
