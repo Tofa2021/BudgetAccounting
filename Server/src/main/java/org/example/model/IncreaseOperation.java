@@ -25,6 +25,6 @@ public class IncreaseOperation extends Operation {
 
     @Override
     public OperationDTO toDTO() {
-        return new IncreaseOperationDTO(getId(), getAmount(), getUser().getId(), category);
+        return new IncreaseOperationDTO(getId(), getAmount(), getDateTime(), getUser().getId(), category);
     }
 }

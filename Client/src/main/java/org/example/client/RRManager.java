@@ -5,6 +5,7 @@ import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
 import org.example.dto.response.Response;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
@@ -50,11 +51,11 @@ public class RRManager {
     }
 
     public Result<Object> increaseBudget(int amount, IncreaseOperationCategory category) {
-        return processRequest(new IncreaseOperationRequest(assessToken, amount, category));
+        return processRequest(new IncreaseOperationRequest(assessToken, amount, Instant.now(), category));
     }
 
     public Result<Object> decreaseBudget(int amount, DecreaseOperationCategory category) {
-        return processRequest(new DecreaseOperationRequest(assessToken, amount, category));
+        return processRequest(new DecreaseOperationRequest(assessToken, amount, Instant.now(), category));
     }
 
     public Result<Object> deleteOperation(Long id) {

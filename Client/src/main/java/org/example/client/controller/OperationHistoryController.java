@@ -1,5 +1,6 @@
 package org.example.client.controller;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -13,6 +14,11 @@ import org.example.client.viewModel.OperationHistoryViewModel;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
+
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class OperationHistoryController extends BaseController<OperationHistoryViewModel> {
     @FXML
@@ -80,7 +86,13 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         });
         categoryColumn.setPrefWidth(150);
 
-        // TODO dateColumn
+        TableColumn<OperationDTO, String> dateTimeColumn = new TableColumn<>("Дата");
+        dateTimeColumn.setCellValueFactory(cellData -> {
+            OperationDTO operation = cellData.getValue();
+            Instant dateTime = operation.getDateTime();
+            ZonedDateTime userDateTime = dateTime.atZone(ZoneId.systemDefault());
+            return new SimpleStringProperty(userDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
+        });
 
         TableColumn<OperationDTO, Void> actionsColumn = new TableColumn<>("Действия");
         actionsColumn.setCellFactory(new Callback<>() {
@@ -126,7 +138,7 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         actionsColumn.setPrefWidth(200);
 
         operationTableView.getColumns().addAll(
-                indexColumn, typeColumn, amountColumn, categoryColumn, actionsColumn
+                indexColumn, typeColumn, amountColumn, categoryColumn, dateTimeColumn, actionsColumn
         );
 
         operationTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

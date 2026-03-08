@@ -52,6 +52,7 @@ public class BudgetService {
             operation.setAmount(amount);
             operation.setUser(user);
             operation.setCategory(request.getCategory());
+            operation.setDateTime(request.getDateTime());
             session.persist(operation);
 
             Budget budget = budgetDAO.findByUserId(session, userId)
@@ -73,6 +74,7 @@ public class BudgetService {
             operation.setAmount(amount);
             operation.setUser(user);
             operation.setCategory(request.getCategory());
+            operation.setDateTime(request.getDateTime());
             session.persist(operation);
 
             Budget budget = budgetDAO.findByUserId(session, userId)

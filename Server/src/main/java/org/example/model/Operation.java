@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.example.dto.model.OperationDTO;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "operations")
@@ -22,6 +23,9 @@ public abstract class Operation implements Serializable {
 
     @Column(nullable = false)
     private Integer amount;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMPTZ")
+    private Instant dateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
