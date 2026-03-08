@@ -9,6 +9,14 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum IncreaseOperationCategory {
     SALARY("Зарплата"),
+    BONUS("Премия"),
+    GIFT("Подарок"),
+    INVESTMENT("Инвестиции"),
+    FREELANCE("Фриланс"),
+    BUSINESS("Бизнес"),
+    RENTAL("Аренда"),
+    REFUND("Возврат"),
+    OTHER("Другое"),
     ;
 
     private final String name;
@@ -21,6 +29,6 @@ public enum IncreaseOperationCategory {
         return Arrays.stream(values())
                 .filter(category -> category.getName().equals(name))
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 }
