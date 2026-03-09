@@ -19,10 +19,6 @@ public class RegistrationController extends BaseController<RegistrationViewModel
     private Label errorField;
 
     @Override
-    public void init() {
-    }
-
-    @Override
     protected void bindViewModel() {
         usernameField.textProperty().bindBidirectional(
                 viewModel.getUsernameInput()

@@ -2,12 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.Scene?>
-<Scene xmlns:fx="http://javafx.com/fxml" width="800" height="600"
-       xmlns="http://javafx.com/javafx"
-       fx:controller="org.example.client.controller.BudgetController">
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.client.controller.BudgetController">
 
     <VBox fx:id="root" spacing="20" alignment="CENTER">
         <padding>
@@ -54,4 +52,4 @@
         <Label fx:id="errorLabel" style="-fx-text-fill: red"/>
 
     </VBox>
-</Scene>
+</VBox>

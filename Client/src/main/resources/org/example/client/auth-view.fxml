@@ -2,13 +2,11 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.Scene?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<Scene xmlns:fx="http://javafx.com/fxml" width="800" height="600"
-       xmlns="http://javafx.com/javafx"
-       fx:controller="org.example.client.controller.AuthController">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.client.controller.AuthController">
     <VBox fx:id="root" spacing="20" alignment="CENTER">
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
@@ -51,4 +49,4 @@
         </HBox>
     </VBox>
 
-</Scene>
+</VBox>

@@ -3,11 +3,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.Scene?>
 <?import javafx.scene.text.Font?>
-<Scene xmlns:fx="http://javafx.com/fxml" width="800" height="600"
-       xmlns="http://javafx.com/javafx"
-       fx:controller="org.example.client.controller.OperationHistoryController">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.client.controller.OperationHistoryController">
     <VBox fx:id="root" spacing="20" alignment="CENTER">
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
@@ -64,31 +63,7 @@
             </VBox>
         </TitledPane>
 
-        <VBox spacing="10" VBox.vgrow="NEVER">
-            <Label text="Период:" style="-fx-font-weight: bold;"/>
-            <HBox spacing="10" alignment="CENTER">
-                <ToggleButton fx:id="weekButton" text="7 дней" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-                <ToggleButton fx:id="monthButton" text="30 дней" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-                <ToggleButton fx:id="threeMonthsButton" text="90 дней" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-                <ToggleButton fx:id="halfYearButton" text="Полгода" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-                <ToggleButton fx:id="yearButton" text="Год" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-                <ToggleButton fx:id="allButton" text="Все время" prefWidth="80"
-                              style="-fx-background-color: #e0e0e0; -fx-text-fill: black;"
-                              focusTraversable="false" onAction="#handlePeriodClick"/>
-            </HBox>
-
-            <Label fx:id="periodInfoLabel" style="-fx-font-style: italic; -fx-text-fill: #666;"/>
-        </VBox>
+        <fx:include fx:id="periodSelect" source="period_select.fxml"/>
 
         <TableView fx:id="operationTableView" VBox.vgrow="ALWAYS"/>
 
@@ -101,4 +76,4 @@
         <Label fx:id="errorLabel" wrapText="true" style="-fx-text-fill: red;"/>
     </VBox>
 
-</Scene>
+</VBox>

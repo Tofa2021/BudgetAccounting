@@ -1,6 +1,7 @@
 package org.example.client.scene;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.stage.Stage;
 import org.example.client.RRManager;
 import org.example.client.controller.BaseController;
@@ -46,7 +47,8 @@ public class SceneManager {
                     getClass().getResource(sceneInfo.fxmlPath())
             );
 
-            javafx.scene.Scene scene = loader.load();
+            Parent root = loader.load();
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 800, 600);
 
             BaseController<BaseViewModel> controller = loader.getController();
             controller.setViewModel(sceneInfo.viewModel());

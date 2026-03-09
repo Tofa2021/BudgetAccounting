@@ -29,10 +29,6 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     @FXML
     private Label errorLabel;
 
-    @FXML
-    public void init() {
-    }
-
     protected void bindViewModel() {
         balanceLabel.textProperty().bind(
                 viewModel.getBalance().asString("Текущий баланс: $%d")

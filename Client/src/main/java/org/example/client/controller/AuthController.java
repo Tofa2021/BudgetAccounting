@@ -19,10 +19,6 @@ public class AuthController extends BaseController<AuthViewModel> {
     private Label errorLabel;
 
     @Override
-    public void init() {
-    }
-
-    @Override
     protected void bindViewModel() {
         usernameField.textProperty().bindBidirectional(
                 viewModel.getUsernameInput()

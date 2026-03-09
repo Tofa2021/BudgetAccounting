@@ -1,12 +1,12 @@
 package org.example.client.controller;
 
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.example.client.scene.Scene;
@@ -22,7 +22,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
-public class OperationHistoryController extends BaseController<OperationHistoryViewModel> {
+public class OperationHistoryController extends BaseController<OperationHistoryViewModel> implements PeriodSelectionListener {
     @FXML
     public ComboBox<String> categoryFilterComboBox;
     @FXML
@@ -43,37 +43,32 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
     public Button clearFiltersButton;
     @FXML
     public Label filterResultsLabel;
+    @FXML
+    private VBox periodSelect;
 
     @FXML
     private TableView<OperationDTO> operationTableView;
+    @FXML
+    private PeriodSelectController periodSelectController;
 
     @FXML
-    private ToggleButton weekButton;
-    @FXML
-    private ToggleButton monthButton;
-    @FXML
-    private ToggleButton threeMonthsButton;
-    @FXML
-    private ToggleButton halfYearButton;
-    @FXML
-    private ToggleButton yearButton;
-    @FXML
-    private ToggleButton allButton;
-    @FXML
-    private Label periodInfoLabel;
-
-    private ToggleGroup periodToggleGroup;
-
-    @Override
-    public void init() {
+    public void initialize() {
+        setupFilters();
+        setupTableView();
+        setupPeriodSelector();
     }
 
     @Override
     protected void bindViewModel() {
-        setupPeriodSelector();
-        setupTableView();
         operationTableView.setItems(viewModel.getOperations());
+        viewModel.loadRecentOperations(7);
+    }
 
+    private void setupPeriodSelector() {
+        periodSelectController.setListener(this);
+    }
+
+    private void setupFilters() {
         typeFilterComboBox.getItems().setAll("Все", "+", "-");
         typeFilterComboBox.setValue("Все");
 
@@ -104,86 +99,14 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         categoryFilterComboBox.setValue("Все категории");
     }
 
-    private void setupPeriodSelector() {
-        periodToggleGroup = new ToggleGroup();
-
-        weekButton.setToggleGroup(periodToggleGroup);
-        monthButton.setToggleGroup(periodToggleGroup);
-        threeMonthsButton.setToggleGroup(periodToggleGroup);
-        halfYearButton.setToggleGroup(periodToggleGroup);
-        yearButton.setToggleGroup(periodToggleGroup);
-        allButton.setToggleGroup(periodToggleGroup);
-
-        periodToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-            if (newToggle != null) {
-                resetButtonStyles();
-
-                ToggleButton selectedButton = (ToggleButton) newToggle;
-                selectedButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-
-                loadOperationsForPeriod(selectedButton);
-            }
-        });
-
-        weekButton.setSelected(true);
-
-        updatePeriodInfo("последние 7 дней", 7);
+    @Override
+    public void onPeriodSelected(int days) {
+        viewModel.loadRecentOperations(days);
     }
 
-    @FXML
-    private void handlePeriodClick(ActionEvent event) {
-        processPeriodToggleButton((ToggleButton) event.getSource());
-    }
-
-    private void processPeriodToggleButton(ToggleButton toggleButton) {
-        resetButtonStyles();
-        toggleButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
-        loadOperationsForPeriod(toggleButton);
-    }
-
-    private void resetButtonStyles() {
-        String defaultStyle = "-fx-background-color: #e0e0e0; -fx-text-fill: black;";
-        weekButton.setStyle(defaultStyle);
-        monthButton.setStyle(defaultStyle);
-        threeMonthsButton.setStyle(defaultStyle);
-        halfYearButton.setStyle(defaultStyle);
-        yearButton.setStyle(defaultStyle);
-        allButton.setStyle(defaultStyle);
-    }
-
-    private void loadOperationsForPeriod(ToggleButton selectedButton) {
-        if (selectedButton == weekButton) {
-            viewModel.loadRecentOperations(7);
-            updatePeriodInfo("последние 7 дней", 7);
-        } else if (selectedButton == monthButton) {
-            viewModel.loadRecentOperations(30);
-            updatePeriodInfo("последние 30 дней", 30);
-        } else if (selectedButton == threeMonthsButton) {
-            viewModel.loadRecentOperations(90);
-            updatePeriodInfo("последние 90 дней", 90);
-        } else if (selectedButton == halfYearButton) {
-            viewModel.loadRecentOperations(180);
-            updatePeriodInfo("полгода", 180);
-        } else if (selectedButton == yearButton) {
-            viewModel.loadRecentOperations(365);
-            updatePeriodInfo("год", 365);
-        } else if (selectedButton == allButton) {
-            viewModel.refreshOperations();
-            updatePeriodInfo("все время", null);
-        }
-    }
-
-    private void updatePeriodInfo(String periodName, Integer days) {
-        if (days != null) {
-            LocalDate fromDate = LocalDate.now().minusDays(days);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            periodInfoLabel.setText(String.format("Показаны операции с %s по %s (за %s)",
-                    fromDate.format(formatter),
-                    LocalDate.now().format(formatter),
-                    periodName));
-        } else {
-            periodInfoLabel.setText("Показаны все операции");
-        }
+    @Override
+    public void onAllTimeSelected() {
+        viewModel.refreshOperations();
     }
 
     @FXML
@@ -362,7 +285,7 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
 
         viewModel.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
 
-        resetButtonStyles();
+        periodSelectController.resetButtonStyles();
     }
 
     @FXML
@@ -375,7 +298,7 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         maxAmountField.clear();
         operationTableView.setItems(viewModel.getOperations());
 
-        processPeriodToggleButton((ToggleButton) periodToggleGroup.getSelectedToggle());
+        periodSelectController.restorePeriod();
     }
 
     @FXML
