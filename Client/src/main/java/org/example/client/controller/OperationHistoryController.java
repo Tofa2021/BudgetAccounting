@@ -12,50 +12,36 @@ import javafx.util.Callback;
 import org.example.client.scene.Scene;
 import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.OperationHistoryViewModel;
-import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
-public class OperationHistoryController extends BaseController<OperationHistoryViewModel> implements PeriodSelectionListener {
-    @FXML
-    public ComboBox<String> categoryFilterComboBox;
-    @FXML
-    public ComboBox<String> typeFilterComboBox;
-    @FXML
-    public DatePicker dateFromPicker;
-    @FXML
-    public DatePicker dateToPicker;
-    @FXML
-    public Button clearDateButton;
-    @FXML
-    public TextField minAmountField;
-    @FXML
-    public TextField maxAmountField;
-    @FXML
-    public Button applyFiltersButton;
-    @FXML
-    public Button clearFiltersButton;
-    @FXML
-    public Label filterResultsLabel;
-    @FXML
-    private VBox periodSelect;
-
+public class OperationHistoryController extends BaseController<OperationHistoryViewModel> implements PeriodSelectionListener, FilterListener {
     @FXML
     private TableView<OperationDTO> operationTableView;
+
     @FXML
-    private PeriodSelectController periodSelectController;
+    private VBox operationFilterVBox;
+    @FXML
+    private OperationFilterController operationFilterVBoxController;
+
+    @FXML
+    private VBox periodSelectVBox;
+    @FXML
+    private PeriodSelectController periodSelectVBoxController;
 
     @FXML
     public void initialize() {
-        setupFilters();
+        System.out.println("INIT History");
         setupTableView();
         setupPeriodSelector();
+        setupFilter();
     }
 
     @Override
@@ -65,48 +51,27 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
     }
 
     private void setupPeriodSelector() {
-        periodSelectController.setListener(this);
+        System.out.println("Setup Period");
+        periodSelectVBoxController.setListener(this);
     }
 
-    private void setupFilters() {
-        typeFilterComboBox.getItems().setAll("Все", "+", "-");
-        typeFilterComboBox.setValue("Все");
-
-        categoryFilterComboBox.getItems().setAll("Все категории");
-        categoryFilterComboBox.setValue("Все категории");
-
-        typeFilterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
-            updateCategoryFilter(newVal);
-        });
-    }
-
-    private void updateCategoryFilter(String type) {
-        categoryFilterComboBox.getItems().clear();
-        categoryFilterComboBox.getItems().add("Все категории");
-
-        switch (type) {
-            case "+" -> {
-                categoryFilterComboBox.getItems().addAll(Arrays.stream(
-                                IncreaseOperationCategory.values())
-                        .map(IncreaseOperationCategory::getName)
-                        .toList());
-            }
-            case "-" -> categoryFilterComboBox.getItems().addAll(Arrays.stream(
-                            DecreaseOperationCategory.values())
-                    .map(DecreaseOperationCategory::getName)
-                    .toList());
-        }
-        categoryFilterComboBox.setValue("Все категории");
+    private void setupFilter() {
+        System.out.println("Setup Filter");
+        operationFilterVBoxController.setListener(this);
     }
 
     @Override
     public void onPeriodSelected(int days) {
         viewModel.loadRecentOperations(days);
+        operationFilterVBoxController.clearFilters();
+        operationFilterVBoxController.setExpanded(false);
     }
 
     @Override
     public void onAllTimeSelected() {
         viewModel.refreshOperations();
+        operationFilterVBoxController.clearFilters();
+        operationFilterVBoxController.setExpanded(false);
     }
 
     @FXML
@@ -265,45 +230,15 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         overlay.show();
     }
 
-    @FXML
-    private void handleApplyFilters() {
-        String type = typeFilterComboBox.getValue();
-        String category = categoryFilterComboBox.getValue();
-        Instant dateFrom = dateFromPicker.getValue() != null
-                ? dateFromPicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                : null;
-        Instant dateTo = dateToPicker.getValue() != null
-                ? dateToPicker.getValue().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
-                : null;
-        Integer minAmount = minAmountField.getText().isEmpty()
-                ? null
-                : Integer.parseInt(minAmountField.getText());
-
-        Integer maxAmount = maxAmountField.getText().isEmpty()
-                ? null
-                : Integer.parseInt(maxAmountField.getText());
-
-        viewModel.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
-
-        periodSelectController.resetButtonStyles();
-    }
-
-    @FXML
-    private void handleClearFilters() {
-        categoryFilterComboBox.getSelectionModel().selectFirst();
-        typeFilterComboBox.getSelectionModel().selectFirst();
-        dateFromPicker.setValue(null);
-        dateToPicker.setValue(null);
-        minAmountField.clear();
-        maxAmountField.clear();
+    @Override
+    public void onFiltersCleared() {
         operationTableView.setItems(viewModel.getOperations());
-
-        periodSelectController.restorePeriod();
+        periodSelectVBoxController.restorePeriod();
     }
 
-    @FXML
-    public void handleClearDates() {
-        dateFromPicker.setValue(null);
-        dateToPicker.setValue(null);
+    @Override
+    public void onFiltersApplied(String type, String category, Instant dateFrom, Instant dateTo, Integer minAmount, Integer maxAmount) {
+        viewModel.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
+        periodSelectVBoxController.resetButtonStyles();
     }
 }
