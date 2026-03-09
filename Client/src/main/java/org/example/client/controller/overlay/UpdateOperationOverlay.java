@@ -1,4 +1,4 @@
-package org.example.client.controller;
+package org.example.client.controller.overlay;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

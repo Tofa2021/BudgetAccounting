@@ -5,8 +5,8 @@
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="org.example.client.controller.OperationFilterController"
-      spacing="5">AA
+      fx:controller="org.example.client.controller.filter.OperationFilterController"
+      spacing="5">
     <TitledPane fx:id="titledPane" text="Фильтры" expanded="false">
         <VBox spacing="10">
             <padding>

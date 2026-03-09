@@ -1,4 +1,4 @@
-package org.example.client.controller;
+package org.example.client.controller.periodSelection;
 
 public interface PeriodSelectionListener {
     void onPeriodSelected(int days);

@@ -1,4 +1,4 @@
-package org.example.client.controller;
+package org.example.client.controller.periodSelection;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

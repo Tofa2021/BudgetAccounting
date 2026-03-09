@@ -19,4 +19,12 @@ module org.example.client {
     opens org.example.client.viewModel to javafx.fxml;
     exports org.example.client.scene;
     opens org.example.client.scene to javafx.fxml;
+    exports org.example.client.controller.filter;
+    opens org.example.client.controller.filter to javafx.fxml;
+    exports org.example.client.controller.overlay;
+    opens org.example.client.controller.overlay to javafx.fxml;
+    exports org.example.client.controller.periodSelection;
+    opens org.example.client.controller.periodSelection to javafx.fxml;
+    exports org.example.client.controller.table;
+    opens org.example.client.controller.table to javafx.fxml;
 }

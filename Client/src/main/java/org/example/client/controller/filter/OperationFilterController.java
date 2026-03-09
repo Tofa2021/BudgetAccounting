@@ -1,4 +1,4 @@
-package org.example.client.controller;
+package org.example.client.controller.filter;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -40,7 +40,6 @@ public class OperationFilterController {
 
     @FXML
     public void initialize() {
-        System.out.println("INIT Filter");
         setupFilters();
     }
 

@@ -1,4 +1,4 @@
-package org.example.client.controller;
+package org.example.client.controller.overlay;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
