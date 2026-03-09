@@ -14,6 +14,7 @@ public enum Status implements Serializable {
     INVALID_TOKEN(408),
     NOT_FOUND(404),
     ALREADY_EXISTS(500),
+    BAD_REQUEST(400),
     ;
 
     private final int status;

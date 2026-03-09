@@ -17,10 +17,10 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 public class Controller {
+    private final JwtProvider jwtProvider;
     private final BudgetService budgetService;
     private final UserService userService;
     private final OperationService operationService;
-    private final JwtProvider jwtProvider;
 
     public Response process(Request request) {
         RequestAction action = request.getAction();

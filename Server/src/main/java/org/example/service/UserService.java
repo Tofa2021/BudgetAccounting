@@ -14,12 +14,14 @@ import org.example.model.Budget;
 import org.example.model.Role;
 import org.example.model.User;
 import org.example.security.JwtProvider;
+import org.example.security.PasswordEncoder;
 import org.example.util.TransactionUtils;
 
 import java.util.Set;
 
 @RequiredArgsConstructor
 public class UserService {
+    private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
@@ -33,11 +35,11 @@ public class UserService {
             }
 
             Role role = roleDAO.findById(session, 1L)
-                    .orElseThrow(() -> new RoleNotFoundException(1L));
+                    .orElseThrow(() -> new RoleNotFoundException(1L)); // TODO replace 1L on smth
 
             User user = new User();
             user.setUsername(username);
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRoles(Set.of(role));
             session.persist(user);
 
@@ -59,7 +61,7 @@ public class UserService {
                     .orElseThrow(() -> new UserNotFoundException(username));
             Long userId = user.getId();
 
-            if (user.getPassword().equals(request.getPassword())) {
+            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return new Pair<>(jwtProvider.generateAccessToken(userId), jwtProvider.generateRefreshToken(userId));
             }
 
