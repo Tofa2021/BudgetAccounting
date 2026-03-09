@@ -102,4 +102,9 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     public void handleOpenOperationHistory() {
         SceneManager.getInstance().loadScene(Scene.OPERATION_HISTORY);
     }
+
+    @FXML
+    public void handleOpenGraphicsButton() {
+        SceneManager.getInstance().loadScene(Scene.GRAPHICS);
+    }
 }

@@ -5,4 +5,5 @@ public enum Scene {
     REGISTRATION,
     BUDGET,
     OPERATION_HISTORY,
+    GRAPHICS,
 }
