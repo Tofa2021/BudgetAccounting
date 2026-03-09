@@ -17,10 +17,12 @@ import java.util.concurrent.SynchronousQueue;
 public class ClientConnection {
     private final BlockingQueue<Request> requestQueue = new SynchronousQueue<>();
     private final BlockingQueue<Response> responseQueue;
+    private final Thread connectionThread;
 
     public ClientConnection(BlockingQueue<Response> responseQueue) {
         this.responseQueue = responseQueue;
-        new Thread(this::start).start();
+        connectionThread = new Thread(this::start);
+        connectionThread.start();
     }
 
     private void start() {
@@ -75,5 +77,9 @@ public class ClientConnection {
         } catch (InterruptedException e) {
             throw new RuntimeException("InterruptedException", e);
         }
+    }
+
+    public void close() {
+        connectionThread.interrupt();
     }
 }

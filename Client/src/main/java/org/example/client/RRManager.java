@@ -150,4 +150,8 @@ public class RRManager {
         }
         return Result.error(status, getErrorMessage(status));
     }
+
+    public void close() {
+        clientConnection.close();
+    }
 }
