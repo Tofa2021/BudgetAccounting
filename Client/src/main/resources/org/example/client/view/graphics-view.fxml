@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.client.controller.GraphicsController"
+      spacing="25"
+      alignment="TOP_CENTER"
+      VBox.vgrow="ALWAYS"
+>
+
+    <fx:include source="../navigation.fxml"/>
+
+    <VBox spacing="15" alignment="CENTER" maxWidth="600">
+        <fx:include fx:id="periodSelectVBox" source="../period_select.fxml"/>
+    </VBox>
+
+    <fx:include fx:id="budgetLineChartVBox" source="../budget-line-chart.fxml"/>
+</VBox>

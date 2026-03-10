@@ -8,8 +8,28 @@ import lombok.Setter;
 
 @Setter
 public class PeriodSelectController {
-    private final String DEFAULT_BUTTON_STYLE = "-fx-background-color: #e0e0e0; -fx-text-fill: black;";
-    private final String SELECTED_BUTTON_STYLE = "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;";
+    private final String DEFAULT_BUTTON_STYLE =
+            "-fx-background-color: white; " +
+                    "-fx-text-fill: #2c3e50; " +
+                    "-fx-border-color: #dddddd; " +
+                    "-fx-border-width: 1; " +
+                    "-fx-border-radius: 20; " +
+                    "-fx-background-radius: 20; " +
+                    "-fx-padding: 8 15 8 15; " +
+                    "-fx-font-size: 13px; " +
+                    "-fx-cursor: hand;";
+    private final String SELECTED_BUTTON_STYLE =
+            "-fx-background-color: #007bff; " +
+                    "-fx-text-fill: white; " +
+                    "-fx-border-color: #0056b3; " +
+                    "-fx-border-width: 1; " +
+                    "-fx-border-radius: 20; " +
+                    "-fx-background-radius: 20; " +
+                    "-fx-padding: 8 15 8 15; " +
+                    "-fx-font-size: 13px; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-cursor: hand; " +
+                    "-fx-effect: dropshadow(gaussian, rgba(0,123,255,0.3), 8, 0, 0, 2);";
     @FXML
     private ToggleButton weekButton;
     @FXML

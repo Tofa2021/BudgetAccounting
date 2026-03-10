@@ -44,7 +44,7 @@ public class OperationFilterController {
     }
 
     private void setupFilters() {
-        typeFilterComboBox.getItems().setAll("Все", "+", "-");
+        typeFilterComboBox.getItems().setAll("Все", "Доходы", "Расходы");
         typeFilterComboBox.setValue("Все");
 
         categoryFilterComboBox.getItems().setAll("Все категории");
@@ -60,13 +60,13 @@ public class OperationFilterController {
         categoryFilterComboBox.getItems().add("Все категории");
 
         switch (type) {
-            case "+" -> {
+            case "Доходы" -> {
                 categoryFilterComboBox.getItems().addAll(Arrays.stream(
                                 IncreaseOperationCategory.values())
                         .map(IncreaseOperationCategory::getName)
                         .toList());
             }
-            case "-" -> categoryFilterComboBox.getItems().addAll(Arrays.stream(
+            case "Расходы" -> categoryFilterComboBox.getItems().addAll(Arrays.stream(
                             DecreaseOperationCategory.values())
                     .map(DecreaseOperationCategory::getName)
                     .toList());
@@ -76,7 +76,7 @@ public class OperationFilterController {
 
     @FXML
     private void handleApplyFilters() {
-        String type = typeFilterComboBox.getValue();
+        String type = typeFilterComboBox.getValue().equals("Доходы") ? "+" : "-";
         String category = categoryFilterComboBox.getValue();
         Instant dateFrom = dateFromPicker.getValue() != null
                 ? dateFromPicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()

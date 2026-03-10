@@ -7,6 +7,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.util.Callback;
 import lombok.Setter;
 import org.example.dto.model.DecreaseOperationDTO;
@@ -23,23 +25,65 @@ public class OperationTableController {
     @FXML
     private TableView<OperationDTO> operationTableView;
 
+    @FXML
+    private TableColumn<OperationDTO, Integer> indexColumn;
+    @FXML
+    private TableColumn<OperationDTO, String> typeColumn;
+    @FXML
+    private TableColumn<OperationDTO, Integer> amountColumn;
+    @FXML
+    private TableColumn<OperationDTO, String> categoryColumn;
+    @FXML
+    private TableColumn<OperationDTO, String> dateTimeColumn;
+    @FXML
+    private TableColumn<OperationDTO, Void> actionsColumn;
+
     @Setter
     private OperationActionListener listener;
 
     @FXML
     public void initialize() {
-        setupTable();
+        setupColumns();
+        setupRowFactory();
+        setupTableStyle();
     }
 
     public void bindItems(ObservableList<OperationDTO> items) {
         operationTableView.setItems(items);
     }
 
-    private void setupTable() {
-        setupRowFactory();
+    private void setupTableStyle() {
+        operationTableView.setStyle(
+                "-fx-font-family: 'Segoe UI', 'System';" +
+                        "-fx-font-size: 13px;" +
+                        "-fx-background-color: white;"
+        );
 
-        TableColumn<OperationDTO, Integer> indexColumn = new TableColumn<>("№");
-        indexColumn.setCellFactory(col -> new TableCell<OperationDTO, Integer>() {
+        operationTableView.widthProperty().addListener((obs, oldVal, newVal) -> {
+            operationTableView.lookupAll("TableColumnHeader").forEach(header -> {
+                header.setStyle(
+                        "-fx-background-color: #f8f9fa;" +
+                                "-fx-border-color: #dee2e6;" +
+                                "-fx-border-width: 0 0 2 0;" +
+                                "-fx-padding: 8px;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-font-size: 13px;" +
+                                "-fx-text-fill: #495057;"
+                );
+            });
+        });
+
+        Label placeholder = new Label("Нет операций");
+        placeholder.setStyle(
+                "-fx-font-size: 14px;" +
+                        "-fx-text-fill: #6c757d;" +
+                        "-fx-padding: 20px;"
+        );
+        operationTableView.setPlaceholder(placeholder);
+    }
+
+    private void setupColumns() {
+        indexColumn.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
@@ -50,27 +94,54 @@ public class OperationTableController {
                 }
             }
         });
-        indexColumn.setPrefWidth(20);
-        indexColumn.setSortable(false);
+        indexColumn.setStyle("-fx-alignment: CENTER;");
 
-        TableColumn<OperationDTO, String> typeColumn = new TableColumn<>("Тип");
         typeColumn.setCellValueFactory(cellData -> {
             OperationDTO operation = cellData.getValue();
             String type = "";
             if (operation instanceof IncreaseOperationDTO) {
-                type = "+";
+                type = "Доход";
             } else if (operation instanceof DecreaseOperationDTO) {
-                type = "-";
+                type = "Расход";
             }
-            return new javafx.beans.property.SimpleStringProperty(type);
+            return new SimpleStringProperty(type);
         });
-        typeColumn.setPrefWidth(80);
+        typeColumn.setCellFactory(col -> new TableCell<>() {
+            private final HBox container = new HBox(8);
+            private final Circle indicator = new Circle(5);
+            private final Label typeLabel = new Label();
 
-        TableColumn<OperationDTO, Integer> amountColumn = new TableColumn<>("Сумма");
+            {
+                container.setAlignment(Pos.CENTER_LEFT);
+                indicator.setStroke(Color.TRANSPARENT);
+                typeLabel.setStyle("-fx-font-weight: 600;");
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    typeLabel.setText(item);
+
+                    if (item.equals("Доход")) {
+                        indicator.setFill(Color.web("#28a745"));
+                        typeLabel.setTextFill(Color.web("#28a745"));
+                    } else {
+                        indicator.setFill(Color.web("#dc3545"));
+                        typeLabel.setTextFill(Color.web("#dc3545"));
+                    }
+
+                    container.getChildren().setAll(indicator, typeLabel);
+                    setGraphic(container);
+                }
+            }
+        });
+        typeColumn.setStyle("-fx-alignment: CENTER_LEFT;");
+
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
-        amountColumn.setPrefWidth(100);
 
-        TableColumn<OperationDTO, String> categoryColumn = new TableColumn<>("Категория");
         categoryColumn.setCellValueFactory(cellData -> {
             OperationDTO operation = cellData.getValue();
             String category = "";
@@ -79,11 +150,10 @@ public class OperationTableController {
             } else if (operation instanceof DecreaseOperationDTO decreaseOperationDTO) {
                 category = decreaseOperationDTO.getCategory().getName();
             }
-            return new javafx.beans.property.SimpleStringProperty(category);
+            return new SimpleStringProperty(category);
         });
-        categoryColumn.setPrefWidth(150);
+        categoryColumn.setStyle("-fx-alignment: CENTER_LEFT;");
 
-        TableColumn<OperationDTO, String> dateTimeColumn = new TableColumn<>("Дата");
         dateTimeColumn.setCellValueFactory(cellData -> {
             OperationDTO operation = cellData.getValue();
             Instant dateTime = operation.getDateTime();
@@ -96,21 +166,37 @@ public class OperationTableController {
             LocalDateTime date2 = LocalDateTime.parse(dateStr2, formatter);
             return date1.compareTo(date2);
         });
+        dateTimeColumn.setStyle("-fx-alignment: CENTER;");
 
-        TableColumn<OperationDTO, Void> actionsColumn = new TableColumn<>("Действия");
         actionsColumn.setCellFactory(new Callback<>() {
             @Override
             public TableCell<OperationDTO, Void> call(final TableColumn<OperationDTO, Void> param) {
                 return new TableCell<>() {
-                    private final Button updateButton = new Button("✏️");
-                    private final Button deleteButton = new Button("🗑️");
+                    private final Button updateButton = new Button("✏");
+                    private final Button deleteButton = new Button("🗑");
                     private final HBox pane = new HBox(5, updateButton, deleteButton);
 
                     {
-                        updateButton.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-font-size: 12px;");
-                        deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white; -fx-font-size: 12px;");
-
+                        updateButton.setStyle(
+                                "-fx-background-color: #ffc107; " +
+                                        "-fx-background-radius: 5; " +
+                                        "-fx-text-fill: #212529; " +
+                                        "-fx-font-size: 12px; " +
+                                        "-fx-font-weight: bold; " +
+                                        "-fx-padding: 5 10 5 10; " +
+                                        "-fx-cursor: hand;"
+                        );
                         updateButton.setPrefWidth(60);
+
+                        deleteButton.setStyle(
+                                "-fx-background-color: #dc3545; " +
+                                        "-fx-background-radius: 5; " +
+                                        "-fx-text-fill: white; " +
+                                        "-fx-font-size: 12px; " +
+                                        "-fx-font-weight: bold; " +
+                                        "-fx-padding: 5 10 5 10; " +
+                                        "-fx-cursor: hand;"
+                        );
                         deleteButton.setPrefWidth(60);
 
                         pane.setAlignment(Pos.CENTER);
@@ -138,33 +224,16 @@ public class OperationTableController {
                 };
             }
         });
-        actionsColumn.setPrefWidth(200);
-        actionsColumn.setSortable(false);
-
-        operationTableView.getColumns().addAll(
-                indexColumn, typeColumn, amountColumn, categoryColumn, dateTimeColumn, actionsColumn
-        );
-
-        operationTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        actionsColumn.setStyle("-fx-alignment: CENTER;");
     }
 
     private void setupRowFactory() {
-        operationTableView.setRowFactory(tv -> new TableRow<OperationDTO>() {
+        operationTableView.setRowFactory(tv -> new TableRow<>() {
             @Override
             protected void updateItem(OperationDTO operation, boolean empty) {
                 super.updateItem(operation, empty);
-
-                getStyleClass().removeAll("row-plus", "row-minus");
-
                 if (operation == null || empty) {
                     setStyle("");
-                    return;
-                }
-
-                if (operation instanceof IncreaseOperationDTO) {
-                    setStyle("-fx-background-color: #e8f5e8;");
-                } else if (operation instanceof DecreaseOperationDTO) {
-                    setStyle("-fx-background-color: #ffebee;");
                 }
             }
         });

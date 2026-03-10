@@ -13,9 +13,7 @@
         <Insets top="5" right="5" bottom="5" left="5"/>
     </padding>
 
-    <Label text="Выберите период:" style="-fx-font-weight: bold;"/>
-
-    <HBox spacing="5" alignment="CENTER_LEFT">
+    <HBox spacing="5" alignment="CENTER">
         <ToggleButton fx:id="weekButton" text="7 дней" onAction="#handlePeriodClick"/>
         <ToggleButton fx:id="monthButton" text="30 дней" onAction="#handlePeriodClick"/>
         <ToggleButton fx:id="threeMonthsButton" text="90 дней" onAction="#handlePeriodClick"/>

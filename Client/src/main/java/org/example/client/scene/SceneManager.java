@@ -34,11 +34,11 @@ public class SceneManager {
 
         OperationHistoryViewModel operationHistoryViewModel = new OperationHistoryViewModel(rrManager);
 
-        scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/auth-view.fxml", new AuthViewModel(rrManager)));
-        scenes.put(Scene.REGISTRATION, new SceneInfo("/org/example/client/registration-view.fxml", new RegistrationViewModel(rrManager)));
-        scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/budget-view.fxml", new BudgetViewModel(rrManager)));
-        scenes.put(Scene.OPERATION_HISTORY, new SceneInfo("/org/example/client/operation-history-view.fxml", operationHistoryViewModel));
-        scenes.put(Scene.GRAPHICS, new SceneInfo("/org/example/client/graphics-view.fxml", operationHistoryViewModel));
+        scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/view/auth-view.fxml", new AuthViewModel(rrManager)));
+        scenes.put(Scene.REGISTRATION, new SceneInfo("/org/example/client/view/registration-view.fxml", new RegistrationViewModel(rrManager)));
+        scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/view/budget-view.fxml", new BudgetViewModel(rrManager)));
+        scenes.put(Scene.OPERATION_HISTORY, new SceneInfo("/org/example/client/view/operation-history-view.fxml", operationHistoryViewModel));
+        scenes.put(Scene.GRAPHICS, new SceneInfo("/org/example/client/view/graphics-view.fxml", operationHistoryViewModel));
 
         initFirstScene(stage, firstScene);
         loadScene(firstScene);

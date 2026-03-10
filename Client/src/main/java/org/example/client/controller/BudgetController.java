@@ -29,7 +29,7 @@ public class BudgetController extends BaseController<BudgetViewModel> {
 
     protected void bindViewModel() {
         balanceLabel.textProperty().bind(
-                viewModel.getBalance().asString("Текущий баланс: $%d")
+                viewModel.getBalance().asString("Текущий баланс: %d руб")
         );
 
         amountField.textProperty().bindBidirectional(
