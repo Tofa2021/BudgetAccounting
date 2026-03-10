@@ -10,7 +10,7 @@ import java.time.Instant;
 public class IncreaseOperationRequest extends OperationRequest {
     private final IncreaseOperationCategory category;
 
-    public IncreaseOperationRequest(String token, int amount, Instant dateTime, IncreaseOperationCategory category) {
+    public IncreaseOperationRequest(String token, double amount, Instant dateTime, IncreaseOperationCategory category) {
         super(RequestAction.INCREASE_OPERATION, token, amount, dateTime);
         this.category = category;
     }

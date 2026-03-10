@@ -29,12 +29,14 @@ public class BudgetController extends BaseController<BudgetViewModel> {
 
     protected void bindViewModel() {
         balanceLabel.textProperty().bind(
-                viewModel.getBalance().asString("Текущий баланс: %d руб")
+                viewModel.getBalance().asString("Текущий баланс: %.2f руб")
         );
 
         amountField.textProperty().bindBidirectional(
                 viewModel.getAmountInput()
         );
+
+        setupAmountValidation();
 
         increaseCategoryComboBox.getItems().setAll(Arrays.stream(IncreaseOperationCategory.values())
                 .map(IncreaseOperationCategory::getName)
@@ -54,10 +56,22 @@ public class BudgetController extends BaseController<BudgetViewModel> {
                 viewModel.getErrorMessage());
     }
 
+    private void setupAmountValidation() {
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                return;
+            }
+
+            if (!newValue.matches("\\d*(\\.\\d{0,2})?")) {
+                amountField.setText(oldValue);
+            }
+        });
+    }
+
     @FXML
     private void handleIncrease() {
         if (isValidatedInput()) {
-            int amount = Integer.parseInt(amountField.getText());
+            double amount = Double.parseDouble(amountField.getText());
             String categoryString = increaseCategoryComboBox.getValue();
             IncreaseOperationCategory category = Arrays.stream(IncreaseOperationCategory.values())
                     .filter(cat -> cat.getName().equals(categoryString))
@@ -71,7 +85,7 @@ public class BudgetController extends BaseController<BudgetViewModel> {
     @FXML
     private void handleDecrease() {
         if (isValidatedInput()) {
-            int amount = Integer.parseInt(amountField.getText());
+            double amount = Double.parseDouble(amountField.getText());
             String categoryString = decreaseCategoryComboBox.getValue();
             DecreaseOperationCategory category = Arrays.stream(DecreaseOperationCategory.values())
                     .filter(cat -> cat.getName().equals(categoryString))
@@ -89,7 +103,7 @@ public class BudgetController extends BaseController<BudgetViewModel> {
         }
 
         try {
-            int amount = Integer.parseInt(text);
+            double amount = Double.parseDouble(text);
             return amount > 0;
         } catch (NumberFormatException e) {
             return false;

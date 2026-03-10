@@ -16,18 +16,18 @@ public class Budget {
     private Long id;
 
     @Column(nullable = false)
-    private Integer amount = 0;
+    private Double amount = 0.;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
-    public void increase(int amount) {
+    public void increase(double amount) {
         this.amount = this.amount + amount;
     }
 
-    public void decrease(int amount) {
-        int result = this.amount - amount;
+    public void decrease(double amount) {
+        double result = this.amount - amount;
         if (result < 0) {
             throw new IllegalArgumentException("Amount cannot be negative");
         }

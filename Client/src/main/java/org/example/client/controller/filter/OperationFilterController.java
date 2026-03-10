@@ -41,6 +41,7 @@ public class OperationFilterController {
     @FXML
     public void initialize() {
         setupFilters();
+        setupAmountValidation();
     }
 
     private void setupFilters() {
@@ -53,6 +54,35 @@ public class OperationFilterController {
         typeFilterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             updateCategoryFilter(newVal);
         });
+    }
+
+    private void setupAmountValidation() {
+        TextFormatter<String> minFormatter = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) {
+                return change;
+            }
+
+            if (newText.matches("\\d*(\\.\\d{0,2})?")) {
+                return change;
+            }
+            return null;
+        });
+
+        TextFormatter<String> maxFormatter = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) {
+                return change;
+            }
+
+            if (newText.matches("\\d*(\\.\\d{0,2})?")) {
+                return change;
+            }
+            return null;
+        });
+
+        minAmountField.setTextFormatter(minFormatter);
+        maxAmountField.setTextFormatter(maxFormatter);
     }
 
     private void updateCategoryFilter(String type) {
@@ -84,13 +114,13 @@ public class OperationFilterController {
         Instant dateTo = dateToPicker.getValue() != null
                 ? dateToPicker.getValue().atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant()
                 : null;
-        Integer minAmount = minAmountField.getText().isEmpty()
+        Double minAmount = minAmountField.getText().isEmpty()
                 ? null
-                : Integer.parseInt(minAmountField.getText());
+                : Double.parseDouble(minAmountField.getText());
 
-        Integer maxAmount = maxAmountField.getText().isEmpty()
+        Double maxAmount = maxAmountField.getText().isEmpty()
                 ? null
-                : Integer.parseInt(maxAmountField.getText());
+                : Double.parseDouble(maxAmountField.getText());
 
         listener.onFiltersApplied(type, category, dateFrom, dateTo, minAmount, maxAmount);
         titledPane.setExpanded(false);

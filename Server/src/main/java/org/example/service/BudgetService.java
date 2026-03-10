@@ -20,7 +20,7 @@ public class BudgetService {
     private final BudgetDAO budgetDAO;
     private final UserDAO userDAO;
 
-    public int getAmount(Long userId) {
+    public double getAmount(Long userId) {
         try (Session session = Hibernate.getSessionFactory().openSession()) {
             Budget budget = budgetDAO.findByUserId(session, userId)
                     .orElseThrow(() -> new BudgetNotFoundException(userId));
@@ -34,7 +34,7 @@ public class BudgetService {
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
             Budget budget = new Budget();
-            budget.setAmount(0);
+            budget.setAmount(0.);
             budget.setUser(user);
             budgetDAO.save(session, budget);
 
@@ -44,7 +44,7 @@ public class BudgetService {
 
     public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
-            int amount = request.getAmount();
+            double amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -65,7 +65,7 @@ public class BudgetService {
 
     public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
         return TransactionUtils.executeInTransaction(session -> {
-            int amount = request.getAmount();
+            double amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));

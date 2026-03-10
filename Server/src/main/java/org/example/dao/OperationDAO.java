@@ -32,8 +32,8 @@ public class OperationDAO extends DAO<Operation, Long> {
     public List<Operation> findFilteredOperations(
             Session session,
             Long userId,
-            Integer minAmount,
-            Integer maxAmount,
+            Double minAmount,
+            Double maxAmount,
             Instant dateFrom,
             Instant dateTo,
             IncreaseOperationCategory category
@@ -81,8 +81,8 @@ public class OperationDAO extends DAO<Operation, Long> {
     public List<Operation> findFilteredOperations(
             Session session,
             Long userId,
-            Integer minAmount,
-            Integer maxAmount,
+            Double minAmount,
+            Double maxAmount,
             Instant dateFrom,
             Instant dateTo,
             DecreaseOperationCategory category
@@ -130,8 +130,8 @@ public class OperationDAO extends DAO<Operation, Long> {
     public List<Operation> findFilteredOperations(
             Session session,
             Long userId,
-            Integer minAmount,
-            Integer maxAmount,
+            Double minAmount,
+            Double maxAmount,
             Instant dateFrom,
             Instant dateTo
     ) {

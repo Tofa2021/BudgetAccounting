@@ -12,7 +12,7 @@ import java.time.Instant;
 @Getter
 public abstract class OperationDTO implements Serializable {
     private Long id;
-    private Integer amount;
+    private Double amount;
     private Instant dateTime;
     private Long userId;
 }

@@ -19,7 +19,7 @@ import java.util.*;
 public class BudgetLineChartController {
     private final List<LocalDate> datePoints = new ArrayList<>();
     private final List<XYChart.Data<Number, Number>> dataPoints = new ArrayList<>();
-    private int currentBudget;
+    private double currentBudget;
 
     @FXML
     private LineChart<Number, Number> lineChart;
@@ -40,7 +40,7 @@ public class BudgetLineChartController {
         updateChart();
     }
 
-    public void setCurrentBudget(int budget) {
+    public void setCurrentBudget(double budget) {
         this.currentBudget = budget;
         updateChart();
     }
@@ -159,18 +159,12 @@ public class BudgetLineChartController {
         balanceSeries.getData().add(lastPoint);
         dataPoints.add(lastPoint);
 
-        lineChart.setTitle(String.format("Динамика бюджета (текущий: %d руб)", currentBudget));
+        lineChart.setTitle(String.format("Динамика бюджета (текущий: %.2f руб)", currentBudget));
 
         javafx.application.Platform.runLater(this::addTooltipsToAllPoints);
     }
 
     private void addTooltipsToAllPoints() {
-        if (dataPoints.size() != datePoints.size()) {
-            System.err.println("Ошибка: количество точек данных (" + dataPoints.size() +
-                    ") не соответствует количеству дат (" + datePoints.size() + ")");
-            return;
-        }
-
         for (int i = 0; i < dataPoints.size(); i++) {
             XYChart.Data<Number, Number> dataPoint = dataPoints.get(i);
             LocalDate date = datePoints.get(i);

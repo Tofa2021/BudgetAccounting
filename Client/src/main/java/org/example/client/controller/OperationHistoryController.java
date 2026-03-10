@@ -80,7 +80,7 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
     }
 
     @Override
-    public void onFiltersApplied(String type, String category, Instant dateFrom, Instant dateTo, Integer minAmount, Integer maxAmount) {
+    public void onFiltersApplied(String type, String category, Instant dateFrom, Instant dateTo, Double minAmount, Double maxAmount) {
         viewModel.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
         periodSelectVBoxController.resetButtonStyles();
     }

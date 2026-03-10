@@ -30,7 +30,7 @@ public class OperationTableController {
     @FXML
     private TableColumn<OperationDTO, String> typeColumn;
     @FXML
-    private TableColumn<OperationDTO, Integer> amountColumn;
+    private TableColumn<OperationDTO, Double> amountColumn;
     @FXML
     private TableColumn<OperationDTO, String> categoryColumn;
     @FXML
@@ -141,6 +141,18 @@ public class OperationTableController {
         typeColumn.setStyle("-fx-alignment: CENTER_LEFT;");
 
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        amountColumn.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                if (empty || amount == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("%.2f", amount));
+                }
+            }
+        });
+        amountColumn.setStyle("-fx-alignment: CENTER_RIGHT; -fx-padding: 0 15 0 0;");
 
         categoryColumn.setCellValueFactory(cellData -> {
             OperationDTO operation = cellData.getValue();

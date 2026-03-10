@@ -22,7 +22,7 @@ public abstract class Operation implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private Integer amount;
+    private Double amount;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMPTZ")
     private Instant dateTime;
@@ -31,7 +31,7 @@ public abstract class Operation implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Operation(Integer amount) {
+    public Operation(Double amount) {
         this.amount = amount;
     }
 

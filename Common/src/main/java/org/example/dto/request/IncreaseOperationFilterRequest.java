@@ -11,8 +11,8 @@ public class IncreaseOperationFilterRequest extends OperationFilterRequest {
 
     public IncreaseOperationFilterRequest(
             String token,
-            Integer maxAmount,
-            Integer minAmount,
+            Double maxAmount,
+            Double minAmount,
             Instant dateFrom,
             Instant dateTo,
             IncreaseOperationCategory category

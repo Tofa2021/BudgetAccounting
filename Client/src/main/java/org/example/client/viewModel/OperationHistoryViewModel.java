@@ -63,8 +63,8 @@ public class OperationHistoryViewModel extends BaseViewModel {
             String category,
             Instant dateFrom,
             Instant dateTo,
-            Integer minAmount,
-            Integer maxAmount
+            Double minAmount,
+            Double maxAmount
     ) {
         var result = rrManager.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
         if (result.isSuccess()) {
@@ -72,7 +72,7 @@ public class OperationHistoryViewModel extends BaseViewModel {
         }
     }
 
-    public int getBalance() {
+    public double getBalance() {
         var result = rrManager.getAmount();
         if (result.isSuccess()) {
             return result.getData();

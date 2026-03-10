@@ -44,7 +44,7 @@ public class UserService {
             session.persist(user);
 
             Budget budget = new Budget();
-            budget.setAmount(0);
+            budget.setAmount(0.);
             budget.setUser(user);
             session.persist(budget);
 

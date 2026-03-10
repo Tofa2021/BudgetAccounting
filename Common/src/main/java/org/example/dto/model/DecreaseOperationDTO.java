@@ -11,7 +11,7 @@ import java.time.Instant;
 public class DecreaseOperationDTO extends OperationDTO {
     private DecreaseOperationCategory category;
 
-    public DecreaseOperationDTO(Long id, Integer amount, Instant dateTime, Long userId, DecreaseOperationCategory category) {
+    public DecreaseOperationDTO(Long id, Double amount, Instant dateTime, Long userId, DecreaseOperationCategory category) {
         super(id, amount, dateTime, userId);
         this.category = category;
     }

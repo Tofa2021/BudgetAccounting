@@ -18,7 +18,7 @@ public class DecreaseOperation extends Operation {
     @Column(nullable = false)
     private DecreaseOperationCategory category;
 
-    public DecreaseOperation(Integer amount, DecreaseOperationCategory category) {
+    public DecreaseOperation(Double amount, DecreaseOperationCategory category) {
         super(amount);
         this.category = category;
     }

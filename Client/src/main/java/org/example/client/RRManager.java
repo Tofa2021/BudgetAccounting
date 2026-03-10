@@ -22,7 +22,7 @@ public class RRManager {
         clientConnection = new ClientConnection(responseQueue);
     }
 
-    public Result<Integer> getAmount() {
+    public Result<Double> getAmount() {
         return processRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken));
     }
 
@@ -50,17 +50,16 @@ public class RRManager {
         return Result.error(result.getStatus(), result.getErrorMessage());
     }
 
-    public Result<Object> increaseBudget(int amount, IncreaseOperationCategory category) {
+    public Result<Object> increaseBudget(double amount, IncreaseOperationCategory category) {
         return processRequest(new IncreaseOperationRequest(assessToken, amount, Instant.now(), category));
     }
 
-    public Result<Object> decreaseBudget(int amount, DecreaseOperationCategory category) {
+    public Result<Object> decreaseBudget(double amount, DecreaseOperationCategory category) {
         return processRequest(new DecreaseOperationRequest(assessToken, amount, Instant.now(), category));
     }
 
     public Result<Object> deleteOperation(Long id) {
-        processRequest(new AuthorizedModelIdRequest(id, RequestAction.DELETE_OPERATION, assessToken));
-        return Result.success(null);
+        return processRequest(new AuthorizedModelIdRequest(id, RequestAction.DELETE_OPERATION, assessToken));
     }
 
     public Result<Object> updateOperation(OperationDTO operationDTO) {
@@ -76,8 +75,8 @@ public class RRManager {
             String categoryString,
             Instant dateFrom,
             Instant dateTo,
-            Integer minAmount,
-            Integer maxAmount
+            Double minAmount,
+            Double maxAmount
     ) {
         OperationFilterRequest request = switch (type) {
             case "+" -> {

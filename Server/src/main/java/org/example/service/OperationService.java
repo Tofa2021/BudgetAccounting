@@ -68,9 +68,9 @@ public class OperationService {
             Budget budget = budgetDAO.findByUserId(session, userId)
                     .orElseThrow(() -> new BudgetNotFoundException(userId));
 
-            int oldAmount = existingOperation.getAmount();
-            int newAmount = requestOperation.getAmount();
-            int difference = newAmount - oldAmount;
+            double oldAmount = existingOperation.getAmount();
+            double newAmount = requestOperation.getAmount();
+            double difference = newAmount - oldAmount;
 
             if (
                     existingOperation instanceof IncreaseOperation existingIncreaseOperation &&

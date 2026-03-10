@@ -81,8 +81,17 @@ public class UpdateOperationOverlay {
         Label titleLabel = new Label("Редактирование операции");
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        TextField amountField = new TextField(String.valueOf(operation.getAmount()));
+        TextField amountField = new TextField(String.format("%.2f", operation.getAmount()));
         amountField.setPromptText("Сумма");
+
+        amountField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue.isEmpty()) {
+                return;
+            }
+            if (!newValue.matches("\\d*(\\.\\d{0,2})?")) {
+                amountField.setText(oldValue);
+            }
+        });
 
         ComboBox<String> categoryCombo = new ComboBox<>();
         if (operation instanceof IncreaseOperationDTO) {
@@ -114,7 +123,7 @@ public class UpdateOperationOverlay {
         form.getChildren().addAll(titleLabel, amountField, categoryCombo, buttonBox);
 
         saveButton.setOnAction(e -> {
-            int newAmount = Integer.parseInt(amountField.getText());
+            double newAmount = Double.parseDouble(amountField.getText());
             String newCategoryName = categoryCombo.getValue();
             if (operation instanceof IncreaseOperationDTO increaseOperationDTO) {
                 increaseOperationDTO.setAmount(newAmount);

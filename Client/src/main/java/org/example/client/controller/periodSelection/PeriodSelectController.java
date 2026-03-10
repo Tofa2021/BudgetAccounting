@@ -21,7 +21,7 @@ public class PeriodSelectController {
     private final String SELECTED_BUTTON_STYLE =
             "-fx-background-color: #007bff; " +
                     "-fx-text-fill: white; " +
-                    "-fx-border-color: #0056b3; " +
+                    "-fx-border-color: #dddddd; " +
                     "-fx-border-width: 1; " +
                     "-fx-border-radius: 20; " +
                     "-fx-background-radius: 20; " +
