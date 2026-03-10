@@ -10,7 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Setter
 @Getter
-public abstract class OperationDTO implements Serializable {
+public abstract class OperationDTO implements Serializable, DTO {
     private Long id;
     private Double amount;
     private Instant dateTime;

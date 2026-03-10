@@ -11,4 +11,8 @@ import java.io.Serializable;
 public class Response implements Serializable {
     private final Status status;
     private final Object body;
+
+    public static Response success(Object body) {
+        return new Response(Status.OK, body);
+    }
 }

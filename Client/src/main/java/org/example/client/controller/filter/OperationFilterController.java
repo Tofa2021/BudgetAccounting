@@ -106,7 +106,12 @@ public class OperationFilterController {
 
     @FXML
     private void handleApplyFilters() {
-        String type = typeFilterComboBox.getValue().equals("Доходы") ? "+" : "-";
+        String type =
+                switch (typeFilterComboBox.getValue()) {
+                    case "Доходы" -> "+";
+                    case "Расходы" -> "-";
+                    default -> "Все";
+                };
         String category = categoryFilterComboBox.getValue();
         Instant dateFrom = dateFromPicker.getValue() != null
                 ? dateFromPicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()

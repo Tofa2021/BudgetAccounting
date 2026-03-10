@@ -16,7 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type")
-public abstract class Operation implements Serializable {
+public abstract class Operation implements Serializable, DTOConvertible<OperationDTO> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +34,4 @@ public abstract class Operation implements Serializable {
     public Operation(Double amount) {
         this.amount = amount;
     }
-
-    public abstract OperationDTO toDTO();
 }
