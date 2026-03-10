@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <VBox xmlns:fx="http://javafx.com/fxml"
@@ -8,9 +7,6 @@
       fx:controller="org.example.client.controller.BudgetController">
 
     <VBox fx:id="root" spacing="20" alignment="CENTER">
-        <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
-        </padding>
 
         <fx:include source="navigation.fxml"/>
 

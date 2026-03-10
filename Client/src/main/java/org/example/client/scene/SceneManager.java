@@ -45,39 +45,44 @@ public class SceneManager {
     }
 
     private void initFirstScene(Stage stage, Scene firstScene) {
+        SceneInfo sceneInfo = scenes.get(firstScene);
+        Parent root = loadParent(sceneInfo.fxmlPath());
+        stage.setScene(new javafx.scene.Scene(root));
+    }
+
+    private Parent loadParent(String fxmlPath) {
         try {
-            SceneInfo sceneInfo = scenes.get(firstScene);
-
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(sceneInfo.fxmlPath())
+                    getClass().getResource(fxmlPath)
             );
-
-            Parent root = loader.load();
-            stage.setScene(new javafx.scene.Scene(root));
+            return loader.load();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to load scene " + firstScene.name(), e);
+            throw new RuntimeException("Failed to load view parent");
+        }
+    }
+
+    private Parent loadFxml(String fxmlPath, BaseViewModel baseViewModel) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(fxmlPath)
+            );
+
+            Parent parent = loader.load();
+            BaseController<BaseViewModel> controller = loader.getController();
+            controller.setViewModel(baseViewModel);
+
+            return parent;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load view parent");
         }
     }
 
     public void loadScene(Scene loadScene) {
-        try {
-            SceneInfo sceneInfo = scenes.get(loadScene);
-
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(sceneInfo.fxmlPath())
-            );
-
-            Parent root = loader.load();
-
-            BaseController<BaseViewModel> controller = loader.getController();
-            controller.setViewModel(sceneInfo.viewModel());
-
-            stage.getScene().setRoot(root);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load scene " + loadScene.name(), e);
-        }
+        SceneInfo sceneInfo = scenes.get(loadScene);
+        Parent root = loadFxml(sceneInfo.fxmlPath(), sceneInfo.viewModel());
+        stage.getScene().setRoot(root);
+        stage.show();
     }
 }

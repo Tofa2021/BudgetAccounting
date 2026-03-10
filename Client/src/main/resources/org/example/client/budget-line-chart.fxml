@@ -16,6 +16,7 @@
                prefHeight="380.0"
                prefWidth="580.0"
                createSymbols="false"
+               animated="false"
     >
 
         <xAxis>
