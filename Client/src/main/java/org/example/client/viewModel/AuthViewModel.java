@@ -21,16 +21,18 @@ public class AuthViewModel extends BaseViewModel {
     public void init() {
     }
 
-    public void signIn(String username, String password) {
+    public boolean signIn(String username, String password) {
         if (!isInputCorrect()) {
-            return;
+            return false;
         }
 
         var result = rrManager.signIn(username, password);
         if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
+            return true;
         }
         errorMessage.setValue(result.getErrorMessage());
+        return false;
     }
 
     private boolean isInputCorrect() {

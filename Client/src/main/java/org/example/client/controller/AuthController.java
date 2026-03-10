@@ -55,9 +55,15 @@ public class AuthController extends BaseController<AuthViewModel> {
 
     @FXML
     private void handleSignIn() {
-        viewModel.signIn(usernameField.getText(), passwordField.getText());
-        usernameField.clear();
-        passwordField.clear();
+        boolean isSignedIn = viewModel.signIn(usernameField.getText(), passwordField.getText());
+        if (isSignedIn) {
+            usernameField.clear();
+            passwordField.clear();
+            errorLabel.setVisible(false);
+        } else {
+            passwordField.clear();
+            errorLabel.setVisible(true);
+        }
     }
 
     @FXML
