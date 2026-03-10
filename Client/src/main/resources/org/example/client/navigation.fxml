@@ -13,7 +13,10 @@
       style="-fx-background-color: linear-gradient(to right, #2c3e50, #3498db);
              -fx-padding: 10 20 10 20;
              -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 2);"
-      prefHeight="60.0">
+      prefHeight="60.0"
+      minHeight="60"
+      maxHeight="60"
+>
 
     <padding>
         <Insets top="5" right="5" bottom="5" left="5"/>
