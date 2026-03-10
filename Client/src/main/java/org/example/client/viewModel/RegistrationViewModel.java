@@ -21,12 +21,13 @@ public class RegistrationViewModel extends BaseViewModel {
     public void init() {
     }
 
-    public void signUp(String username, String password) {
+    public boolean signUp(String username, String password) {
         var result = rrManager.signUp(username, password);
         if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
+            return true;
         }
         errorInput.setValue(result.getErrorMessage());
-
+        return false;
     }
 }

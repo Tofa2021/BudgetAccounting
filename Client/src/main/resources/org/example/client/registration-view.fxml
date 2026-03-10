@@ -2,52 +2,72 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <VBox xmlns:fx="http://javafx.com/fxml"
       xmlns="http://javafx.com/javafx"
-      fx:controller="org.example.client.controller.RegistrationController">
-    <VBox fx:id="root" spacing="20" alignment="CENTER">
+      fx:controller="org.example.client.controller.RegistrationController"
+      style="-fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);">
+    <VBox fx:id="root" spacing="20" alignment="CENTER"
+          style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: #dee2e6; -fx-border-width: 1;"
+          VBox.vgrow="ALWAYS">
         <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets top="40" right="40" bottom="40" left="40"/>
         </padding>
 
-        <Label text="Регистрация">
+        <effect>
+            <DropShadow>
+                <color>
+                    <Color opacity="0.1"/>
+                </color>
+                <offsetY>4</offsetY>
+            </DropShadow>
+        </effect>
+
+        <Label text="Регистрация" textFill="#2c3e50">
             <font>
-                <Font name="System Bold" size="24"/>
+                <Font name="System Bold" size="28"/>
             </font>
         </Label>
 
-        <HBox spacing="20" alignment="CENTER">
-            <Label text="Логин: "/>
-            <TextField fx:id="usernameField" promptText="Введите логин" maxWidth="150"/>
-        </HBox>
+        <VBox spacing="15" alignment="CENTER" maxWidth="300">
+            <HBox spacing="20" alignment="CENTER">
+                <Label text="Логин:" style="-fx-font-size: 14px; -fx-text-fill: #495057;" minWidth="60"/>
+                <TextField fx:id="usernameField" promptText="Введите логин"
+                           style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ced4da; -fx-border-width: 1; -fx-padding: 8; -fx-background-color: white;"
+                           prefWidth="200" maxWidth="200"/>
+            </HBox>
 
-        <HBox spacing="20" alignment="CENTER">
-            <Label text="Пароль: "/>
-            <PasswordField fx:id="passwordField" promptText="Введите пароль" maxWidth="150"/>
-        </HBox>
+            <HBox spacing="20" alignment="CENTER">
+                <Label text="Пароль:" style="-fx-font-size: 14px; -fx-text-fill: #495057;" minWidth="60"/>
+                <PasswordField fx:id="passwordField" promptText="Введите пароль"
+                               style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #ced4da; -fx-border-width: 1; -fx-padding: 8; -fx-background-color: white;"
+                               prefWidth="200" maxWidth="200"/>
+            </HBox>
+        </VBox>
 
-        <Label fx:id="errorField" wrapText="true" style="-fx-text-fill: red;"/>
+        <Label fx:id="errorField" wrapText="true"
+               style="-fx-text-fill: #dc3545; -fx-font-size: 13px; -fx-background-color: #f8d7da; -fx-background-radius: 5; -fx-padding: 8 15 8 15;"
+               visible="false"/>
 
         <Button fx:id="signUpButton"
                 text="Зарегистрироваться"
-                prefWidth="150"
-                style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
+                prefWidth="200"
+                style="-fx-background-color: #28a745; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10 20 10 20; -fx-cursor: hand;"
                 onAction="#handleSignUp"/>
 
         <HBox alignment="CENTER" spacing="5">
-            <Label text="Уже есть аккаунт?" style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"/>
+            <Label text="Уже есть аккаунт?" style="-fx-font-size: 13px; -fx-text-fill: #6c757d;"/>
             <Hyperlink fx:id="signUpLink"
                        text="Войти"
-                       style="-fx-font-size: 12px; -fx-text-fill: #3498db; -fx-border-color: transparent;"
+                       style="-fx-font-size: 13px; -fx-text-fill: #007bff; -fx-border-color: transparent; -fx-underline: false; -fx-cursor: hand;"
                        onAction="#handleSignInLink">
                 <font>
-                    <Font name="System Bold" size="12"/>
+                    <Font name="System Bold" size="13"/>
                 </font>
             </Hyperlink>
         </HBox>
-
     </VBox>
-
 </VBox>

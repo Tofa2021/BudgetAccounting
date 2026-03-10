@@ -35,8 +35,14 @@ public class RegistrationController extends BaseController<RegistrationViewModel
 
     @FXML
     private void handleSignUp() {
-        viewModel.signUp(usernameField.getText(), passwordField.getText());
-        passwordField.clear();
+        boolean isSingedUp = viewModel.signUp(usernameField.getText(), passwordField.getText());
+        if (isSingedUp) {
+            passwordField.clear();
+            errorField.setVisible(false);
+        } else {
+            passwordField.clear();
+            errorField.setVisible(true);
+        }
     }
 
     @FXML
