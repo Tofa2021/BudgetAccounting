@@ -5,8 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.example.client.scene.Scene;
-import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.BudgetViewModel;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
@@ -96,15 +94,5 @@ public class BudgetController extends BaseController<BudgetViewModel> {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    @FXML
-    public void handleOpenOperationHistory() {
-        SceneManager.getInstance().loadScene(Scene.OPERATION_HISTORY);
-    }
-
-    @FXML
-    public void handleOpenGraphicsButton() {
-        SceneManager.getInstance().loadScene(Scene.GRAPHICS);
     }
 }

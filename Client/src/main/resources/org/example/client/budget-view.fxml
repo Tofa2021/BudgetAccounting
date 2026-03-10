@@ -12,6 +12,8 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
+        <fx:include source="navigation.fxml"/>
+
         <Label fx:id="balanceLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
         <HBox fx:id="inputBox" spacing="10" alignment="CENTER">
@@ -42,18 +44,6 @@
                       promptText="Выберите категорию"
                       prefWidth="150"/>
         </HBox>
-
-        <Button fx:id="openOperationHistoryButton"
-                text="История операций"
-                prefWidth="150"
-                style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
-                onAction="#handleOpenOperationHistory"/>
-
-        <Button fx:id="openGraphicsButton"
-                text="График бюджета"
-                prefWidth="150"
-                style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
-                onAction="#handleOpenGraphicsButton"/>
 
         <Label fx:id="errorLabel" style="-fx-text-fill: red"/>
 

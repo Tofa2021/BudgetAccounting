@@ -5,8 +5,6 @@ import javafx.scene.layout.VBox;
 import org.example.client.controller.graphics.BudgetLineChartController;
 import org.example.client.controller.periodSelection.PeriodSelectController;
 import org.example.client.controller.periodSelection.PeriodSelectionListener;
-import org.example.client.scene.Scene;
-import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.OperationHistoryViewModel;
 
 public class GraphicsController extends BaseController<OperationHistoryViewModel> implements PeriodSelectionListener {
@@ -37,11 +35,4 @@ public class GraphicsController extends BaseController<OperationHistoryViewModel
     public void onAllTimeSelected() {
         viewModel.refreshOperations();
     }
-
-    @FXML
-    public void handleOpenBudgetButton() {
-        SceneManager.getInstance().loadScene(Scene.BUDGET);
-    }
-
-
 }

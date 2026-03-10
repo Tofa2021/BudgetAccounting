@@ -36,6 +36,7 @@ public class AuthController extends BaseController<AuthViewModel> {
     @FXML
     private void handleSignIn() {
         viewModel.signIn(usernameField.getText(), passwordField.getText());
+        usernameField.clear();
         passwordField.clear();
     }
 

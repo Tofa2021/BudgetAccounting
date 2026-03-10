@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -12,6 +11,8 @@
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
+
+        <fx:include source="navigation.fxml"/>
 
         <Label text="История операций">
             <font>
@@ -24,12 +25,6 @@
         <fx:include fx:id="periodSelectVBox" source="period_select.fxml"/>
 
         <fx:include fx:id="operationTableVBox" source="operation-table.fxml"/>
-
-        <Button fx:id="openBudgetButton"
-                text="Вернуться к Бюджету"
-                prefWidth="150"
-                style="-fx-background-color: blue; -fx-text-fill: white; -fx-font-size: 14px;"
-                onAction="#handleOpenBudget"/>
 
         <Label fx:id="errorLabel" wrapText="true" style="-fx-text-fill: red;"/>
     </VBox>

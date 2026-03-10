@@ -28,6 +28,7 @@ public class SceneManager {
 
     public void init(Stage stage, RRManager rrManager, Scene firstScene) {
         this.stage = stage;
+        stage.setMaximized(true);
 
         stage.setTitle("BudgetAccounting");
 
@@ -39,7 +40,24 @@ public class SceneManager {
         scenes.put(Scene.OPERATION_HISTORY, new SceneInfo("/org/example/client/operation-history-view.fxml", operationHistoryViewModel));
         scenes.put(Scene.GRAPHICS, new SceneInfo("/org/example/client/graphics-view.fxml", operationHistoryViewModel));
 
+        initFirstScene(stage, firstScene);
         loadScene(firstScene);
+    }
+
+    private void initFirstScene(Stage stage, Scene firstScene) {
+        try {
+            SceneInfo sceneInfo = scenes.get(firstScene);
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(sceneInfo.fxmlPath())
+            );
+
+            Parent root = loader.load();
+            stage.setScene(new javafx.scene.Scene(root));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load scene " + firstScene.name(), e);
+        }
     }
 
     public void loadScene(Scene loadScene) {
@@ -51,12 +69,11 @@ public class SceneManager {
             );
 
             Parent root = loader.load();
-            javafx.scene.Scene scene = new javafx.scene.Scene(root, 800, 600);
 
             BaseController<BaseViewModel> controller = loader.getController();
             controller.setViewModel(sceneInfo.viewModel());
 
-            stage.setScene(scene);
+            stage.getScene().setRoot(root);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

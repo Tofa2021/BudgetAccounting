@@ -10,8 +10,6 @@ import org.example.client.controller.periodSelection.PeriodSelectController;
 import org.example.client.controller.periodSelection.PeriodSelectionListener;
 import org.example.client.controller.table.OperationActionListener;
 import org.example.client.controller.table.OperationTableController;
-import org.example.client.scene.Scene;
-import org.example.client.scene.SceneManager;
 import org.example.client.viewModel.OperationHistoryViewModel;
 import org.example.dto.model.OperationDTO;
 
@@ -74,11 +72,6 @@ public class OperationHistoryController extends BaseController<OperationHistoryV
         viewModel.refreshOperations();
         operationFilterVBoxController.clearFilters();
         operationFilterVBoxController.setExpanded(false);
-    }
-
-    @FXML
-    public void handleOpenBudget() {
-        SceneManager.getInstance().loadScene(Scene.BUDGET);
     }
 
     @Override
