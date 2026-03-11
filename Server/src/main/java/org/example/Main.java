@@ -12,6 +12,7 @@ import org.example.service.BudgetService;
 import org.example.service.OperationService;
 import org.example.service.UserService;
 import org.example.util.Hibernate;
+import org.example.util.SessionBuilder;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,12 +27,14 @@ public class Main {
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        BudgetService budgetService = new BudgetService(budgetDAO, userDAO);
-        UserService userService = new UserService(passwordEncoder, jwtProvider, userDAO, roleDAO);
-        OperationService operationService = new OperationService(operationDAO, budgetDAO);
+        SessionBuilder sessionBuilder = new Hibernate();
+
+        BudgetService budgetService = new BudgetService(budgetDAO, userDAO, sessionBuilder);
+        UserService userService = new UserService(passwordEncoder, jwtProvider, userDAO, roleDAO, sessionBuilder);
+        OperationService operationService = new OperationService(operationDAO, budgetDAO, sessionBuilder);
 
         Controller controller = new Controller(jwtProvider, budgetService, userService, operationService);
-        Hibernate.getSessionFactory();
+
 
         new Thread(() -> connectionManager.start(controller)).start();
     }

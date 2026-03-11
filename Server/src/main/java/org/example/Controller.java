@@ -53,8 +53,8 @@ public class Controller {
 
     private Response processUnauthorizedRequest(RequestAction action, Request request) {
         Object result = switch (action) {
-            case SIGN_IN -> userService.signin((AuthRequest) request);
-            case SIGN_UP -> userService.signup((AuthRequest) request);
+            case SIGN_IN -> userService.signIn((AuthRequest) request);
+            case SIGN_UP -> userService.signUp((AuthRequest) request);
             default -> throw new IllegalStateException("Unexpected unauthorized action: " + action);
         };
 

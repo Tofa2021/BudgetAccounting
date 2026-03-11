@@ -11,7 +11,7 @@ import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.User;
-import org.example.util.Hibernate;
+import org.example.util.SessionBuilder;
 import org.example.util.TransactionUtils;
 import org.hibernate.Session;
 
@@ -19,9 +19,10 @@ import org.hibernate.Session;
 public class BudgetService {
     private final BudgetDAO budgetDAO;
     private final UserDAO userDAO;
+    private final SessionBuilder sessionBuilder;
 
     public double getAmount(Long userId) {
-        try (Session session = Hibernate.getSessionFactory().openSession()) {
+        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
             Budget budget = budgetDAO.findByUserId(session, userId)
                     .orElseThrow(() -> new BudgetNotFoundException(userId));
             return budget.getAmount();
@@ -29,7 +30,7 @@ public class BudgetService {
     }
 
     public Budget create(Long userId) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -43,7 +44,7 @@ public class BudgetService {
     }
 
     public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             double amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -64,7 +65,7 @@ public class BudgetService {
     }
 
     public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             double amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)

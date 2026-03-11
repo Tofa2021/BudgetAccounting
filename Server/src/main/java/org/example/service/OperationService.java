@@ -13,6 +13,7 @@ import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.Operation;
+import org.example.util.SessionBuilder;
 import org.example.util.TransactionUtils;
 
 import java.time.Instant;
@@ -23,22 +24,23 @@ import java.util.List;
 public class OperationService {
     private final OperationDAO operationDAO;
     private final BudgetDAO budgetDAO;
+    private final SessionBuilder sessionBuilder;
 
     public List<Operation> getAllByUserId(Long userId) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             return operationDAO.findAllByUserId(session, userId);
         });
     }
 
     public List<Operation> getRecentOperations(Long userId, IntegerAuthorizedRequest request) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             Instant cutoff = Instant.now().minus(request.getInteger(), ChronoUnit.DAYS);
             return operationDAO.findRecentOperations(session, userId, cutoff);
         });
     }
 
     public void deleteById(AuthorizedModelIdRequest request) {
-        TransactionUtils.executeInTransaction(session -> {
+        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             Long id = request.getId();
             Operation operation = operationDAO.findById(session, id).orElseThrow(() -> new OperationNotFoundException(id));
 
@@ -57,7 +59,7 @@ public class OperationService {
     }
 
     public void update(UpdateRequest<OperationDTO> request) {
-        TransactionUtils.executeInTransaction(session -> {
+        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             OperationDTO requestOperation = request.getData();
             System.out.println(requestOperation.getAmount());
             Long operationId = request.getData().getId();
@@ -98,7 +100,7 @@ public class OperationService {
     }
 
     public List<Operation> getFilteredOperations(Long userId, OperationFilterRequest request) {
-        return TransactionUtils.executeInTransaction(session -> {
+        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             if (request instanceof IncreaseOperationFilterRequest increaseRequest) {
                 return operationDAO.findFilteredOperations(
                         session,

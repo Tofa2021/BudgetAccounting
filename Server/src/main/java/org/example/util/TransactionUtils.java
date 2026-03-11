@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TransactionUtils {
-    public static void executeInTransaction(Consumer<Session> action) {
+    public static void executeInTransaction(SessionBuilder sessionBuilder, Consumer<Session> action) {
         Transaction transaction = null;
-        try (Session session = Hibernate.getSessionFactory().openSession()) {
+        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             action.accept(session);
             transaction.commit();
@@ -26,9 +26,9 @@ public class TransactionUtils {
         }
     }
 
-    public static <R> R executeInTransaction(Function<Session, R> action) {
+    public static <R> R executeInTransaction(SessionBuilder sessionBuilder, Function<Session, R> action) {
         Transaction transaction = null;
-        try (Session session = Hibernate.getSessionFactory().openSession()) {
+        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             R result = action.apply(session);
             transaction.commit();
@@ -43,6 +43,4 @@ public class TransactionUtils {
             throw new RuntimeException(e);
         }
     }
-
-
 }
