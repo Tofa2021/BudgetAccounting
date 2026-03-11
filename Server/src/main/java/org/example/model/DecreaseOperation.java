@@ -8,6 +8,8 @@ import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 
+import java.time.Instant;
+
 @Entity
 @DiscriminatorValue("MINUS")
 @Getter
@@ -20,6 +22,11 @@ public class DecreaseOperation extends Operation {
 
     public DecreaseOperation(Double amount, DecreaseOperationCategory category) {
         super(amount);
+        this.category = category;
+    }
+
+    public DecreaseOperation(Long id, Double amount, Instant dateTime, User user, DecreaseOperationCategory category) {
+        super(id, amount, dateTime, user);
         this.category = category;
     }
 

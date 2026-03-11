@@ -5,10 +5,10 @@ import org.example.dto.RequestAction;
 
 @Getter
 public class AuthorizedModelIdRequest extends AuthorizedRequest {
-    private final Long id;
+    private final Long modelId;
 
-    public AuthorizedModelIdRequest(Long id, RequestAction action, String token) {
+    public AuthorizedModelIdRequest(Long modelId, RequestAction action, String token) {
         super(action, token);
-        this.id = id;
+        this.modelId = modelId;
     }
 }

@@ -41,7 +41,7 @@ public class OperationService {
 
     public void deleteById(AuthorizedModelIdRequest request) {
         TransactionUtils.executeInTransaction(sessionBuilder, session -> {
-            Long id = request.getId();
+            Long id = request.getModelId();
             Operation operation = operationDAO.findById(session, id).orElseThrow(() -> new OperationNotFoundException(id));
 
             Long userId = operation.getUser().getId();
@@ -54,14 +54,13 @@ public class OperationService {
                 budget.increase(operation.getAmount());
             }
 
-            operationDAO.deleteById(session, request.getId());
+            operationDAO.deleteById(session, request.getModelId());
         });
     }
 
     public void update(UpdateRequest<OperationDTO> request) {
         TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             OperationDTO requestOperation = request.getData();
-            System.out.println(requestOperation.getAmount());
             Long operationId = request.getData().getId();
             Operation existingOperation = operationDAO.findById(session, operationId)
                     .orElseThrow(() -> new OperationNotFoundException(operationId));
@@ -94,7 +93,6 @@ public class OperationService {
                                 existingOperation.getClass().getSimpleName(),
                                 request.getClass().getSimpleName()));
             }
-            System.out.println(existingOperation.getAmount());
             operationDAO.update(session, existingOperation);
         });
     }
