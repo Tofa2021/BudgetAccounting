@@ -24,7 +24,7 @@ public abstract class Operation implements Serializable, DTOConvertible<Operatio
     @Column(nullable = false)
     private Double amount;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMPTZ")
+    @Column(nullable = false)
     private Instant dateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
