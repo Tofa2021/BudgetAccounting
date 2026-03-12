@@ -29,25 +29,14 @@ public class BudgetService {
         }
     }
 
-    public Budget create(Long userId) {
-        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
-            User user = userDAO.findById(session, userId)
-                    .orElseThrow(() -> new UserNotFoundException(userId));
-
-            Budget budget = new Budget();
-            budget.setAmount(0.);
-            budget.setUser(user);
-            budgetDAO.save(session, budget);
-
-            return budget;
-        });
-    }
-
-    public IncreaseOperation processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
-        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+    public void processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
+        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             double amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
+
+            Budget budget = budgetDAO.findByUserId(session, userId)
+                    .orElseThrow(() -> new BudgetNotFoundException(userId));
 
             IncreaseOperation operation = new IncreaseOperation();
             operation.setAmount(amount);
@@ -56,20 +45,19 @@ public class BudgetService {
             operation.setDateTime(request.getDateTime());
             session.persist(operation);
 
-            Budget budget = budgetDAO.findByUserId(session, userId)
-                    .orElseThrow(() -> new BudgetNotFoundException(userId));
             budget.setAmount(budget.getAmount() + amount);
-
-            return operation;
         });
     }
 
-    public DecreaseOperation processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
-        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+    public void processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
+        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
             double amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
+
+            Budget budget = budgetDAO.findByUserId(session, userId)
+                    .orElseThrow(() -> new BudgetNotFoundException(userId));
 
             DecreaseOperation operation = new DecreaseOperation();
             operation.setAmount(amount);
@@ -78,11 +66,7 @@ public class BudgetService {
             operation.setDateTime(request.getDateTime());
             session.persist(operation);
 
-            Budget budget = budgetDAO.findByUserId(session, userId)
-                    .orElseThrow(() -> new BudgetNotFoundException(userId));
             budget.setAmount(budget.getAmount() - amount);
-
-            return operation;
         });
     }
 }
