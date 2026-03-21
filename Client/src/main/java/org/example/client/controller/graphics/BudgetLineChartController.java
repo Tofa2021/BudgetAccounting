@@ -35,6 +35,7 @@ public class BudgetLineChartController {
     public void bindItems(ObservableList<OperationDTO> items) {
         this.operations = items;
         this.operations.addListener((ListChangeListener<OperationDTO>) change -> {
+            System.out.println("Operations changed new size: " + change.getList().size());
             updateChart();
         });
         updateChart();

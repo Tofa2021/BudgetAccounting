@@ -88,6 +88,9 @@ public class PeriodSelectController {
     private void handlePeriodClick(ActionEvent event) {
         ToggleButton source = (ToggleButton) event.getSource();
         source.setSelected(true);
+        if (listener != null) {
+            notifyListener(source);
+        }
     }
 
     public void restorePeriod() {

@@ -12,9 +12,8 @@ import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.User;
-import org.example.util.SessionBuilder;
+import org.example.util.SessionManager;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +38,8 @@ public class BudgetServiceMockTest {
     @Mock
     private UserDAO userDAO;
     @Mock
-    private SessionBuilder sessionBuilder;
+    private SessionManager sessionManager;
 
-    @Mock
-    private SessionFactory sessionFactory;
     @Mock
     private Session session;
     @Mock
@@ -50,8 +47,7 @@ public class BudgetServiceMockTest {
 
     @BeforeEach
     public void SetUp() {
-        Mockito.when(sessionBuilder.getSessionFactory()).thenReturn(sessionFactory);
-        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(sessionManager.openSession()).thenReturn(session);
     }
 
     @Test
@@ -65,8 +61,7 @@ public class BudgetServiceMockTest {
         double actualAmount = budgetService.getAmount(user.getId());
 
         Assertions.assertEquals(expectedAmount, actualAmount);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
         Mockito.verify(budgetDAO).findByUserId(session, user.getId());
     }
@@ -81,8 +76,7 @@ public class BudgetServiceMockTest {
             budgetService.getAmount(user.getId());
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
         Mockito.verify(budgetDAO).findByUserId(session, user.getId());
     }
@@ -105,8 +99,7 @@ public class BudgetServiceMockTest {
         budgetService.processIncreaseOperation(request, user.getId());
 
         Assertions.assertEquals(1100., budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -136,8 +129,7 @@ public class BudgetServiceMockTest {
         });
 
         Assertions.assertEquals(1000., budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -164,8 +156,7 @@ public class BudgetServiceMockTest {
             budgetService.processIncreaseOperation(request, user.getId());
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -192,8 +183,7 @@ public class BudgetServiceMockTest {
         budgetService.processDecreaseOperation(request, user.getId());
 
         Assertions.assertEquals(900., budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -223,8 +213,7 @@ public class BudgetServiceMockTest {
         });
 
         Assertions.assertEquals(1000., budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -251,8 +240,7 @@ public class BudgetServiceMockTest {
             budgetService.processDecreaseOperation(request, user.getId());
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();

@@ -1,11 +1,10 @@
 package org.example.util;
 
-import lombok.Getter;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-@Getter
-public class Hibernate implements SessionBuilder {
+public class HibernateSessionManager implements SessionManager {
     private final SessionFactory sessionFactory = buildSessionFactory();
 
     private SessionFactory buildSessionFactory() {
@@ -21,5 +20,10 @@ public class Hibernate implements SessionBuilder {
         if (sessionFactory != null) {
             sessionFactory.close();
         }
+    }
+
+    @Override
+    public Session openSession() {
+        return sessionFactory.openSession();
     }
 }

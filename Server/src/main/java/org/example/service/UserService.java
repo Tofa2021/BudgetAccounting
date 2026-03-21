@@ -15,7 +15,7 @@ import org.example.model.Role;
 import org.example.model.User;
 import org.example.security.JwtProvider;
 import org.example.security.PasswordEncoder;
-import org.example.util.SessionBuilder;
+import org.example.util.SessionManager;
 import org.example.util.TransactionUtils;
 
 import java.util.Set;
@@ -26,10 +26,10 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
-    private final SessionBuilder sessionBuilder;
+    private final SessionManager sessionManager;
 
     public Pair<String, String> signUp(AuthRequest request) {
-        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+        return TransactionUtils.executeInTransaction(sessionManager, session -> {
             String username = request.getUsername();
 
             if (userDAO.findByUsername(session, username).isPresent()) {
@@ -56,7 +56,7 @@ public class UserService {
     }
 
     public Pair<String, String> signIn(AuthRequest request) {
-        return TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+        return TransactionUtils.executeInTransaction(sessionManager, session -> {
             String username = request.getUsername();
 
             User user = userDAO.findByUsername(session, username)

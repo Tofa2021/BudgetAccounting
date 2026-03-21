@@ -3,7 +3,6 @@ package org.example.util;
 import org.example.dto.Status;
 import org.example.exception.BusinessException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,9 +18,7 @@ import java.util.function.Function;
 @ExtendWith(MockitoExtension.class)
 public class TransactionUtilsTest {
     @Mock
-    private SessionBuilder sessionBuilder;
-    @Mock
-    private SessionFactory sessionFactory;
+    private SessionManager sessionManager;
     @Mock
     private Session session;
     @Mock
@@ -29,8 +26,7 @@ public class TransactionUtilsTest {
 
     @BeforeEach
     public void setUp() {
-        Mockito.when(sessionBuilder.getSessionFactory()).thenReturn(sessionFactory);
-        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(sessionManager.openSession()).thenReturn(session);
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
     }
 
@@ -38,11 +34,10 @@ public class TransactionUtilsTest {
     public void executeInTransaction_withConsumerAndSuccess_shouldCommit() {
         Consumer<Session> consumer = Mockito.mock(Consumer.class);
 
-        TransactionUtils.executeInTransaction(sessionBuilder, consumer);
+        TransactionUtils.executeInTransaction(sessionManager, consumer);
 
         Mockito.verify(consumer).accept(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -57,12 +52,11 @@ public class TransactionUtilsTest {
         Mockito.doThrow(new BusinessException(Status.SERVER_ERROR, "")).when(consumer).accept(session);
 
         Assertions.assertThrows(BusinessException.class, () -> {
-            TransactionUtils.executeInTransaction(sessionBuilder, consumer);
+            TransactionUtils.executeInTransaction(sessionManager, consumer);
         });
 
         Mockito.verify(consumer).accept(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -76,12 +70,11 @@ public class TransactionUtilsTest {
         Mockito.doThrow(new RuntimeException()).when(consumer).accept(session);
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            TransactionUtils.executeInTransaction(sessionBuilder, consumer);
+            TransactionUtils.executeInTransaction(sessionManager, consumer);
         });
 
         Mockito.verify(consumer).accept(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -92,11 +85,10 @@ public class TransactionUtilsTest {
     public void executeInTransactionReturnFunction() {
         Function<Session, ?> function = Mockito.mock(Function.class);
 
-        TransactionUtils.executeInTransaction(sessionBuilder, function);
+        TransactionUtils.executeInTransaction(sessionManager, function);
 
         Mockito.verify(function).apply(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -109,12 +101,11 @@ public class TransactionUtilsTest {
         Mockito.doThrow(new BusinessException(Status.SERVER_ERROR, "")).when(function).apply(session);
 
         Assertions.assertThrows(BusinessException.class, () -> {
-            TransactionUtils.executeInTransaction(sessionBuilder, function);
+            TransactionUtils.executeInTransaction(sessionManager, function);
         });
 
         Mockito.verify(function).apply(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -128,12 +119,11 @@ public class TransactionUtilsTest {
         Mockito.doThrow(new RuntimeException()).when(function).apply(session);
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            TransactionUtils.executeInTransaction(sessionBuilder, function);
+            TransactionUtils.executeInTransaction(sessionManager, function);
         });
 
         Mockito.verify(function).apply(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -147,12 +137,11 @@ public class TransactionUtilsTest {
 
         Mockito.when(function.apply(session)).thenReturn(expectedValue);
 
-        int actualValue = TransactionUtils.executeInTransaction(sessionBuilder, function);
+        int actualValue = TransactionUtils.executeInTransaction(sessionManager, function);
 
         Assertions.assertEquals(expectedValue, actualValue);
         Mockito.verify(function).apply(session);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();

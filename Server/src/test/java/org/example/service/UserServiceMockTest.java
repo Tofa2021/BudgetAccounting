@@ -14,9 +14,8 @@ import org.example.model.Role;
 import org.example.model.User;
 import org.example.security.JwtProvider;
 import org.example.security.PasswordEncoder;
-import org.example.util.SessionBuilder;
+import org.example.util.SessionManager;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,9 +43,7 @@ class UserServiceMockTest {
     @Mock
     private RoleDAO roleDAO;
     @Mock
-    private SessionBuilder sessionBuilder;
-    @Mock
-    private SessionFactory sessionFactory;
+    private SessionManager sessionManager;
 
     @Mock
     private Session session;
@@ -55,8 +52,7 @@ class UserServiceMockTest {
 
     @BeforeEach
     public void setUp() {
-        Mockito.when(sessionBuilder.getSessionFactory()).thenReturn(sessionFactory);
-        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(sessionManager.openSession()).thenReturn(session);
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
     }
 
@@ -81,8 +77,7 @@ class UserServiceMockTest {
         Mockito.verify(passwordEncoder).matches("123", user.getPassword());
         Mockito.verify(jwtProvider).generateAccessToken(1L);
         Mockito.verify(jwtProvider).generateRefreshToken(1L);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(transaction).commit();
         Mockito.verify(session).close();
@@ -102,8 +97,7 @@ class UserServiceMockTest {
 
         Mockito.verify(transaction, Mockito.never()).commit();
         Mockito.verify(transaction, Mockito.never()).rollback();
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(userDAO).findByUsername(session, "user");
         Mockito.verify(passwordEncoder).matches("123", user.getPassword());
@@ -122,8 +116,7 @@ class UserServiceMockTest {
 
         Mockito.verify(transaction, Mockito.never()).commit();
         Mockito.verify(transaction, Mockito.never()).rollback();
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(userDAO).findByUsername(session, "user");
         Mockito.verify(session).close();
@@ -140,8 +133,7 @@ class UserServiceMockTest {
             userService.signIn(authRequest);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(transaction).rollback();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -170,8 +162,7 @@ class UserServiceMockTest {
         var actualTokens = userService.signUp(authRequest);
 
         Assertions.assertEquals(new Pair<>(expectedAccessToken, expectedRefreshToken), actualTokens);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(transaction).commit();
         Mockito.verify(session).close();
@@ -197,8 +188,7 @@ class UserServiceMockTest {
         });
 
         Mockito.verify(userDAO).findByUsername(session, "user");
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -215,8 +205,7 @@ class UserServiceMockTest {
             userService.signUp(authRequest);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -234,8 +223,7 @@ class UserServiceMockTest {
             userService.signUp(authRequest);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).rollback();

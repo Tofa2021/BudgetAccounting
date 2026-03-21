@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class TransactionUtils {
-    public static void executeInTransaction(SessionBuilder sessionBuilder, Consumer<Session> action) {
+    public static void executeInTransaction(SessionManager sessionManager, Consumer<Session> action) {
         Transaction transaction = null;
-        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
+        try (Session session = sessionManager.openSession()) {
             transaction = session.beginTransaction();
             action.accept(session);
             transaction.commit();
@@ -26,9 +26,9 @@ public class TransactionUtils {
         }
     }
 
-    public static <R> R executeInTransaction(SessionBuilder sessionBuilder, Function<Session, R> action) {
+    public static <R> R executeInTransaction(SessionManager sessionManager, Function<Session, R> action) {
         Transaction transaction = null;
-        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
+        try (Session session = sessionManager.openSession()) {
             transaction = session.beginTransaction();
             R result = action.apply(session);
             transaction.commit();

@@ -12,9 +12,8 @@ import org.example.dto.request.*;
 import org.example.exception.BudgetNotFoundException;
 import org.example.exception.OperationNotFoundException;
 import org.example.model.*;
-import org.example.util.SessionBuilder;
+import org.example.util.SessionManager;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,9 +41,7 @@ public class OperationServiceMockTest {
     @Mock
     private BudgetDAO budgetDAO;
     @Mock
-    private SessionBuilder sessionBuilder;
-    @Mock
-    private SessionFactory sessionFactory;
+    private SessionManager sessionManager;
     @Mock
     private Session session;
     @Mock
@@ -52,8 +49,7 @@ public class OperationServiceMockTest {
 
     @BeforeEach
     public void setUp() {
-        Mockito.when(sessionBuilder.getSessionFactory()).thenReturn(sessionFactory);
-        Mockito.when(sessionFactory.openSession()).thenReturn(session);
+        Mockito.when(sessionManager.openSession()).thenReturn(session);
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
     }
 
@@ -68,8 +64,7 @@ public class OperationServiceMockTest {
         List<Operation> actualOperations = operationService.getAllByUserId(user.getId());
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
         Mockito.verify(operationDAO).findAllByUserId(session, user.getId());
     }
@@ -99,8 +94,7 @@ public class OperationServiceMockTest {
             Mockito.verify(operationDAO).findRecentOperations(session, user.getId(), expectedCutoff);
         }
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
     }
 
@@ -125,8 +119,7 @@ public class OperationServiceMockTest {
             Mockito.verify(operationDAO).findRecentOperations(session, user.getId(), expectedCutoff);
         }
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
     }
 
@@ -144,8 +137,7 @@ public class OperationServiceMockTest {
         operationService.deleteById(request);
 
         Assertions.assertEquals(expectedAmount, budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -168,8 +160,7 @@ public class OperationServiceMockTest {
         operationService.deleteById(request);
 
         Assertions.assertEquals(expectedAmount, budget.getAmount());
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -188,8 +179,7 @@ public class OperationServiceMockTest {
             operationService.deleteById(request);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -209,8 +199,7 @@ public class OperationServiceMockTest {
             operationService.deleteById(request);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -248,8 +237,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(updateOperation.getCategory(), existingOperation.getCategory());
         Assertions.assertEquals(110., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -290,8 +278,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(updateOperation.getCategory(), existingOperation.getCategory());
         Assertions.assertEquals(90., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -332,8 +319,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(updateOperation.getCategory(), existingOperation.getCategory());
         Assertions.assertEquals(90., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -374,8 +360,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(updateOperation.getCategory(), existingOperation.getCategory());
         Assertions.assertEquals(110., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
@@ -407,8 +392,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(exceptedCategory, existingOperation.getCategory());
         Assertions.assertEquals(100., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -449,8 +433,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(expectedCategory, existingOperation.getCategory());
         Assertions.assertEquals(100., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -492,8 +475,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(expectedCategory, existingOperation.getCategory());
         Assertions.assertEquals(100., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -536,8 +518,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(expectedCategory, existingOperation.getCategory());
         Assertions.assertEquals(100., budget.getAmount());
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
@@ -574,8 +555,7 @@ public class OperationServiceMockTest {
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
         Mockito.verify(operationDAO).findFilteredOperations(
                 session, user.getId(), null, null, null, null
@@ -828,8 +808,7 @@ public class OperationServiceMockTest {
             operationService.getFilteredOperations(user.getId(), request);
         });
 
-        Mockito.verify(sessionBuilder).getSessionFactory();
-        Mockito.verify(sessionFactory).openSession();
+        Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(transaction).rollback();
         Mockito.verify(session).close();

@@ -21,16 +21,20 @@ import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
 
+import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public class UpdateOperationOverlay {
     private final OperationDTO operation;
     private final Runnable onSaveCallback;
+    private final NumberFormat numberFormat;
     private Stage overlayStage;
 
     public UpdateOperationOverlay(Stage ownerStage, OperationDTO operation, Runnable onSaveCallback) {
         this.operation = operation;
         this.onSaveCallback = onSaveCallback;
+        this.numberFormat = NumberFormat.getInstance(Locale.getDefault());
         createOverlay(ownerStage);
     }
 

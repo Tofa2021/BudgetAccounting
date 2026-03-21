@@ -11,7 +11,7 @@ import org.example.model.Budget;
 import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.User;
-import org.example.util.SessionBuilder;
+import org.example.util.SessionManager;
 import org.example.util.TransactionUtils;
 import org.hibernate.Session;
 
@@ -19,10 +19,10 @@ import org.hibernate.Session;
 public class BudgetService {
     private final BudgetDAO budgetDAO;
     private final UserDAO userDAO;
-    private final SessionBuilder sessionBuilder;
+    private final SessionManager sessionManager;
 
     public double getAmount(Long userId) {
-        try (Session session = sessionBuilder.getSessionFactory().openSession()) {
+        try (Session session = sessionManager.openSession()) {
             Budget budget = budgetDAO.findByUserId(session, userId)
                     .orElseThrow(() -> new BudgetNotFoundException(userId));
             return budget.getAmount();
@@ -30,7 +30,7 @@ public class BudgetService {
     }
 
     public void processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
-        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+        TransactionUtils.executeInTransaction(sessionManager, session -> {
             double amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -50,7 +50,7 @@ public class BudgetService {
     }
 
     public void processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
-        TransactionUtils.executeInTransaction(sessionBuilder, session -> {
+        TransactionUtils.executeInTransaction(sessionManager, session -> {
             double amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)
