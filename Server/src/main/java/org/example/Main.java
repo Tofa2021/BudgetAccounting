@@ -33,9 +33,9 @@ public class Main {
         UserService userService = new UserService(passwordEncoder, jwtProvider, userDAO, roleDAO, sessionManager);
         OperationService operationService = new OperationService(operationDAO, budgetDAO, sessionManager);
 
-        Controller controller = new Controller(jwtProvider, budgetService, userService, operationService);
+        RequestProcessor requestProcessor = new RequestProcessor(jwtProvider, budgetService, userService, operationService);
 
 
-        new Thread(() -> connectionManager.start(controller)).start();
+        new Thread(() -> connectionManager.start(requestProcessor)).start();
     }
 }

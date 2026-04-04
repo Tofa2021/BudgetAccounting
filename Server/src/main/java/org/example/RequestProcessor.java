@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor
-public class Controller {
+public class RequestProcessor {
 
     private final JwtProvider jwtProvider;
     private final BudgetService budgetService;

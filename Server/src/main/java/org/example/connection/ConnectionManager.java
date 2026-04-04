@@ -1,6 +1,6 @@
 package org.example.connection;
 
-import org.example.Controller;
+import org.example.RequestProcessor;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,14 +8,14 @@ import java.net.Socket;
 import java.util.concurrent.Executors;
 
 public class ConnectionManager {
-    public void start(Controller controller) {
+    public void start(RequestProcessor requestProcessor) {
         try (
                 ServerSocket serverSocket = new ServerSocket(8080);
                 var executor = Executors.newVirtualThreadPerTaskExecutor()
         ) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                executor.execute(new ConnectionHandler(clientSocket, controller));
+                executor.execute(new ClientConnection(clientSocket, requestProcessor));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
