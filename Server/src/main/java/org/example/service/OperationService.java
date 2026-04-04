@@ -14,7 +14,6 @@ import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.Operation;
 import org.example.util.SessionManager;
-import org.example.util.TransactionUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,20 +26,20 @@ public class OperationService {
     private final SessionManager sessionManager;
 
     public List<Operation> getAllByUserId(Long userId) {
-        return TransactionUtils.executeInTransaction(sessionManager, session -> {
+        return sessionManager.executeInTransaction(session -> {
             return operationDAO.findAllByUserId(session, userId);
         });
     }
 
     public List<Operation> getRecentOperations(Long userId, IntegerAuthorizedRequest request) {
-        return TransactionUtils.executeInTransaction(sessionManager, session -> {
+        return sessionManager.executeInTransaction(session -> {
             Instant cutoff = Instant.now().minus(request.getInteger(), ChronoUnit.DAYS);
             return operationDAO.findRecentOperations(session, userId, cutoff);
         });
     }
 
     public void deleteById(AuthorizedModelIdRequest request) {
-        TransactionUtils.executeInTransaction(sessionManager, session -> {
+        sessionManager.executeInTransaction(session -> {
             Long id = request.getModelId();
             Operation operation = operationDAO.findById(session, id).orElseThrow(() -> new OperationNotFoundException(id));
 
@@ -59,7 +58,7 @@ public class OperationService {
     }
 
     public void update(UpdateRequest<OperationDTO> request) {
-        TransactionUtils.executeInTransaction(sessionManager, session -> {
+        sessionManager.executeInTransaction(session -> {
             OperationDTO requestOperation = request.getData();
             Long operationId = request.getData().getId();
             Operation existingOperation = operationDAO.findById(session, operationId)
@@ -98,7 +97,7 @@ public class OperationService {
     }
 
     public List<Operation> getFilteredOperations(Long userId, OperationFilterRequest request) {
-        return TransactionUtils.executeInTransaction(sessionManager, session -> {
+        return sessionManager.executeInTransaction(session -> {
             if (request instanceof IncreaseOperationFilterRequest increaseRequest) {
                 return operationDAO.findFilteredOperations(
                         session,

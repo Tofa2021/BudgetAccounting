@@ -16,7 +16,6 @@ import org.example.model.User;
 import org.example.security.JwtProvider;
 import org.example.security.PasswordEncoder;
 import org.example.util.SessionManager;
-import org.example.util.TransactionUtils;
 
 import java.util.Set;
 
@@ -29,7 +28,7 @@ public class UserService {
     private final SessionManager sessionManager;
 
     public Pair<String, String> signUp(AuthRequest request) {
-        return TransactionUtils.executeInTransaction(sessionManager, session -> {
+        return sessionManager.executeInTransaction(session -> {
             String username = request.getUsername();
 
             if (userDAO.findByUsername(session, username).isPresent()) {
@@ -56,7 +55,7 @@ public class UserService {
     }
 
     public Pair<String, String> signIn(AuthRequest request) {
-        return TransactionUtils.executeInTransaction(sessionManager, session -> {
+        return sessionManager.executeInTransaction(session -> {
             String username = request.getUsername();
 
             User user = userDAO.findByUsername(session, username)

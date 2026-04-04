@@ -12,7 +12,6 @@ import org.example.model.DecreaseOperation;
 import org.example.model.IncreaseOperation;
 import org.example.model.User;
 import org.example.util.SessionManager;
-import org.example.util.TransactionUtils;
 import org.hibernate.Session;
 
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class BudgetService {
     }
 
     public void processIncreaseOperation(IncreaseOperationRequest request, Long userId) {
-        TransactionUtils.executeInTransaction(sessionManager, session -> {
+        sessionManager.executeInTransaction(session -> {
             double amount = request.getAmount();
             User user = userDAO.findById(session, userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -50,7 +49,7 @@ public class BudgetService {
     }
 
     public void processDecreaseOperation(DecreaseOperationRequest request, Long userId) {
-        TransactionUtils.executeInTransaction(sessionManager, session -> {
+        sessionManager.executeInTransaction(session -> {
             double amount = request.getAmount();
 
             User user = userDAO.findById(session, userId)
