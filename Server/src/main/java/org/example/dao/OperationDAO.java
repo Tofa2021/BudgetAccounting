@@ -14,18 +14,21 @@ public class OperationDAO extends DAO<Operation, Long> {
     }
 
     public List<Operation> findAllByUserId(Session session, Long userId) {
-        return session.createQuery(
-                        "FROM Operation WHERE user.id = :userId", Operation.class)
-                .setParameter("userId", userId)
+        return HqlQueryBuilder
+                .builder(Operation.class)
+                .select()
+                .where("user.id", "=", userId)
+                .build(session)
                 .list();
     }
 
     public List<Operation> findRecentOperations(Session session, Long userId, Instant cutoffDate) {
-        return session.createQuery(
-                        "SELECT o FROM Operation o WHERE o.user.id = :userId AND o.dateTime >= :cutoffDate",
-                        Operation.class
-                ).setParameter("userId", userId)
-                .setParameter("cutoffDate", cutoffDate)
+        return HqlQueryBuilder
+                .builder(Operation.class)
+                .select()
+                .where("user.id", "=", userId)
+                .and("dateTime", ">=", cutoffDate)
+                .build(session)
                 .list();
     }
 
@@ -38,44 +41,10 @@ public class OperationDAO extends DAO<Operation, Long> {
             Instant dateTo,
             IncreaseOperationCategory category
     ) {
-        StringBuilder hql = new StringBuilder("SELECT o FROM IncreaseOperation o WHERE o.user.id = :userId");
-
-        if (minAmount != null) {
-            hql.append(" AND o.amount >= :minAmount");
-        }
-        if (maxAmount != null) {
-            hql.append(" AND o.amount <= :maxAmount");
-        }
-        if (dateFrom != null) {
-            hql.append(" AND o.dateTime >= :dateFrom");
-        }
-        if (dateTo != null) {
-            hql.append(" AND o.dateTime <= :dateTo");
-        }
-        if (category != null) {
-            hql.append(" AND o.category = :category");
-        }
-
-        var query = session.createQuery(hql.toString(), Operation.class);
-        query.setParameter("userId", userId);
-
-        if (minAmount != null) {
-            query.setParameter("minAmount", minAmount);
-        }
-        if (maxAmount != null) {
-            query.setParameter("maxAmount", maxAmount);
-        }
-        if (dateFrom != null) {
-            query.setParameter("dateFrom", dateFrom);
-        }
-        if (dateTo != null) {
-            query.setParameter("dateTo", dateTo);
-        }
-        if (category != null) {
-            query.setParameter("category", category);
-        }
-
-        return query.list();
+        return getBaseFilteredBuilder(userId, minAmount, maxAmount, dateFrom, dateTo, "IncreaseOperation")
+                .and("category", "=", category)
+                .build(session)
+                .list();
     }
 
     public List<Operation> findFilteredOperations(
@@ -87,44 +56,10 @@ public class OperationDAO extends DAO<Operation, Long> {
             Instant dateTo,
             DecreaseOperationCategory category
     ) {
-        StringBuilder hql = new StringBuilder("SELECT o FROM DecreaseOperation o WHERE o.user.id = :userId");
-
-        if (minAmount != null) {
-            hql.append(" AND o.amount >= :minAmount");
-        }
-        if (maxAmount != null) {
-            hql.append(" AND o.amount <= :maxAmount");
-        }
-        if (dateFrom != null) {
-            hql.append(" AND o.dateTime >= :dateFrom");
-        }
-        if (dateTo != null) {
-            hql.append(" AND o.dateTime <= :dateTo");
-        }
-        if (category != null) {
-            hql.append(" AND o.category = :category");
-        }
-
-        var query = session.createQuery(hql.toString(), Operation.class);
-        query.setParameter("userId", userId);
-
-        if (minAmount != null) {
-            query.setParameter("minAmount", minAmount);
-        }
-        if (maxAmount != null) {
-            query.setParameter("maxAmount", maxAmount);
-        }
-        if (dateFrom != null) {
-            query.setParameter("dateFrom", dateFrom);
-        }
-        if (dateTo != null) {
-            query.setParameter("dateTo", dateTo);
-        }
-        if (category != null) {
-            query.setParameter("category", category);
-        }
-
-        return query.list();
+        return getBaseFilteredBuilder(userId, minAmount, maxAmount, dateFrom, dateTo, "DecreaseOperation")
+                .and("category", "=", category)
+                .build(session)
+                .list();
     }
 
     public List<Operation> findFilteredOperations(
@@ -135,37 +70,32 @@ public class OperationDAO extends DAO<Operation, Long> {
             Instant dateFrom,
             Instant dateTo
     ) {
-        StringBuilder hql = new StringBuilder("SELECT o FROM Operation o WHERE o.user.id = :userId");
+        return getBaseFilteredBuilder(userId, minAmount, maxAmount, dateFrom, dateTo, null)
+                .build(session)
+                .list();
+    }
 
-        if (minAmount != null) {
-            hql.append(" AND o.amount >= :minAmount");
-        }
-        if (maxAmount != null) {
-            hql.append(" AND o.amount <= :maxAmount");
-        }
-        if (dateFrom != null) {
-            hql.append(" AND o.dateTime >= :dateFrom");
-        }
-        if (dateTo != null) {
-            hql.append(" AND o.dateTime <= :dateTo");
-        }
+    private HqlQueryBuilder<Operation> getBaseFilteredBuilder(
+            Long userId,
+            Double minAmount,
+            Double maxAmount,
+            Instant dateFrom,
+            Instant dateTo,
+            String specificTableName
+    ) {
+        HqlQueryBuilder<Operation> builder = HqlQueryBuilder.builder(Operation.class);
 
-        var query = session.createQuery(hql.toString(), Operation.class);
-        query.setParameter("userId", userId);
-
-        if (minAmount != null) {
-            query.setParameter("minAmount", minAmount);
-        }
-        if (maxAmount != null) {
-            query.setParameter("maxAmount", maxAmount);
-        }
-        if (dateFrom != null) {
-            query.setParameter("dateFrom", dateFrom);
-        }
-        if (dateTo != null) {
-            query.setParameter("dateTo", dateTo);
+        if (specificTableName == null) {
+            builder.select();
+        } else {
+            builder.select(specificTableName);
         }
 
-        return query.list();
+        return builder
+                .where("user.id", "=", userId)
+                .and("amount", ">=", minAmount)
+                .and("amount", "<=", maxAmount)
+                .and("dateTime", ">=", dateFrom)
+                .and("dateTime", "<=", dateTo);
     }
 }

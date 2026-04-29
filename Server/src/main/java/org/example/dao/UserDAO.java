@@ -11,9 +11,11 @@ public class UserDAO extends DAO<User, Long> {
     }
 
     public Optional<User> findByUsername(Session session, String username) {
-        return session.createQuery(
-                        "FROM User WHERE username = :username", User.class)
-                .setParameter("username", username)
+        return HqlQueryBuilder
+                .builder(User.class)
+                .select()
+                .where("username", "=", username)
+                .build(session)
                 .uniqueResultOptional();
     }
 }

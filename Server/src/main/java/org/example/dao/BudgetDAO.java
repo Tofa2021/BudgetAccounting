@@ -11,10 +11,11 @@ public class BudgetDAO extends DAO<Budget, Long> {
     }
 
     public Optional<Budget> findByUserId(Session session, Long userId) {
-        Budget budget = session.createQuery(
-                        "FROM Budget WHERE user.id = :userId", Budget.class)
-                .setParameter("userId", userId)
-                .uniqueResult();
-        return Optional.ofNullable(budget);
+        return HqlQueryBuilder
+                .builder(Budget.class)
+                .select()
+                .where("user.id", "=", userId)
+                .build(session)
+                .uniqueResultOptional();
     }
 }

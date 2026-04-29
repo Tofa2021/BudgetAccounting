@@ -31,7 +31,7 @@ public abstract class DAO<T, ID> {
 
     public List<T> findAll(Session session) {
         try {
-            return session.createQuery("FROM " + modelClass.getSimpleName(), modelClass).list();
+            return HqlQueryBuilder.builder(modelClass).select().build(session).list();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,9 +54,6 @@ public abstract class DAO<T, ID> {
     }
 
     public void deleteById(Session session, ID id) {
-        session.createMutationQuery(
-                        "DELETE FROM " + modelClass.getSimpleName() + " WHERE id = :id")
-                .setParameter("id", id)
-                .executeUpdate();
+        HqlQueryBuilder.builder(modelClass).delete().where("id", "=", id).buildMutation(session).executeUpdate();
     }
 }
