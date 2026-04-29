@@ -127,7 +127,7 @@ public class UpdateOperationOverlay {
         form.getChildren().addAll(titleLabel, amountField, categoryCombo, buttonBox);
 
         saveButton.setOnAction(e -> {
-            double newAmount = Double.parseDouble(amountField.getText());
+            double newAmount = Double.parseDouble(amountField.getText().replace(',', '.'));
             String newCategoryName = categoryCombo.getValue();
             if (operation instanceof IncreaseOperationDTO increaseOperationDTO) {
                 increaseOperationDTO.setAmount(newAmount);
