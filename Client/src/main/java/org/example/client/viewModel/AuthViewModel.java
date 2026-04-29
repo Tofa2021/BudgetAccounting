@@ -3,7 +3,7 @@ package org.example.client.viewModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.Getter;
-import org.example.client.RRManager;
+import org.example.client.connection.ServerInteractionManager;
 import org.example.client.scene.Scene;
 import org.example.client.scene.SceneManager;
 
@@ -13,8 +13,8 @@ public class AuthViewModel extends BaseViewModel {
     private final StringProperty passwordInput = new SimpleStringProperty("");
     private final StringProperty errorMessage = new SimpleStringProperty("");
 
-    public AuthViewModel(RRManager rrManager) {
-        super(rrManager);
+    public AuthViewModel(ServerInteractionManager serverInteractionManager) {
+        super(serverInteractionManager);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AuthViewModel extends BaseViewModel {
             return false;
         }
 
-        var result = rrManager.signIn(username, password);
+        var result = serverInteractionManager.signIn(username, password);
         if (result.isSuccess()) {
             SceneManager.getInstance().loadScene(Scene.BUDGET);
             return true;

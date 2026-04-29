@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import lombok.Getter;
-import org.example.client.RRManager;
+import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.IncreaseOperationCategory;
 
@@ -20,8 +20,8 @@ public class BudgetViewModel extends BaseViewModel {
             new SimpleStringProperty(DecreaseOperationCategory.FOOD.getName());
 
 
-    public BudgetViewModel(RRManager rrManager) {
-        super(rrManager);
+    public BudgetViewModel(ServerInteractionManager serverInteractionManager) {
+        super(serverInteractionManager);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BudgetViewModel extends BaseViewModel {
             return;
         }
 
-        var result = rrManager.increaseBudget(amount, category);
+        var result = serverInteractionManager.increaseBudget(amount, category);
         if (result.isSuccess()) {
             refreshBalance();
         }
@@ -49,14 +49,14 @@ public class BudgetViewModel extends BaseViewModel {
             return;
         }
 
-        var result = rrManager.decreaseBudget(amount, category);
+        var result = serverInteractionManager.decreaseBudget(amount, category);
         if (result.isSuccess()) {
             refreshBalance();
         }
     }
 
     private void refreshBalance() {
-        var result = rrManager.getAmount();
+        var result = serverInteractionManager.getAmount();
         if (result.isSuccess()) {
             balance.set(result.getData());
         }

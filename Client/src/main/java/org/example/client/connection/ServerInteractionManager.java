@@ -1,5 +1,6 @@
-package org.example.client;
+package org.example.client.connection;
 
+import org.example.client.Result;
 import org.example.dto.*;
 import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
@@ -11,15 +12,24 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
-public class RRManager {
+public class ServerInteractionManager {
     private final ClientConnection clientConnection;
     private final BlockingQueue<Response> responseQueue;
     private String assessToken = "";
     private String refreshToken = "";
 
-    public RRManager() {
+    public ServerInteractionManager() {
         responseQueue = new SynchronousQueue<>();
         clientConnection = new ClientConnection(responseQueue);
+    }
+
+    private <T> Result<T> processRequest(Request request) {
+        Response response = putRequest(request);
+        Status status = response.getStatus();
+        if (status == Status.OK) {
+            return Result.success((T) response.getBody());
+        }
+        return Result.error(status, getErrorMessage(status));
     }
 
     public Result<Double> getAmount() {
@@ -137,17 +147,9 @@ public class RRManager {
             case Status.ALREADY_EXISTS -> "Уже существует";
             case Status.SERVER_ERROR -> "Неизвестная ошибка сервера";
             case Status.INVALID_TOKEN -> "Неверный токен";
+            case Status.UNAUTHORIZED -> "Неправильный пароль";
             default -> throw new NoSuchElementException();
         };
-    }
-
-    private <T> Result<T> processRequest(Request request) {
-        Response response = putRequest(request);
-        Status status = response.getStatus();
-        if (status == Status.OK) {
-            return Result.success((T) response.getBody());
-        }
-        return Result.error(status, getErrorMessage(status));
     }
 
     public void close() {

@@ -3,7 +3,7 @@ package org.example.client.scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import org.example.client.RRManager;
+import org.example.client.connection.ServerInteractionManager;
 import org.example.client.controller.BaseController;
 import org.example.client.viewModel.*;
 
@@ -26,17 +26,17 @@ public class SceneManager {
         return instance;
     }
 
-    public void init(Stage stage, RRManager rrManager, Scene firstScene) {
+    public void init(Stage stage, ServerInteractionManager serverInteractionManager, Scene firstScene) {
         this.stage = stage;
         stage.setMaximized(true);
 
         stage.setTitle("BudgetAccounting");
 
-        OperationHistoryViewModel operationHistoryViewModel = new OperationHistoryViewModel(rrManager);
+        OperationHistoryViewModel operationHistoryViewModel = new OperationHistoryViewModel(serverInteractionManager);
 
-        scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/view/auth-view.fxml", new AuthViewModel(rrManager)));
-        scenes.put(Scene.REGISTRATION, new SceneInfo("/org/example/client/view/registration-view.fxml", new RegistrationViewModel(rrManager)));
-        scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/view/budget-view.fxml", new BudgetViewModel(rrManager)));
+        scenes.put(Scene.AUTH, new SceneInfo("/org/example/client/view/auth-view.fxml", new AuthViewModel(serverInteractionManager)));
+        scenes.put(Scene.REGISTRATION, new SceneInfo("/org/example/client/view/registration-view.fxml", new RegistrationViewModel(serverInteractionManager)));
+        scenes.put(Scene.BUDGET, new SceneInfo("/org/example/client/view/budget-view.fxml", new BudgetViewModel(serverInteractionManager)));
         scenes.put(Scene.OPERATION_HISTORY, new SceneInfo("/org/example/client/view/operation-history-view.fxml", operationHistoryViewModel));
         scenes.put(Scene.GRAPHICS, new SceneInfo("/org/example/client/view/graphics-view.fxml", operationHistoryViewModel));
 

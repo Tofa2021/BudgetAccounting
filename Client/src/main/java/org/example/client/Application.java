@@ -2,11 +2,12 @@ package org.example.client;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import org.example.client.connection.ServerInteractionManager;
 import org.example.client.scene.Scene;
 import org.example.client.scene.SceneManager;
 
 public class Application extends javafx.application.Application {
-    private RRManager rrManager;
+    private ServerInteractionManager serverInteractionManager;
 
     public Application() {
     }
@@ -17,8 +18,8 @@ public class Application extends javafx.application.Application {
 
     @Override
     public void start(Stage stage) {
-        rrManager = new RRManager();
-        SceneManager.getInstance().init(stage, rrManager, Scene.AUTH);
+        serverInteractionManager = new ServerInteractionManager();
+        SceneManager.getInstance().init(stage, serverInteractionManager, Scene.AUTH);
 
         stage.setOnCloseRequest(event -> {
             close();
@@ -26,7 +27,7 @@ public class Application extends javafx.application.Application {
     }
 
     private void close() {
-        rrManager.close();
+        serverInteractionManager.close();
         Platform.exit();
     }
 

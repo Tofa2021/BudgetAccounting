@@ -1,4 +1,4 @@
-package org.example.client;
+package org.example.client.connection;
 
 import org.example.dto.Status;
 import org.example.dto.request.Request;
@@ -15,11 +15,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 public class ClientConnection {
-    private final BlockingQueue<Request> requestQueue = new SynchronousQueue<>();
+    private final BlockingQueue<Request> requestQueue;
     private final BlockingQueue<Response> responseQueue;
     private final Thread connectionThread;
 
     public ClientConnection(BlockingQueue<Response> responseQueue) {
+        this.requestQueue = new SynchronousQueue<>();
         this.responseQueue = responseQueue;
         connectionThread = new Thread(this::start);
         connectionThread.start();
@@ -32,8 +33,10 @@ public class ClientConnection {
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
             ) {
+                System.out.println("Connected to Server");
                 while (true) {
-                    Response response = send(in, out, requestQueue.take());
+                    Request request = requestQueue.take();
+                    Response response = send(in, out, request);
                     responseQueue.put(response);
                 }
             } catch (ConnectException e) {

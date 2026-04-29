@@ -29,4 +29,6 @@ module org.example.client {
     opens org.example.client.controller.table to javafx.fxml;
     exports org.example.client.controller.graphics;
     opens org.example.client.controller.graphics to javafx.fxml;
+    exports org.example.client.connection;
+    opens org.example.client.connection to javafx.fxml;
 }
