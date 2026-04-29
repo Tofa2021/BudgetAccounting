@@ -36,7 +36,7 @@ public class UserService {
             }
 
             Role role = roleDAO.findById(session, 1L)
-                    .orElseThrow(() -> new RoleNotFoundException(1L)); // TODO replace 1L on smth
+                    .orElseThrow(() -> new RoleNotFoundException(1L)); // TODO replace id=1L on Real role
 
             User user = new User();
             user.setUsername(username);
@@ -66,7 +66,7 @@ public class UserService {
                 return new Pair<>(jwtProvider.generateAccessToken(userId), jwtProvider.generateRefreshToken(userId));
             }
 
-            throw new BusinessException(Status.SERVER_ERROR, "Invalid password");
+            throw new BusinessException(Status.UNAUTHORIZED, "Invalid password");
         });
     }
 }
