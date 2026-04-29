@@ -1,6 +1,5 @@
 package org.example.connection;
 
-import org.example.RequestProcessor;
 import org.example.dto.request.Request;
 import org.example.dto.response.Response;
 
@@ -17,9 +16,9 @@ public class ClientConnection implements Runnable {
     private final RequestProcessor requestProcessor;
 
     public ClientConnection(Socket socket, RequestProcessor requestProcessor) throws IOException {
-        clientSocket = socket;
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
+        this.clientSocket = socket;
         this.requestProcessor = requestProcessor;
     }
 
@@ -28,13 +27,27 @@ public class ClientConnection implements Runnable {
         try {
             while (true) {
                 Request request = (Request) in.readObject();
-                send(requestProcessor.process(request));
+                System.out.println("Received request: " + request.getAction() + " from " + clientSocket.getPort());
+                Response response = requestProcessor.process(request);
+                System.out.println("Send response: " + response.getStatus());
+                send(response);
             }
         } catch (EOFException e) {
             System.out.println("Client disconnected normally");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error in connection: " + e.getMessage());
         } finally {
+            disconnect();
+        }
+    }
+
+    private void send(Response response) {
+        try {
+            out.writeObject(response);
+            out.flush();
+            out.reset();
+        } catch (IOException e) {
+            System.err.println("Error sending data: " + e.getMessage());
             disconnect();
         }
     }
@@ -49,17 +62,6 @@ public class ClientConnection implements Runnable {
             }
         } catch (IOException e) {
             System.err.println("Error closing connection: " + e.getMessage());
-        }
-    }
-
-    private void send(Response response) {
-        try {
-            out.writeObject(response);
-            out.flush();
-            out.reset();
-        } catch (IOException e) {
-            System.err.println("Error sending data: " + e.getMessage());
-            disconnect();
         }
     }
 }

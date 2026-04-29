@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.connection.ConnectionManager;
+import org.example.connection.RequestProcessor;
 import org.example.dao.BudgetDAO;
 import org.example.dao.OperationDAO;
 import org.example.dao.RoleDAO;
@@ -16,8 +17,6 @@ import org.example.util.SessionManager;
 
 public class Main {
     public static void main(String[] args) {
-        ConnectionManager connectionManager = new ConnectionManager();
-
         BudgetDAO budgetDAO = new BudgetDAO();
         RoleDAO roleDAO = new RoleDAO();
         UserDAO userDAO = new UserDAO();
@@ -35,7 +34,8 @@ public class Main {
 
         RequestProcessor requestProcessor = new RequestProcessor(jwtProvider, budgetService, userService, operationService);
 
+        ConnectionManager connectionManager = new ConnectionManager(requestProcessor);
 
-        new Thread(() -> connectionManager.start(requestProcessor)).start();
+        connectionManager.start();
     }
 }
