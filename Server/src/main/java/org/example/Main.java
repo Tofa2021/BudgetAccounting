@@ -1,38 +1,42 @@
 package org.example;
 
-import org.example.connection.ConnectionManager;
-import org.example.connection.RequestProcessor;
-import org.example.dao.BudgetDAO;
-import org.example.dao.OperationDAO;
-import org.example.dao.RoleDAO;
-import org.example.dao.UserDAO;
-import org.example.security.BCryptPasswordEncoder;
-import org.example.security.JwtProvider;
-import org.example.security.PasswordEncoder;
-import org.example.service.BudgetService;
-import org.example.service.OperationService;
-import org.example.service.UserService;
-import org.example.util.HibernateSessionManager;
-import org.example.util.SessionManager;
+import org.example.application.service.BudgetService;
+import org.example.application.service.OperationService;
+import org.example.application.service.UserService;
+import org.example.domain.dao.BudgetDAO;
+import org.example.domain.dao.OperationDAO;
+import org.example.domain.dao.RoleDAO;
+import org.example.domain.dao.UserDAO;
+import org.example.infrastructure.dao.HibernateBudgetDAO;
+import org.example.infrastructure.dao.HibernateOperationDAO;
+import org.example.infrastructure.dao.HibernateRoleDAO;
+import org.example.infrastructure.dao.HibernateUserDAO;
+import org.example.infrastructure.security.BCryptPasswordEncoder;
+import org.example.infrastructure.security.JwtProvider;
+import org.example.infrastructure.security.PasswordEncoder;
+import org.example.infrastructure.security.TokenProvider;
+import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.presentation.RequestProcessor;
+import org.example.presentation.connection.ConnectionManager;
 
 public class Main {
     public static void main(String[] args) {
-        BudgetDAO budgetDAO = new BudgetDAO();
-        RoleDAO roleDAO = new RoleDAO();
-        UserDAO userDAO = new UserDAO();
-        OperationDAO operationDAO = new OperationDAO();
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 
-        JwtProvider jwtProvider = new JwtProvider();
+        BudgetDAO budgetDAO = new HibernateBudgetDAO(transactionManager);
+        RoleDAO roleDAO = new HibernateRoleDAO(transactionManager);
+        UserDAO userDAO = new HibernateUserDAO(transactionManager);
+        OperationDAO operationDAO = new HibernateOperationDAO(transactionManager);
+
+        TokenProvider tokenProvider = new JwtProvider();
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        SessionManager sessionManager = new HibernateSessionManager();
+        BudgetService budgetService = new BudgetService(budgetDAO, operationDAO, userDAO, transactionManager);
+        UserService userService = new UserService(passwordEncoder, tokenProvider, userDAO, roleDAO, budgetDAO, transactionManager);
+        OperationService operationService = new OperationService(operationDAO, budgetDAO, transactionManager);
 
-        BudgetService budgetService = new BudgetService(budgetDAO, userDAO, sessionManager);
-        UserService userService = new UserService(passwordEncoder, jwtProvider, userDAO, roleDAO, sessionManager);
-        OperationService operationService = new OperationService(operationDAO, budgetDAO, sessionManager);
-
-        RequestProcessor requestProcessor = new RequestProcessor(jwtProvider, budgetService, userService, operationService);
+        RequestProcessor requestProcessor = new RequestProcessor(tokenProvider, budgetService, userService, operationService);
 
         ConnectionManager connectionManager = new ConnectionManager(requestProcessor);
 

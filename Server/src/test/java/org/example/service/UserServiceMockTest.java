@@ -1,20 +1,21 @@
 package org.example.service;
 
-import org.example.dao.RoleDAO;
-import org.example.dao.UserDAO;
+import org.example.application.service.UserService;
+import org.example.domain.SessionManager;
+import org.example.domain.exception.BusinessException;
+import org.example.domain.exception.RoleNotFoundException;
+import org.example.domain.exception.UserAlreadyExistsException;
+import org.example.domain.exception.UserNotFoundException;
+import org.example.domain.model.Budget;
+import org.example.domain.model.Role;
+import org.example.domain.model.User;
 import org.example.dto.Pair;
 import org.example.dto.RequestAction;
 import org.example.dto.request.AuthRequest;
-import org.example.exception.BusinessException;
-import org.example.exception.RoleNotFoundException;
-import org.example.exception.UserAlreadyExistsException;
-import org.example.exception.UserNotFoundException;
-import org.example.model.Budget;
-import org.example.model.Role;
-import org.example.model.User;
-import org.example.security.JwtProvider;
-import org.example.security.PasswordEncoder;
-import org.example.util.SessionManager;
+import org.example.infrastructure.dao.HibernateRoleDAO;
+import org.example.infrastructure.dao.HibernateUserDAO;
+import org.example.infrastructure.security.JwtProvider;
+import org.example.infrastructure.security.PasswordEncoder;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.Assertions;
@@ -39,9 +40,9 @@ class UserServiceMockTest {
     @Mock
     private JwtProvider jwtProvider;
     @Mock
-    private UserDAO userDAO;
+    private HibernateUserDAO hibernateUserDAO;
     @Mock
-    private RoleDAO roleDAO;
+    private HibernateRoleDAO hibernateRoleDAO;
     @Mock
     private SessionManager sessionManager;
 
@@ -63,7 +64,7 @@ class UserServiceMockTest {
         String expectedAccessToken = "access-token";
         String expectedRefreshToken = "refresh-token";
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
         Mockito.when(passwordEncoder.matches("123", user.getPassword())).thenReturn(true);
 
         Mockito.when(jwtProvider.generateAccessToken(1L)).thenReturn(expectedAccessToken);
@@ -73,7 +74,7 @@ class UserServiceMockTest {
 
         Assertions.assertEquals(new Pair<>(expectedAccessToken, expectedRefreshToken), actualTokens);
 
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
         Mockito.verify(passwordEncoder).matches("123", user.getPassword());
         Mockito.verify(jwtProvider).generateAccessToken(1L);
         Mockito.verify(jwtProvider).generateRefreshToken(1L);
@@ -88,7 +89,7 @@ class UserServiceMockTest {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_IN, "user", "123");
         User user = new User(1L, "user", "123", Set.of());
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
         Mockito.when(passwordEncoder.matches("123", user.getPassword())).thenReturn(false);
 
         Assertions.assertThrows(BusinessException.class, () -> {
@@ -99,7 +100,7 @@ class UserServiceMockTest {
         Mockito.verify(transaction, Mockito.never()).rollback();
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
         Mockito.verify(passwordEncoder).matches("123", user.getPassword());
         Mockito.verify(session).close();
     }
@@ -108,7 +109,7 @@ class UserServiceMockTest {
     public void signIn_userNotFound_throwsException() {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_IN, "user", "123");
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> {
             userService.signIn(authRequest);
@@ -118,7 +119,7 @@ class UserServiceMockTest {
         Mockito.verify(transaction, Mockito.never()).rollback();
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
         Mockito.verify(session).close();
     }
 
@@ -126,7 +127,7 @@ class UserServiceMockTest {
     public void signIn_databaseError_throwsRuntimeException() {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_IN, "user", "123");
 
-        Mockito.when(userDAO.findByUsername(session, "user"))
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user"))
                 .thenThrow(new RuntimeException("Database error"));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
@@ -147,8 +148,8 @@ class UserServiceMockTest {
         String expectedAccessToken = "access-token";
         String expectedRefreshToken = "refresh-token";
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
-        Mockito.when(roleDAO.findById(session, 1L)).thenReturn(Optional.of(role));
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
+        Mockito.when(hibernateRoleDAO.findById(session, 1L)).thenReturn(Optional.of(role));
 
         Mockito.doAnswer(invocation -> {
             User user = invocation.getArgument(0);
@@ -167,9 +168,9 @@ class UserServiceMockTest {
         Mockito.verify(transaction).commit();
         Mockito.verify(session).close();
 
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
         Mockito.verify(passwordEncoder).encode("123");
-        Mockito.verify(roleDAO).findById(session, 1L);
+        Mockito.verify(hibernateRoleDAO).findById(session, 1L);
         Mockito.verify(jwtProvider).generateAccessToken(1L);
         Mockito.verify(jwtProvider).generateRefreshToken(1L);
         Mockito.verify(session).persist(Mockito.any(User.class));
@@ -181,13 +182,13 @@ class UserServiceMockTest {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_UP, "user", "123");
         User user = new User(1L, "user", "123", Set.of());
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
 
         Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
             userService.signUp(authRequest);
         });
 
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
@@ -198,8 +199,8 @@ class UserServiceMockTest {
     public void signUp_roleNotFound_throwsException() {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_UP, "user", "123");
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
-        Mockito.when(roleDAO.findById(session, 1L)).thenReturn(Optional.empty());
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.empty());
+        Mockito.when(hibernateRoleDAO.findById(session, 1L)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(RoleNotFoundException.class, () -> {
             userService.signUp(authRequest);
@@ -209,15 +210,15 @@ class UserServiceMockTest {
         Mockito.verify(session).beginTransaction();
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
-        Mockito.verify(userDAO).findByUsername(session, "user");
-        Mockito.verify(roleDAO).findById(session, 1L);
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateRoleDAO).findById(session, 1L);
     }
 
     @Test
     public void signUp_dataBaseError_throwsException() {
         AuthRequest authRequest = new AuthRequest(RequestAction.SIGN_UP, "user", "123");
 
-        Mockito.when(userDAO.findByUsername(session, "user")).thenThrow(new RuntimeException("DataBase Error"));
+        Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenThrow(new RuntimeException("DataBase Error"));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             userService.signUp(authRequest);
@@ -228,6 +229,6 @@ class UserServiceMockTest {
         Mockito.verify(session).close();
         Mockito.verify(transaction).rollback();
         Mockito.verify(transaction, Mockito.never()).commit();
-        Mockito.verify(userDAO).findByUsername(session, "user");
+        Mockito.verify(hibernateUserDAO).findByUsername(session, "user");
     }
 }

@@ -85,7 +85,7 @@ public class UpdateOperationOverlay {
         Label titleLabel = new Label("Редактирование операции");
         titleLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        TextField amountField = new TextField(String.format("%.2f", operation.getAmount()));
+        TextField amountField = new TextField(String.format("%.2f", operation.getAmount()).replace(',', '.'));
         amountField.setPromptText("Сумма");
 
         amountField.textProperty().addListener((observable, oldValue, newValue) -> {
