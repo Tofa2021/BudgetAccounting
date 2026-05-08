@@ -1,5 +1,6 @@
 package org.example.client.connection;
 
+import org.example.Pair;
 import org.example.client.Result;
 import org.example.dto.OperationCategory;
 import org.example.dto.model.OperationDTO;
@@ -10,7 +11,6 @@ import org.example.dto.request.operation.OperationRequest;
 import org.example.dto.request.user.AuthRequest;
 import org.example.dto.response.Response;
 import org.example.dto.response.Status;
-import org.example.enums.Pair;
 
 import java.math.BigDecimal;
 import java.time.Instant;
