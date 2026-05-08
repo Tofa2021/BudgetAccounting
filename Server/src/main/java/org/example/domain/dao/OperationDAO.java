@@ -1,9 +1,9 @@
 package org.example.domain.dao;
 
 import org.example.domain.model.Operation;
-import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.OperationCategory;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
@@ -14,27 +14,10 @@ public interface OperationDAO extends DAO<Operation, Long> {
 
     List<Operation> findFilteredOperations(
             Long userId,
-            Double minAmount,
-            Double maxAmount,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
             Instant dateFrom,
             Instant dateTo,
-            IncreaseOperationCategory category
-    );
-
-    List<Operation> findFilteredOperations(
-            Long userId,
-            Double minAmount,
-            Double maxAmount,
-            Instant dateFrom,
-            Instant dateTo,
-            DecreaseOperationCategory category
-    );
-
-    List<Operation> findFilteredOperations(
-            Long userId,
-            Double minAmount,
-            Double maxAmount,
-            Instant dateFrom,
-            Instant dateTo
+            OperationCategory category
     );
 }

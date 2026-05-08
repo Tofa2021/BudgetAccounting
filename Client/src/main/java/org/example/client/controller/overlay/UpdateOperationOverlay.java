@@ -16,7 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.OperationCategory;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
@@ -99,8 +99,8 @@ public class UpdateOperationOverlay {
 
         ComboBox<String> categoryCombo = new ComboBox<>();
         if (operation instanceof IncreaseOperationDTO) {
-            categoryCombo.getItems().addAll(Arrays.stream(IncreaseOperationCategory.values())
-                    .map(IncreaseOperationCategory::getName)
+            categoryCombo.getItems().addAll(Arrays.stream(OperationCategory.values())
+                    .map(OperationCategory::getName)
                     .toList());
             categoryCombo.valueProperty().setValue(((IncreaseOperationDTO) operation).getCategory().getName());
         } else if (operation instanceof DecreaseOperationDTO) {
@@ -131,7 +131,7 @@ public class UpdateOperationOverlay {
             String newCategoryName = categoryCombo.getValue();
             if (operation instanceof IncreaseOperationDTO increaseOperationDTO) {
                 increaseOperationDTO.setAmount(newAmount);
-                IncreaseOperationCategory newCategory = Arrays.stream(IncreaseOperationCategory.values())
+                OperationCategory newCategory = Arrays.stream(OperationCategory.values())
                         .filter(cat -> cat.getName().equals(newCategoryName))
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Category not found"));

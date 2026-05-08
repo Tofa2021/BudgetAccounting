@@ -20,15 +20,13 @@
         <property name="hibernate.c3p0.max_size">20</property>
         <property name="hibernate.c3p0.timeout">300</property>
         <property name="hibernate.c3p0.max_statements">50</property>
-        
+
         <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="org.example.domain.model.User"/>
         <mapping class="org.example.domain.model.Role"/>
         <mapping class="org.example.domain.model.Budget"/>
         <mapping class="org.example.domain.model.Operation"/>
-        <mapping class="org.example.domain.model.IncreaseOperation"/>
-        <mapping class="org.example.domain.model.DecreaseOperation"/>
 
     </session-factory>
 </hibernate-configuration>

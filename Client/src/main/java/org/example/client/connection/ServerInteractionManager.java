@@ -1,11 +1,18 @@
 package org.example.client.connection;
 
 import org.example.client.Result;
-import org.example.dto.*;
+import org.example.dto.OperationCategory;
 import org.example.dto.model.OperationDTO;
 import org.example.dto.request.*;
+import org.example.dto.request.operation.DeleteOperationRequest;
+import org.example.dto.request.operation.OperationFilterRequest;
+import org.example.dto.request.operation.OperationRequest;
+import org.example.dto.request.user.AuthRequest;
 import org.example.dto.response.Response;
+import org.example.dto.response.Status;
+import org.example.enums.Pair;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,15 +32,15 @@ public class ServerInteractionManager {
 
     private <T> Result<T> processRequest(Request request) {
         Response response = putRequest(request);
-        Status status = response.getStatus();
+        Status status = response.status();
         if (status == Status.OK) {
-            return Result.success((T) response.getBody());
+            return Result.success((T) response.body());
         }
         return Result.error(status, getErrorMessage(status));
     }
 
     public Result<Double> getAmount() {
-        return processRequest(new AuthorizedRequest(RequestAction.GET_BUDGET_AMOUNT, assessToken));
+        return processRequest(new AuthorizedRequest(RequestAction.GET_HOUSEHOLD_AMOUNT, assessToken));
     }
 
     public Result<List<OperationDTO>> getUserOperations() {
@@ -60,8 +67,11 @@ public class ServerInteractionManager {
         return Result.error(result.getStatus(), result.getErrorMessage());
     }
 
-    public Result<Object> increaseBudget(double amount, IncreaseOperationCategory category) {
-        return processRequest(new IncreaseOperationRequest(assessToken, amount, Instant.now(), category));
+    public Result<Object> increaseBudget(BigDecimal amount, OperationCategory category) {
+        if (!category.isIncrease()) {
+            throw new IllegalArgumentException("Category must be increasing");
+        }
+        return processRequest(new OperationRequest(assessToken, amount, Instant.now(), category));
     }
 
     public Result<Object> decreaseBudget(double amount, DecreaseOperationCategory category) {
@@ -69,7 +79,7 @@ public class ServerInteractionManager {
     }
 
     public Result<Object> deleteOperation(Long id) {
-        return processRequest(new AuthorizedModelIdRequest(id, RequestAction.DELETE_OPERATION, assessToken));
+        return processRequest(new DeleteOperationRequest(id, RequestAction.DELETE_OPERATION, assessToken));
     }
 
     public Result<Object> updateOperation(OperationDTO operationDTO) {
@@ -90,9 +100,9 @@ public class ServerInteractionManager {
     ) {
         OperationFilterRequest request = switch (type) {
             case "+" -> {
-                IncreaseOperationCategory category = null;
+                OperationCategory category = null;
                 if (!categoryString.equals("Все категории")) {
-                    category = IncreaseOperationCategory.getByName(categoryString);
+                    category = OperationCategory.getByName(categoryString);
                 }
 
                 yield new IncreaseOperationFilterRequest(
@@ -134,7 +144,7 @@ public class ServerInteractionManager {
         try {
             clientConnection.putRequest(request);
             Response response = responseQueue.take();
-            System.out.println(request.getAction() + " " + response.getStatus());
+            System.out.println(request.getAction() + " " + response.status());
             return response;
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted", e);

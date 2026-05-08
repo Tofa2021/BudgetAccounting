@@ -7,7 +7,7 @@ import javafx.beans.property.StringProperty;
 import lombok.Getter;
 import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.OperationCategory;
 
 @Getter
 public class BudgetViewModel extends BaseViewModel {
@@ -15,7 +15,7 @@ public class BudgetViewModel extends BaseViewModel {
     private final StringProperty amountInput = new SimpleStringProperty("");
     private final StringProperty errorMessage = new SimpleStringProperty("");
     private final StringProperty selectedIncreaseCategory =
-            new SimpleStringProperty(IncreaseOperationCategory.SALARY.getName());
+            new SimpleStringProperty(OperationCategory.SALARY.getName());
     private final StringProperty selectedDecreaseCategory =
             new SimpleStringProperty(DecreaseOperationCategory.FOOD.getName());
 
@@ -29,7 +29,7 @@ public class BudgetViewModel extends BaseViewModel {
         refreshBalance();
     }
 
-    public void increase(double amount, IncreaseOperationCategory category) {
+    public void increase(double amount, OperationCategory category) {
         errorMessage.setValue("");
         if (category == null) {
             errorMessage.setValue("Выберите категорию");

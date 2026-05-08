@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.example.client.viewModel.BudgetViewModel;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.OperationCategory;
 
 import java.util.Arrays;
 
@@ -38,8 +38,8 @@ public class BudgetController extends BaseController<BudgetViewModel> {
 
         setupAmountValidation();
 
-        increaseCategoryComboBox.getItems().setAll(Arrays.stream(IncreaseOperationCategory.values())
-                .map(IncreaseOperationCategory::getName)
+        increaseCategoryComboBox.getItems().setAll(Arrays.stream(OperationCategory.values())
+                .map(OperationCategory::getName)
                 .toList());
         increaseCategoryComboBox.valueProperty().bindBidirectional(
                 viewModel.getSelectedIncreaseCategory()
@@ -73,7 +73,7 @@ public class BudgetController extends BaseController<BudgetViewModel> {
         if (isValidatedInput()) {
             double amount = Double.parseDouble(amountField.getText());
             String categoryString = increaseCategoryComboBox.getValue();
-            IncreaseOperationCategory category = Arrays.stream(IncreaseOperationCategory.values())
+            OperationCategory category = Arrays.stream(OperationCategory.values())
                     .filter(cat -> cat.getName().equals(categoryString))
                     .findFirst()
                     .get();

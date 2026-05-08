@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import lombok.Setter;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
+import org.example.dto.OperationCategory;
 
 import java.time.Instant;
 import java.time.LocalTime;
@@ -92,8 +92,8 @@ public class OperationFilterController {
         switch (type) {
             case "Доходы" -> {
                 categoryFilterComboBox.getItems().addAll(Arrays.stream(
-                                IncreaseOperationCategory.values())
-                        .map(IncreaseOperationCategory::getName)
+                                OperationCategory.values())
+                        .map(OperationCategory::getName)
                         .toList());
             }
             case "Расходы" -> categoryFilterComboBox.getItems().addAll(Arrays.stream(
