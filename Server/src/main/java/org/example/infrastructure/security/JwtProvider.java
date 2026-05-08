@@ -98,6 +98,11 @@ public class JwtProvider implements TokenProvider {
         return Long.parseLong(getRefreshClaims(token).getSubject());
     }
 
+    @Override
+    public void invalidateRefreshToken(String token) {
+        // TODO
+    }
+
     private Claims getAccessClaims(String token) {
         return getClaims(token, jwtAccessSecret);
     }
