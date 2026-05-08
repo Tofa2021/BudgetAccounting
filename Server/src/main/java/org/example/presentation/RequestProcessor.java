@@ -1,40 +1,42 @@
 package org.example.presentation;
 
 import lombok.AllArgsConstructor;
-import org.example.application.service.*;
+import lombok.extern.slf4j.Slf4j;
+import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.BusinessException;
-import org.example.dto.model.OperationDTO;
-import org.example.dto.request.*;
-import org.example.dto.request.operation.DeleteOperationRequest;
-import org.example.dto.request.operation.OperationFilterRequest;
-import org.example.dto.request.operation.OperationRequest;
+import org.example.dto.request.AuthorizedRequest;
+import org.example.dto.request.Request;
+import org.example.dto.request.RequestAction;
 import org.example.dto.request.user.AuthRequest;
 import org.example.dto.response.Response;
 import org.example.dto.response.Status;
 import org.example.infrastructure.security.TokenProvider;
-import org.example.util.DTOMapper;
+import org.example.presentation.requestHandler.*;
 
-import java.util.NoSuchElementException;
-
+@Slf4j
 @AllArgsConstructor
 public class RequestProcessor {
     private final TokenProvider tokenProvider;
-    private final DTOMapper dtoMapper;
-    private final AccountMemberService accountMemberService;
-    private final AccountService accountService;
-    private final CategoryService categoryService;
-    private final HouseholdMemberService householdMemberService;
-    private final HouseholdService householdService;
-    private final OperationService operationService;
-    private final UserService userService;
+    private final AccountMemberRequestHandler accountMemberRequestHandler;
+    private final AccountRequestHandler accountRequestHandler;
+    private final AuthRequestHandler authRequestHandler;
+    private final CategoryRequestHandler categoryRequestHandler;
+    private final HouseholdMemberRequestHandler householdMemberRequestHandler;
+    private final HouseholdRequestHandler householdRequestHandler;
+    private final OperationRequestHandler operationRequestHandler;
+    private final UserRequestHandler userRequestHandler;
 
     public Response process(Request request) {
         try {
-            return processRequest(request);
+            log.info("Received request with Action = {}", request.getAction());
+            Response response = processRequest(request);
+            log.info("Send response with Status = {}", request.getAction());
+            return response;
         } catch (BusinessException e) {
+            log.warn(e.getMessage());
             return new Response(e.getStatus(), null);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
             return new Response(Status.SERVER_ERROR, null);
         }
     }
@@ -54,15 +56,7 @@ public class RequestProcessor {
     }
 
     private Response processUnauthorizedRequest(RequestAction action, Request request) {
-        Object result = switch (action) {
-            case SIGN_IN -> userService.signIn((AuthRequest) request);
-
-            case SIGN_UP -> userService.signUp((AuthRequest) request);
-
-            default -> throw new IllegalStateException("Unexpected unauthorized action: " + action);
-        };
-
-        return Response.success(result);
+        return authRequestHandler.handle(action, (AuthRequest) request);
     }
 
     private Response processAuthorizedRequest(RequestAction action, AuthorizedRequest request) {
@@ -73,35 +67,28 @@ public class RequestProcessor {
         Long userId = tokenProvider.getUserIdFromAccessToken(request.getToken());
 
         return switch (action) {
-            case CREATE_OPERATION, DELETE_OPERATION, UPDATE_OPERATION -> processVoidOperation(action, request, userId);
+            case CREATE_ACCOUNT, GET_ACCOUNT, GET_ACCOUNTS, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
+                    accountRequestHandler.handle(action, request, userId);
 
-            case GET_HOUSEHOLD_AMOUNT ->
-                    Response.success(householdService.getAmount((ModelIdAuthorizedRequest) request));
+            case CREATE_ACCOUNT_MEMBER, UPDATE_ACCOUNT_MEMBER_ROLE, DELETE_ACCOUNT_MEMBER ->
+                    accountMemberRequestHandler.handle(action, request, userId);
 
-            case GET_USER_OPERATIONS ->
-                    Response.success(dtoMapper.toDTOs(operationService.getAllByUserId(userId), OperationDTO.class));
+            case CREATE_CATEGORY, GET_CATEGORIES, GET_EXPENSE_CATEGORIES, GET_INCOME_CATEGORIES, UPDATE_CATEGORY,
+                 DELETE_CATEGORY -> categoryRequestHandler.handle(action, request, userId);
 
-            case GET_RECENT_OPERATIONS ->
-                    Response.success(dtoMapper.toDTOs(operationService.getRecentOperations(userId, (IntegerAuthorizedRequest) request), OperationDTO.class));
+            case CREATE_HOUSEHOLD_MEMBER, UPDATE_HOUSEHOLD_MEMBER_ROLE, DELETE_HOUSEHOLD_MEMBER ->
+                    householdMemberRequestHandler.handle(action, request, userId);
 
-            case GET_FILTERED_OPERATIONS ->
-                    Response.success(dtoMapper.toDTOs(operationService.getFilteredOperations(userId, (OperationFilterRequest) request), OperationDTO.class));
+            case CREATE_HOUSEHOLD, GET_HOUSEHOLD, GET_HOUSEHOLD_AMOUNT, UPDATE_HOUSEHOLD, DELETE_HOUSEHOLD ->
+                    householdRequestHandler.handle(action, request, userId);
 
-            default -> throw new NoSuchElementException("Unknown action: " + action);
+            case CREATE_OPERATION, GET_USER_OPERATIONS, GET_RECENT_OPERATIONS, GET_FILTERED_OPERATIONS,
+                 UPDATE_OPERATION, DELETE_OPERATION -> operationRequestHandler.handle(action, request, userId);
+
+            case LOGOUT, GET_ME, GET_USER, UPDATE_USER, DELETE_USER ->
+                    userRequestHandler.handle(action, request, userId);
+
+            default -> throw new BadParameterException("Request action = " + action + " is not supported");
         };
-    }
-
-    private Response processVoidOperation(RequestAction action, AuthorizedRequest request, Long userId) {
-        switch (action) {
-            case CREATE_OPERATION -> operationService.create((OperationRequest) request, userId);
-
-            case DELETE_OPERATION -> operationService.deleteById((DeleteOperationRequest) request, userId);
-
-            case UPDATE_OPERATION -> operationService.update((UpdateRequest<OperationDTO>) request);
-
-            default -> throw new NoSuchElementException("Unknown void operation: " + action);
-        }
-
-        return Response.success(null);
     }
 }
