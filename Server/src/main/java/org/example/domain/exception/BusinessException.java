@@ -1,7 +1,7 @@
 package org.example.domain.exception;
 
 import lombok.Getter;
-import org.example.dto.Status;
+import org.example.dto.response.Status;
 
 @Getter
 public class BusinessException extends RuntimeException {

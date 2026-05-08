@@ -1,4 +1,4 @@
-package org.example.domain.exception;
+package org.example.domain.exception.not_found;
 
 public class UserNotFoundException extends NotFoundException {
     public UserNotFoundException(String username) {
