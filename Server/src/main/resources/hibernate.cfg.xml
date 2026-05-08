@@ -24,9 +24,12 @@
         <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="org.example.domain.model.User"/>
-        <mapping class="org.example.domain.model.Role"/>
-        <mapping class="org.example.domain.model.Budget"/>
         <mapping class="org.example.domain.model.Operation"/>
+        <mapping class="org.example.domain.model.Category"/>
+        <mapping class="org.example.domain.model.Household"/>
+        <mapping class="org.example.domain.model.HouseholdMember"/>
+        <mapping class="org.example.domain.model.Account"/>
+        <mapping class="org.example.domain.model.AccountMember"/>
 
     </session-factory>
 </hibernate-configuration>
