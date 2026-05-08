@@ -2,16 +2,14 @@ package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.domain.TransactionManager;
+import org.example.domain.dao.AccountDAO;
 import org.example.domain.dao.HouseholdDAO;
 import org.example.domain.dao.HouseholdMemberDAO;
 import org.example.domain.dao.UserDAO;
 import org.example.domain.exception.already_exists.HouseholdMemberAlreadyExistsExceptionException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
-import org.example.domain.model.Household;
-import org.example.domain.model.HouseholdMember;
-import org.example.domain.model.HouseholdMemberRole;
-import org.example.domain.model.User;
+import org.example.domain.model.*;
 import org.example.dto.request.ModelIdAuthorizedRequest;
 import org.example.dto.request.household.CreateHouseholdRequest;
 import org.example.dto.request.household.DeleteHouseholdRequest;
@@ -29,9 +27,11 @@ public class HouseholdService { // TODO check rights and TODO logging
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
     private final UserDAO userDAO;
+    private final AccountDAO accountDAO;
 
     public BigDecimal getAmount(ModelIdAuthorizedRequest request) {
-        return householdDAO.getAmount(request.getId());
+        List<Account> accounts = accountDAO.getAllByHouseholdId(request.getId());
+        return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     public Household create(CreateHouseholdRequest request, Long userId) {
