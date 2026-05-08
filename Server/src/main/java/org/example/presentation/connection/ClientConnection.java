@@ -30,7 +30,7 @@ public class ClientConnection implements Runnable {
                 Request request = (Request) in.readObject();
                 System.out.println("Received request: " + request.getAction() + " from " + clientSocket.getPort());
                 Response response = requestProcessor.process(request);
-                System.out.println("Send response: " + response.getStatus());
+                System.out.println("Send response: " + response.status());
                 send(response);
             }
         } catch (EOFException e) {
