@@ -2,7 +2,6 @@ package org.example.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.dto.RequestAction;
 
 import java.io.Serializable;
 

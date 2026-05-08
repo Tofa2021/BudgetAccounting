@@ -1,7 +1,6 @@
 package org.example.dto.request;
 
 import lombok.Getter;
-import org.example.dto.RequestAction;
 
 @Getter
 public class IntegerAuthorizedRequest extends AuthorizedRequest {
