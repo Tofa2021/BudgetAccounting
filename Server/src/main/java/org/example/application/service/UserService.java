@@ -9,6 +9,7 @@ import org.example.domain.exception.BusinessException;
 import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.User;
+import org.example.dto.request.ModelIdAuthorizedRequest;
 import org.example.dto.request.user.AuthRequest;
 import org.example.dto.request.user.LogoutRequest;
 import org.example.dto.request.user.UpdateUserRequest;
@@ -18,7 +19,7 @@ import org.example.infrastructure.security.TokenProvider;
 
 @Slf4j
 @RequiredArgsConstructor
-public class UserService { // TODO check rights and TODO logging
+public class UserService { // TODO check rights
     private final TransactionManager transactionManager;
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
@@ -51,12 +52,12 @@ public class UserService { // TODO check rights and TODO logging
                     .orElseThrow(() -> new UserNotFoundException(username));
             Long userId = user.getId();
 
-            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                return new Pair<>(tokenProvider.generateAccessToken(userId), tokenProvider.generateRefreshToken(userId));
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                throw new BusinessException(Status.UNAUTHORIZED, "Invalid password");
             }
 
             log.info("User sign in with username = {}", username);
-            throw new BusinessException(Status.UNAUTHORIZED, "Invalid password");
+            return new Pair<>(tokenProvider.generateAccessToken(userId), tokenProvider.generateRefreshToken(userId));
         });
     }
 
@@ -75,7 +76,9 @@ public class UserService { // TODO check rights and TODO logging
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
             }
 
-            return userDAO.save(user);
+            userDAO.save(user);
+            log.info("User with id = {} updated. New username = {}", userId, username != null);
+            return user;
         });
     }
 
@@ -83,12 +86,16 @@ public class UserService { // TODO check rights and TODO logging
         transactionManager.executeInTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
+            log.info("User with id = {} deleted", userId);
             userDAO.delete(user);
         });
     }
 
     public void logout(LogoutRequest request) {
-        tokenProvider.invalidateRefreshToken(request.getRefreshToken());
+        String refreshToken = request.getRefreshToken();
+        Long userId = tokenProvider.getUserIdFromRefreshToken(refreshToken);
+        tokenProvider.invalidateRefreshToken(refreshToken);
+        log.info("User with id = {} logged out", userId);
     }
 
     public Pair<String, String> refreshTokens(String refreshToken) {
@@ -101,6 +108,7 @@ public class UserService { // TODO check rights and TODO logging
         String newAccessToken = tokenProvider.generateAccessToken(userId);
         String newRefreshToken = tokenProvider.generateRefreshToken(userId);
 
+        log.info("User with id = {} refreshed tokens", userId);
         return new Pair<>(newAccessToken, newRefreshToken);
     }
 
