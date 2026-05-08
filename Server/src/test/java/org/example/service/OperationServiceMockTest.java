@@ -130,7 +130,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void deleteById_increaseOperation() {
+    public void delete_increaseOperation() {
         DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         double expectedAmount = 900.;
@@ -140,7 +140,7 @@ public class OperationServiceMockTest {
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
         Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
-        operationService.deleteById(request);
+        operationService.delete(request);
 
         Assertions.assertEquals(expectedAmount, budget.getAmount());
         Mockito.verify(sessionManager).openSession();
@@ -153,7 +153,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void deleteById_decreaseOperation() {
+    public void delete_decreaseOperation() {
         DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         double expectedAmount = 1100.;
@@ -163,7 +163,7 @@ public class OperationServiceMockTest {
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
         Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
-        operationService.deleteById(request);
+        operationService.delete(request);
 
         Assertions.assertEquals(expectedAmount, budget.getAmount());
         Mockito.verify(sessionManager).openSession();
@@ -176,13 +176,13 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void deleteById_operationNotFound_throwsException() {
+    public void delete_operationNotFound_throwsException() {
         DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(OperationNotFoundException.class, () -> {
-            operationService.deleteById(request);
+            operationService.delete(request);
         });
 
         Mockito.verify(sessionManager).openSession();
@@ -193,7 +193,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void deleteById_budgetNotFound_throwsException() {
+    public void delete_budgetNotFound_throwsException() {
         DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         Operation operation = new DecreaseOperation(1L, 100., Instant.now(), user, DecreaseOperationCategory.FOOD);
@@ -202,7 +202,7 @@ public class OperationServiceMockTest {
         Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
-            operationService.deleteById(request);
+            operationService.delete(request);
         });
 
         Mockito.verify(sessionManager).openSession();
