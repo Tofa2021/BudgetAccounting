@@ -23,8 +23,8 @@ public class AccountService { // TODO check rights and TODO logging
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
 
-    public void create(CreateAccountRequest request, Long userId) {
-        transactionManager.executeInTransaction(() -> {
+    public Account create(CreateAccountRequest request, Long userId) {
+        return transactionManager.executeInTransaction(() -> {
             Household household = householdDAO.findById(request.getHouseholdId())
                     .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
 
@@ -44,6 +44,8 @@ public class AccountService { // TODO check rights and TODO logging
             accountMember.setHouseholdMember(householdMember);
             accountMember.setRole(AccountMemberRole.MANAGER);
             accountMemberDAO.save(accountMember);
+
+            return account;
         });
     }
 

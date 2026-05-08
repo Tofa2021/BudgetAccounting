@@ -35,15 +35,15 @@ public class OperationService { // TODO check rights and TODO logging
         return transactionManager.executeInTransaction(() -> operationDAO.findAllByUserId(userId));
     }
 
-    public List<Operation> getRecentOperations(Long userId, IntegerAuthorizedRequest request) {
+    public List<Operation> getRecentOperations(IntegerAuthorizedRequest request, Long userId) {
         return transactionManager.executeInTransaction(() -> {
             Instant cutoff = Instant.now().minus(request.getInteger(), ChronoUnit.DAYS);
             return operationDAO.findRecentOperations(userId, cutoff);
         });
     }
 
-    public void create(OperationRequest request, Long userId) {
-        transactionManager.executeInTransaction(() -> {
+    public Operation create(OperationRequest request, Long userId) {
+        return transactionManager.executeInTransaction(() -> {
             BigDecimal amount = request.getAmount();
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -71,10 +71,12 @@ public class OperationService { // TODO check rights and TODO logging
                 account.decrease(amount);
             }
             accountDAO.save(account);
+
+            return operation;
         });
     }
 
-    public void deleteById(DeleteOperationRequest request) {
+    public void delete(DeleteOperationRequest request) {
         transactionManager.executeInTransaction(() -> {
             Operation operation = operationDAO.findById(request.getId())
                     .orElseThrow(() -> new OperationNotFoundException(request.getId()));
@@ -144,7 +146,7 @@ public class OperationService { // TODO check rights and TODO logging
         });
     }
 
-    public List<Operation> getFilteredOperations(Long userId, OperationFilterRequest request) {
+    public List<Operation> getFilteredOperations(OperationFilterRequest request, Long userId) {
         return operationDAO.findFilteredOperations(
                 userId,
                 request.getMinAmount(),

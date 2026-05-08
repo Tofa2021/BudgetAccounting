@@ -15,6 +15,7 @@ import org.example.domain.model.User;
 import org.example.dto.request.ModelIdAuthorizedRequest;
 import org.example.dto.request.household.CreateHouseholdRequest;
 import org.example.dto.request.household.DeleteHouseholdRequest;
+import org.example.dto.request.household.GetHouseholdRequest;
 import org.example.dto.request.household.UpdateHouseholdRequest;
 
 import java.math.BigDecimal;
@@ -97,5 +98,10 @@ public class HouseholdService { // TODO check rights and TODO logging
 
     public void delete(DeleteHouseholdRequest request) {
         householdDAO.deleteById(request.getId());
+    }
+
+    public Household get(GetHouseholdRequest request) {
+        return householdDAO.findById(request.getHouseholdId())
+                .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
     }
 }

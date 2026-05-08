@@ -79,7 +79,7 @@ public class UserService { // TODO check rights and TODO logging
         });
     }
 
-    public void deleteById(Long userId) {
+    public void delete(Long userId) {
         transactionManager.executeInTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -102,5 +102,15 @@ public class UserService { // TODO check rights and TODO logging
         String newRefreshToken = tokenProvider.generateRefreshToken(userId);
 
         return new Pair<>(newAccessToken, newRefreshToken);
+    }
+
+    public User get(ModelIdAuthorizedRequest request) {
+        return userDAO.findById(request.getId())
+                .orElseThrow(() -> new UserNotFoundException(request.getId()));
+    }
+
+    public User getMe(Long userId) {
+        return userDAO.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
