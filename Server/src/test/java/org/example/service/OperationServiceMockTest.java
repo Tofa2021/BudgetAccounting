@@ -2,17 +2,22 @@ package org.example.service;
 
 import org.example.application.service.OperationService;
 import org.example.domain.SessionManager;
-import org.example.domain.exception.BudgetNotFoundException;
-import org.example.domain.exception.OperationNotFoundException;
-import org.example.domain.model.*;
+import org.example.domain.exception.not_found.BudgetNotFoundException;
+import org.example.domain.exception.not_found.OperationNotFoundException;
+import org.example.domain.model.Household;
+import org.example.domain.model.Operation;
+import org.example.domain.model.User;
 import org.example.dto.DecreaseOperationCategory;
-import org.example.dto.IncreaseOperationCategory;
-import org.example.dto.RequestAction;
+import org.example.dto.OperationCategory;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
 import org.example.dto.model.OperationDTO;
-import org.example.dto.request.*;
-import org.example.infrastructure.dao.HibernateBudgetDAO;
+import org.example.dto.request.IntegerAuthorizedRequest;
+import org.example.dto.request.RequestAction;
+import org.example.dto.request.UpdateRequest;
+import org.example.dto.request.operation.DeleteOperationRequest;
+import org.example.dto.request.operation.OperationFilterRequest;
+import org.example.infrastructure.dao.HibernateHouseholdDAO;
 import org.example.infrastructure.dao.HibernateOperationDAO;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -40,7 +45,7 @@ public class OperationServiceMockTest {
     @Mock
     private HibernateOperationDAO hibernateOperationDAO;
     @Mock
-    private HibernateBudgetDAO hibernateBudgetDAO;
+    private HibernateHouseholdDAO hibernateBudgetDAO;
     @Mock
     private SessionManager sessionManager;
     @Mock
@@ -57,7 +62,7 @@ public class OperationServiceMockTest {
     @Test
     public void getAllByUser() {
         User user = new User(1L, "user", "123", Set.of());
-        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, IncreaseOperationCategory.SALARY);
+        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findAllByUserId(session, user.getId())).thenReturn(List.of(operation1, operation2));
@@ -77,7 +82,7 @@ public class OperationServiceMockTest {
         Instant fixedNow = Instant.parse("2026-03-11T10:00:00Z");
 
         User user = new User(1L, "user", "123", Set.of());
-        Operation operation1 = new IncreaseOperation(1L, 100., fixedNow, user, IncreaseOperationCategory.SALARY);
+        Operation operation1 = new IncreaseOperation(1L, 100., fixedNow, user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., fixedNow, user, DecreaseOperationCategory.FOOD);
 
         try (MockedStatic<Instant> instantMock = Mockito.mockStatic(Instant.class)) {
@@ -126,11 +131,11 @@ public class OperationServiceMockTest {
 
     @Test
     public void deleteById_increaseOperation() {
-        AuthorizedModelIdRequest request = new AuthorizedModelIdRequest(1L, RequestAction.DELETE_OPERATION, "token");
+        DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         double expectedAmount = 900.;
-        Budget budget = new Budget(1L, 1000., user);
-        Operation operation = new IncreaseOperation(1L, 100., Instant.now(), user, IncreaseOperationCategory.SALARY);
+        Household budget = new Household(1L, 1000., user);
+        Operation operation = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
         Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
@@ -149,10 +154,10 @@ public class OperationServiceMockTest {
 
     @Test
     public void deleteById_decreaseOperation() {
-        AuthorizedModelIdRequest request = new AuthorizedModelIdRequest(1L, RequestAction.DELETE_OPERATION, "token");
+        DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         double expectedAmount = 1100.;
-        Budget budget = new Budget(1L, 1000., user);
+        Household budget = new Household(1L, 1000., user);
         Operation operation = new DecreaseOperation(1L, 100., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
@@ -172,7 +177,7 @@ public class OperationServiceMockTest {
 
     @Test
     public void deleteById_operationNotFound_throwsException() {
-        AuthorizedModelIdRequest request = new AuthorizedModelIdRequest(1L, RequestAction.DELETE_OPERATION, "token");
+        DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.empty());
 
@@ -189,7 +194,7 @@ public class OperationServiceMockTest {
 
     @Test
     public void deleteById_budgetNotFound_throwsException() {
-        AuthorizedModelIdRequest request = new AuthorizedModelIdRequest(1L, RequestAction.DELETE_OPERATION, "token");
+        DeleteOperationRequest request = new DeleteOperationRequest(1L, RequestAction.DELETE_OPERATION, "token");
         User user = new User(1L, "user", "123", Set.of());
         Operation operation = new DecreaseOperation(1L, 100., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
@@ -216,16 +221,16 @@ public class OperationServiceMockTest {
                 100.,
                 Instant.now(),
                 user,
-                IncreaseOperationCategory.BONUS
+                OperationCategory.BONUS
         );
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         IncreaseOperationDTO updateOperation = new IncreaseOperationDTO(
                 1L,
                 110.,
                 Instant.now(),
                 user.getId(),
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
@@ -257,16 +262,16 @@ public class OperationServiceMockTest {
                 100.,
                 Instant.now(),
                 user,
-                IncreaseOperationCategory.BONUS
+                OperationCategory.BONUS
         );
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         IncreaseOperationDTO updateOperation = new IncreaseOperationDTO(
                 1L,
                 90.,
                 Instant.now(),
                 user.getId(),
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
@@ -300,7 +305,7 @@ public class OperationServiceMockTest {
                 user,
                 DecreaseOperationCategory.FOOD
         );
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         DecreaseOperationDTO updateOperation = new DecreaseOperationDTO(
                 1L,
@@ -341,7 +346,7 @@ public class OperationServiceMockTest {
                 user,
                 DecreaseOperationCategory.FOOD
         );
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         DecreaseOperationDTO updateOperation = new DecreaseOperationDTO(
                 1L,
@@ -375,11 +380,11 @@ public class OperationServiceMockTest {
     @Test
     public void update_operationNotFound_throwsException() {
         User user = new User(1L, "user", "123", Set.of());
-        IncreaseOperation existingOperation = new IncreaseOperation(1L, 100., Instant.now(), user, IncreaseOperationCategory.BONUS);
-        IncreaseOperationCategory exceptedCategory = existingOperation.getCategory();
-        Budget budget = new Budget(1L, 100., user);
+        IncreaseOperation existingOperation = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.BONUS);
+        OperationCategory exceptedCategory = existingOperation.getCategory();
+        Household budget = new Household(1L, 100., user);
 
-        IncreaseOperationDTO updateOperation = new IncreaseOperationDTO(1L, 110., Instant.now(), user.getId(), IncreaseOperationCategory.SALARY);
+        IncreaseOperationDTO updateOperation = new IncreaseOperationDTO(1L, 110., Instant.now(), user.getId(), OperationCategory.SALARY);
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId()))
@@ -412,7 +417,7 @@ public class OperationServiceMockTest {
                 DecreaseOperationCategory.FOOD
         );
         DecreaseOperationCategory expectedCategory = existingOperation.getCategory();
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         DecreaseOperationDTO updateOperation = new DecreaseOperationDTO(
                 1L,
@@ -454,14 +459,14 @@ public class OperationServiceMockTest {
                 DecreaseOperationCategory.FOOD
         );
         DecreaseOperationCategory expectedCategory = existingOperation.getCategory();
-        Budget budget = new Budget(1L, 100., user);
+        Household budget = new Household(1L, 100., user);
 
         IncreaseOperationDTO updateOperation = new IncreaseOperationDTO(
                 1L,
                 110.,
                 Instant.now(),
                 user.getId(),
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
@@ -494,10 +499,10 @@ public class OperationServiceMockTest {
                 100.,
                 Instant.now(),
                 user,
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
-        IncreaseOperationCategory expectedCategory = existingOperation.getCategory();
-        Budget budget = new Budget(1L, 100., user);
+        OperationCategory expectedCategory = existingOperation.getCategory();
+        Household budget = new Household(1L, 100., user);
 
         DecreaseOperationDTO updateOperation = new DecreaseOperationDTO(
                 1L,
@@ -541,7 +546,7 @@ public class OperationServiceMockTest {
                 null
         );
 
-        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, IncreaseOperationCategory.SALARY);
+        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findFilteredOperations(
@@ -576,18 +581,18 @@ public class OperationServiceMockTest {
                 100.,
                 dateFrom,
                 dateTo,
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
 
         Operation operation1 = new IncreaseOperation(1L, 200.,
-                Instant.parse("2024-03-10T15:30:00Z"), user, IncreaseOperationCategory.SALARY);
+                Instant.parse("2024-03-10T15:30:00Z"), user, OperationCategory.SALARY);
         Operation operation2 = new IncreaseOperation(2L, 300.,
-                Instant.parse("2024-07-20T09:15:00Z"), user, IncreaseOperationCategory.SALARY);
+                Instant.parse("2024-07-20T09:15:00Z"), user, OperationCategory.SALARY);
 
         Operation operation3 = new IncreaseOperation(3L, 250.,
-                Instant.parse("2023-12-31T23:59:00Z"), user, IncreaseOperationCategory.SALARY);
+                Instant.parse("2023-12-31T23:59:00Z"), user, OperationCategory.SALARY);
         Operation operation4 = new IncreaseOperation(4L, 350.,
-                Instant.parse("2025-01-01T00:00:00Z"), user, IncreaseOperationCategory.SALARY);
+                Instant.parse("2025-01-01T00:00:00Z"), user, OperationCategory.SALARY);
 
         Mockito.when(hibernateOperationDAO.findFilteredOperations(
                 session,
@@ -596,7 +601,7 @@ public class OperationServiceMockTest {
                 500.,
                 dateFrom,
                 dateTo,
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         )).thenReturn(List.of(operation1, operation2));
 
         List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
@@ -606,7 +611,7 @@ public class OperationServiceMockTest {
         Assertions.assertFalse(actualOperations.contains(operation4));
 
         Mockito.verify(hibernateOperationDAO).findFilteredOperations(
-                session, user.getId(), 100., 500., dateFrom, dateTo, IncreaseOperationCategory.SALARY
+                session, user.getId(), 100., 500., dateFrom, dateTo, OperationCategory.SALARY
         );
     }
 
@@ -626,8 +631,8 @@ public class OperationServiceMockTest {
                 null
         );
 
-        Operation operation1 = new IncreaseOperation(1L, 200., Instant.now(), user, IncreaseOperationCategory.SALARY);
-        Operation operation2 = new IncreaseOperation(2L, 300., Instant.now(), user, IncreaseOperationCategory.BONUS);
+        Operation operation1 = new IncreaseOperation(1L, 200., Instant.now(), user, OperationCategory.SALARY);
+        Operation operation2 = new IncreaseOperation(2L, 300., Instant.now(), user, OperationCategory.BONUS);
 
         Mockito.when(hibernateOperationDAO.findFilteredOperations(
                 Mockito.eq(session),
@@ -644,7 +649,7 @@ public class OperationServiceMockTest {
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
         Mockito.verify(hibernateOperationDAO).findFilteredOperations(
-                session, user.getId(), 100., 500., dateFrom, dateTo, (IncreaseOperationCategory) null
+                session, user.getId(), 100., 500., dateFrom, dateTo, (OperationCategory) null
         );
     }
 
@@ -736,7 +741,7 @@ public class OperationServiceMockTest {
                 null
         );
 
-        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, IncreaseOperationCategory.SALARY);
+        Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findFilteredOperations(
@@ -766,7 +771,7 @@ public class OperationServiceMockTest {
                 2000., 1000.,
                 null,
                 null,
-                IncreaseOperationCategory.SALARY
+                OperationCategory.SALARY
         );
 
         Mockito.when(hibernateOperationDAO.findFilteredOperations(
@@ -776,7 +781,7 @@ public class OperationServiceMockTest {
                 Mockito.eq(2000.),
                 Mockito.eq(null),
                 Mockito.eq(null),
-                Mockito.eq(IncreaseOperationCategory.SALARY)
+                Mockito.eq(OperationCategory.SALARY)
         )).thenReturn(List.of());
 
         List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);

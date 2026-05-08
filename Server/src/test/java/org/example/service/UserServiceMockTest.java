@@ -1,17 +1,17 @@
 package org.example.service;
 
+import org.example.Pair;
 import org.example.application.service.UserService;
 import org.example.domain.SessionManager;
 import org.example.domain.exception.BusinessException;
-import org.example.domain.exception.RoleNotFoundException;
-import org.example.domain.exception.UserAlreadyExistsException;
-import org.example.domain.exception.UserNotFoundException;
-import org.example.domain.model.Budget;
+import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
+import org.example.domain.exception.not_found.RoleNotFoundException;
+import org.example.domain.exception.not_found.UserNotFoundException;
+import org.example.domain.model.Household;
 import org.example.domain.model.Role;
 import org.example.domain.model.User;
-import org.example.dto.Pair;
-import org.example.dto.RequestAction;
-import org.example.dto.request.AuthRequest;
+import org.example.dto.request.RequestAction;
+import org.example.dto.request.user.AuthRequest;
 import org.example.infrastructure.dao.HibernateRoleDAO;
 import org.example.infrastructure.dao.HibernateUserDAO;
 import org.example.infrastructure.security.JwtProvider;
@@ -174,7 +174,7 @@ class UserServiceMockTest {
         Mockito.verify(jwtProvider).generateAccessToken(1L);
         Mockito.verify(jwtProvider).generateRefreshToken(1L);
         Mockito.verify(session).persist(Mockito.any(User.class));
-        Mockito.verify(session).persist(Mockito.any(Budget.class));
+        Mockito.verify(session).persist(Mockito.any(Household.class));
     }
 
     @Test
@@ -184,7 +184,7 @@ class UserServiceMockTest {
 
         Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
 
-        Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
+        Assertions.assertThrows(UserAlreadyExistsExceptionException.class, () -> {
             userService.signUp(authRequest);
         });
 
