@@ -24,4 +24,8 @@ public enum Status implements Serializable {
     ;
 
     private final int status;
+
+    public boolean isSuccess() {
+        return this == OK || this == CREATED || this == NO_CONTENT;
+    }
 }

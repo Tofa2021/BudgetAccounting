@@ -13,8 +13,11 @@ public class Result<T> {
     private T data;
     private String errorMessage;
 
-    public static <T> Result<T> success(T data) {
-        return new Result<>(Status.OK, data, "");
+    private Result() {
+    }
+
+    public static <T> Result<T> success(Status status, T data) {
+        return new Result<>(status, data, "");
     }
 
     public static <T> Result<T> error(Status status, String errorMessage) {
@@ -22,7 +25,7 @@ public class Result<T> {
     }
 
     public boolean isSuccess() {
-        return status == Status.OK;
+        return status.isSuccess();
     }
 
     public T getData() {
