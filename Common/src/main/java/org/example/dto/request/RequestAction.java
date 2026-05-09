@@ -40,4 +40,6 @@ public enum RequestAction {
     GET_ME,
     UPDATE_USER,
     DELETE_USER,
+    REFRESH_TOKEN,
+
 }

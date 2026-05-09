@@ -9,10 +9,6 @@ import org.example.domain.exception.BusinessException;
 import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.User;
-import org.example.dto.request.ModelIdAuthorizedRequest;
-import org.example.dto.request.user.AuthRequest;
-import org.example.dto.request.user.LogoutRequest;
-import org.example.dto.request.user.UpdateUserRequest;
 import org.example.dto.response.Status;
 import org.example.infrastructure.security.PasswordEncoder;
 import org.example.infrastructure.security.TokenProvider;
@@ -25,17 +21,15 @@ public class UserService { // TODO check rights
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
-    public Pair<String, String> signUp(AuthRequest request) {
+    public Pair<String, String> signUp(String username, String password) {
         return transactionManager.executeInTransaction(() -> {
-            String username = request.getUsername();
-
             if (userDAO.findByUsername(username).isPresent()) {
                 throw new UserAlreadyExistsExceptionException(username);
             }
 
             User user = new User();
             user.setUsername(username);
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setPassword(passwordEncoder.encode(password));
             userDAO.save(user);
 
             Long userId = user.getId();
@@ -44,15 +38,13 @@ public class UserService { // TODO check rights
         });
     }
 
-    public Pair<String, String> signIn(AuthRequest request) {
+    public Pair<String, String> signIn(String username, String password) {
         return transactionManager.executeInTransaction(() -> {
-            String username = request.getUsername();
-
             User user = userDAO.findByUsername(username)
                     .orElseThrow(() -> new UserNotFoundException(username));
             Long userId = user.getId();
 
-            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            if (!passwordEncoder.matches(password, user.getPassword())) {
                 throw new BusinessException(Status.UNAUTHORIZED, "Invalid password");
             }
 
@@ -61,19 +53,18 @@ public class UserService { // TODO check rights
         });
     }
 
-    public User update(UpdateUserRequest request, Long userId) {
+    public User update(String username, String password, Long userId) {
         return transactionManager.executeInTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
-            String username = request.getUsername();
             if (username != null) {
                 if (userDAO.findByUsername(username).isPresent()) {
                     throw new UserAlreadyExistsExceptionException(username);
                 }
-                user.setUsername(request.getUsername());
+                user.setUsername(username);
             }
-            if (request.getPassword() != null) {
-                user.setPassword(passwordEncoder.encode(request.getPassword()));
+            if (password != null) {
+                user.setPassword(passwordEncoder.encode(password));
             }
 
             userDAO.save(user);
@@ -91,8 +82,7 @@ public class UserService { // TODO check rights
         });
     }
 
-    public void logout(LogoutRequest request) {
-        String refreshToken = request.getRefreshToken();
+    public void logout(String accessToken, String refreshToken) {
         Long userId = tokenProvider.getUserIdFromRefreshToken(refreshToken);
         tokenProvider.invalidateRefreshToken(refreshToken);
         log.info("User with id = {} logged out", userId);
@@ -112,9 +102,9 @@ public class UserService { // TODO check rights
         return new Pair<>(newAccessToken, newRefreshToken);
     }
 
-    public User get(ModelIdAuthorizedRequest request) {
-        return userDAO.findById(request.getId())
-                .orElseThrow(() -> new UserNotFoundException(request.getId()));
+    public User get(Long id) {
+        return userDAO.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public User getMe(Long userId) {

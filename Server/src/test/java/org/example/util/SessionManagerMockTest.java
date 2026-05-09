@@ -46,7 +46,7 @@ public class SessionManagerMockTest {
     public void executeInTransaction_withConsumerAndBusinessException_shouldNotCommitAndNotRollback() {
         Consumer<Session> consumer = Mockito.mock(Consumer.class);
 
-        Mockito.doThrow(new BusinessException(Status.SERVER_ERROR, "")).when(consumer).accept(session);
+        Mockito.doThrow(new BusinessException(Status.UNKNOWN_SERVER_ERROR, "")).when(consumer).accept(session);
 
         Assertions.assertThrows(BusinessException.class, () -> {
             sessionManager.executeInTransaction(consumer);
@@ -95,7 +95,7 @@ public class SessionManagerMockTest {
     public void executeInTransaction_withFunctionAndBusinessException_shouldNotCommitAndNoRollback() {
         Function<Session, ?> function = Mockito.mock(Function.class);
 
-        Mockito.doThrow(new BusinessException(Status.SERVER_ERROR, "")).when(function).apply(session);
+        Mockito.doThrow(new BusinessException(Status.UNKNOWN_SERVER_ERROR, "")).when(function).apply(session);
 
         Assertions.assertThrows(BusinessException.class, () -> {
             sessionManager.executeInTransaction(function);

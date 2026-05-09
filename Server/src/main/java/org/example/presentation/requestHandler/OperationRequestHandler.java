@@ -2,40 +2,76 @@ package org.example.presentation.requestHandler;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.OperationService;
+import org.example.domain.model.Operation;
 import org.example.dto.model.OperationDTO;
-import org.example.dto.request.AuthorizedRequest;
-import org.example.dto.request.RequestAction;
-import org.example.dto.request.operation.CreateOperationRequest;
-import org.example.dto.request.operation.DeleteOperationRequest;
-import org.example.dto.request.operation.OperationFilterRequest;
-import org.example.dto.request.operation.UpdateOperationRequest;
+import org.example.dto.request.Request;
 import org.example.dto.response.Response;
 import org.example.util.DTOMapper;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class OperationRequestHandler {
     private final DTOMapper dtoMapper;
     private final OperationService operationService;
 
-    public Response handle(RequestAction action, AuthorizedRequest request, Long userId) {
-        return switch (action) {
-            case CREATE_OPERATION ->
-                    Response.created(dtoMapper.toDTO(operationService.create((CreateOperationRequest) request, userId), OperationDTO.class));
+    public Response handle(Request request, Long userId) {
+        return switch (request.getAction()) {
+            case CREATE_OPERATION -> {
+                Long accountId = request.getParam("accountId");
+                Long categoryId = request.getParam("categoryId");
+                String description = request.getParam("description");
+                BigDecimal amount = request.getParam("amount");
+                Instant dateTime = request.getParam("dateTime");
 
-            case GET_FILTERED_OPERATIONS ->
-                    Response.success(dtoMapper.toDTOs(operationService.getUserFilteredOperations((OperationFilterRequest) request), OperationDTO.class));
+                Operation operation = operationService.create(accountId, categoryId, description, amount, dateTime, userId);
+                yield Response.created(dtoMapper.toDTO(operation, OperationDTO.class));
+            }
+
+            case GET_FILTERED_OPERATIONS -> {
+                Long householdId = request.getParam("householdId");
+                Long filteringUserId = request.getParam("userId");
+                Long categoryId = request.getParam("categoryId");
+                BigDecimal minAmount = request.getParam("minAmount");
+                BigDecimal maxAmount = request.getParam("maxAmount");
+                Instant dateFrom = request.getParam("dateFrom");
+                Instant dateTo = request.getParam("dateTo");
+                Integer limit = request.getParam("limit");
+
+                List<Operation> operations = operationService.getFilteredOperations(
+                        householdId,
+                        filteringUserId,
+                        categoryId,
+                        minAmount,
+                        maxAmount,
+                        dateFrom,
+                        dateTo,
+                        limit
+                );
+                yield Response.success(dtoMapper.toDTOs(operations, OperationDTO.class));
+            }
 
             case UPDATE_OPERATION -> {
-                operationService.update((UpdateOperationRequest) request);
+                Long id = request.getParam("id");
+                BigDecimal amount = request.getParam("amount");
+                Long categoryId = request.getParam("categoryId");
+                String description = request.getParam("description");
+                Instant dateTime = request.getParam("dateTime");
+
+                operationService.update(id, amount, categoryId, description, dateTime);
                 yield Response.noContent();
             }
 
             case DELETE_OPERATION -> {
-                operationService.delete((DeleteOperationRequest) request);
+                Long id = request.getParam("id");
+
+                operationService.delete(id);
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + action);
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
         };
     }
 }

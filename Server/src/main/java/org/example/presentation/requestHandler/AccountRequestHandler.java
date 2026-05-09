@@ -2,40 +2,62 @@ package org.example.presentation.requestHandler;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountService;
+import org.example.domain.model.Account;
 import org.example.dto.model.AccountDTO;
-import org.example.dto.request.AuthorizedRequest;
-import org.example.dto.request.RequestAction;
-import org.example.dto.request.account.*;
+import org.example.dto.request.Request;
 import org.example.dto.response.Response;
+import org.example.enums.Currency;
 import org.example.util.DTOMapper;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class AccountRequestHandler {
     private final DTOMapper dtoMapper;
     private final AccountService accountService;
 
-    public Response handle(RequestAction action, AuthorizedRequest request, Long userId) {
-        return switch (action) {
-            case CREATE_ACCOUNT ->
-                    Response.created(dtoMapper.toDTO(accountService.create((CreateAccountRequest) request, userId), AccountDTO.class));
+    public Response handle(Request request, Long userId) {
+        return switch (request.getAction()) {
+            case CREATE_ACCOUNT -> {
+                Long householdId = request.getParam("householdId");
+                String name = request.getParam("name");
+                Currency currency = request.getParam("currency");
 
-            case GET_ACCOUNT ->
-                    Response.success(dtoMapper.toDTO(accountService.getAccount((GetAccountRequest) request, userId), AccountDTO.class));
+                Account newAccount = accountService.create(householdId, name, currency, userId);
+                yield Response.created(dtoMapper.toDTO(newAccount, AccountDTO.class));
+            }
 
-            case GET_MY_ACCOUNTS_IN_HOUSEHOLD ->
-                    Response.success(dtoMapper.toDTOs(accountService.getAccounts((GetMyAccountsInHouseholdRequest) request, userId), AccountDTO.class));
+            case GET_ACCOUNT -> {
+                Long id = request.getParam("id");
+
+                Account account = accountService.getAccount(id, userId);
+                yield Response.success(dtoMapper.toDTO(account, AccountDTO.class));
+            }
+
+            case GET_MY_ACCOUNTS_IN_HOUSEHOLD -> {
+                Long householdId = request.getParam("householdId");
+
+                List<Account> accounts = accountService.getAccounts(householdId, userId);
+                yield Response.success(dtoMapper.toDTOs(accounts, AccountDTO.class));
+            }
 
             case UPDATE_ACCOUNT -> {
-                accountService.update((UpdateAccountRequest) request);
+                Long id = request.getParam("id");
+                String name = request.getParam("name");
+                Currency currency = request.getParam("currency");
+
+                accountService.update(id, name, currency);
                 yield Response.noContent();
             }
 
             case DELETE_ACCOUNT -> {
-                accountService.delete((DeleteAccountRequest) request);
+                Long id = request.getParam("id");
+
+                accountService.delete(id);
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + action);
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
         };
     }
 }

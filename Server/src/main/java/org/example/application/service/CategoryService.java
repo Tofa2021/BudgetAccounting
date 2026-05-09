@@ -11,10 +11,6 @@ import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.model.Category;
 import org.example.domain.model.Household;
 import org.example.domain.model.OperationType;
-import org.example.dto.request.category.CreateCategoryRequest;
-import org.example.dto.request.category.DeleteCategoryRequest;
-import org.example.dto.request.category.GetCategoriesRequest;
-import org.example.dto.request.category.UpdateCategoryRequest;
 
 import java.util.List;
 
@@ -25,77 +21,71 @@ public class CategoryService { // TODO check rights and TODO logging
     private final CategoryDAO categoryDAO;
     private final HouseholdDAO householdDAO;
 
-    public Category create(CreateCategoryRequest request) {
+    public Category create(Long householdId, String name, String type) {
         return transactionManager.executeInTransaction(() -> {
-            Household household = householdDAO.findById(request.getHouseholdId())
-                    .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
+            Household household = householdDAO.findById(householdId)
+                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
-            if (categoryDAO.existsByHouseholdIdAndName(request.getHouseholdId(), request.getName())) {
-                throw new CategoryAlreadyExistsException(request.getName());
+            if (categoryDAO.existsByHouseholdIdAndName(householdId, name)) {
+                throw new CategoryAlreadyExistsException(name);
             }
 
             Category category = new Category();
-            category.setName(request.getName());
-            category.setType(OperationType.fromString(request.getType()));
+            category.setName(name);
+            category.setType(OperationType.fromString(type));
             category.setHousehold(household);
 
-            log.info("Category created");
+            log.info("Category created with name = {}", name);
             return categoryDAO.save(category);
         });
     }
 
-    public List<Category> getAll(GetCategoriesRequest request) {
+    public List<Category> getAll(Long householdId) {
         return transactionManager.executeInTransaction(() -> {
-            Long householdId = request.getHouseholdId();
-
-            Household household = householdDAO.findById(householdId)
+            householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdId(householdId);
         });
     }
 
-    public List<Category> getIncomeCategory(GetCategoriesRequest request) {
+    public List<Category> getIncomeCategory(Long householdId) {
         return transactionManager.executeInTransaction(() -> {
-            Long householdId = request.getHouseholdId();
-
-            Household household = householdDAO.findById(householdId)
+            householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.INCOME);
         });
     }
 
-    public List<Category> getExpenseCategory(GetCategoriesRequest request) {
+    public List<Category> getExpenseCategory(Long householdId) {
         return transactionManager.executeInTransaction(() -> {
-            Long householdId = request.getHouseholdId();
-
-            Household household = householdDAO.findById(householdId)
+            householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.EXPENSE);
         });
     }
 
-    public void update(UpdateCategoryRequest request) {
-        Category category = categoryDAO.findById(request.getId())
-                .orElseThrow(() -> new CategoryNotFoundException(request.getId()));
+    public void update(Long id, String newName, String newType) {
+        Category category = categoryDAO.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundException(id));
 
-        if (request.getName() != null && !request.getName().equals(category.getName())) {
-            if (categoryDAO.existsByHouseholdIdAndName(category.getHousehold().getId(), request.getName())) {
-                throw new CategoryAlreadyExistsException(request.getName());
+        if (newName != null && !newName.equals(category.getName())) {
+            if (categoryDAO.existsByHouseholdIdAndName(category.getHousehold().getId(), newName)) {
+                throw new CategoryAlreadyExistsException(newName);
             }
-            category.setName(request.getName());
+            category.setName(newName);
         }
 
-        if (request.getType() != null) {
-            category.setType(OperationType.fromString(request.getType()));
+        if (newType != null) {
+            category.setType(OperationType.fromString(newType));
         }
 
         categoryDAO.save(category);
     }
 
-    public void delete(DeleteCategoryRequest request) {
+    public void delete(Long id) {
         transactionManager.executeInTransaction(() -> {
-            Category category = categoryDAO.findById(request.getCategoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(request.getCategoryId()));
+            Category category = categoryDAO.findById(id)
+                    .orElseThrow(() -> new CategoryNotFoundException(id));
 
             categoryDAO.delete(category);
         });

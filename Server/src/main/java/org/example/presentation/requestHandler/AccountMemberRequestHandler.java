@@ -2,12 +2,9 @@ package org.example.presentation.requestHandler;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountMemberService;
+import org.example.domain.model.AccountMember;
 import org.example.dto.model.AccountMemberDTO;
-import org.example.dto.request.AuthorizedRequest;
-import org.example.dto.request.RequestAction;
-import org.example.dto.request.account_member.CreateAccountMemberRequest;
-import org.example.dto.request.account_member.DeleteAccountMemberRequest;
-import org.example.dto.request.account_member.UpdateAccountMemberRoleRequest;
+import org.example.dto.request.Request;
 import org.example.dto.response.Response;
 import org.example.util.DTOMapper;
 
@@ -16,22 +13,33 @@ public class AccountMemberRequestHandler {
     private final DTOMapper dtoMapper;
     private final AccountMemberService accountMemberService;
 
-    public Response handle(RequestAction action, AuthorizedRequest request, Long userId) {
-        return switch (action) {
-            case CREATE_ACCOUNT_MEMBER ->
-                    Response.created(dtoMapper.toDTO(accountMemberService.create((CreateAccountMemberRequest) request), AccountMemberDTO.class));
+    public Response handle(Request request, Long userId) {
+        return switch (request.getAction()) {
+            case CREATE_ACCOUNT_MEMBER -> {
+                Long householdMemberId = request.getParam("householdMemberId");
+                Long accountId = request.getParam("accountId");
+                String role = request.getParam("role");
+
+                AccountMember member = accountMemberService.create(householdMemberId, accountId, role);
+                yield Response.created(dtoMapper.toDTO(member, AccountMemberDTO.class));
+            }
 
             case UPDATE_ACCOUNT_MEMBER_ROLE -> {
-                accountMemberService.updateRole((UpdateAccountMemberRoleRequest) request);
+                Long memberId = request.getParam("memberId");
+                String role = request.getParam("role");
+
+                accountMemberService.updateRole(memberId, role);
                 yield Response.noContent();
             }
 
             case DELETE_ACCOUNT_MEMBER -> {
-                accountMemberService.delete((DeleteAccountMemberRequest) request);
+                Long id = request.getParam("id");
+
+                accountMemberService.delete(id);
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + action);
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
         };
     }
 }

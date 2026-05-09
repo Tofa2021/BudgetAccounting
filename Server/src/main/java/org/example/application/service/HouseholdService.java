@@ -10,11 +10,6 @@ import org.example.domain.exception.already_exists.HouseholdMemberAlreadyExistsE
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.*;
-import org.example.dto.request.ModelIdAuthorizedRequest;
-import org.example.dto.request.household.CreateHouseholdRequest;
-import org.example.dto.request.household.DeleteHouseholdRequest;
-import org.example.dto.request.household.GetHouseholdRequest;
-import org.example.dto.request.household.UpdateHouseholdRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,21 +24,16 @@ public class HouseholdService { // TODO check rights and TODO logging
     private final UserDAO userDAO;
     private final AccountDAO accountDAO;
 
-    public BigDecimal getAmount(ModelIdAuthorizedRequest request) {
-        List<Account> accounts = accountDAO.getAllByHouseholdId(request.getId());
-        return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-    }
-
-    public Household create(CreateHouseholdRequest request, Long userId) {
+    public Household create(String name, Map<Long, String> startMembers, Long userId) {
         return transactionManager.executeInTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
             Household household = new Household();
-            household.setName(request.getName());
+            household.setName(name);
             household = householdDAO.save(household);
 
-            List<HouseholdMember> members = createMembers(request.getAdditionalMemberRoleMap(), household, user);
+            List<HouseholdMember> members = createMembers(startMembers, household, user);
             household.setMembers(members);
 
             return household;
@@ -87,21 +77,28 @@ public class HouseholdService { // TODO check rights and TODO logging
         return members;
     }
 
-    public void update(UpdateHouseholdRequest request) {
+    public Household get(Long id) {
+        return householdDAO.findById(id)
+                .orElseThrow(() -> new HouseholdNotFoundException(id));
+    }
+
+    public BigDecimal getAmount(Long id) {
+        List<Account> accounts = accountDAO.getAllByHouseholdId(id);
+        return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+    }
+
+    public void update(Long id, String name) {
         transactionManager.executeInTransaction(() -> {
-            Household household = householdDAO.findById(request.getHouseholdId())
-                    .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
-            household.setName(request.getName());
+            Household household = householdDAO.findById(id)
+                    .orElseThrow(() -> new HouseholdNotFoundException(id));
+            household.setName(name);
             householdDAO.save(household);
         });
     }
 
-    public void delete(DeleteHouseholdRequest request) {
-        householdDAO.deleteById(request.getId());
-    }
-
-    public Household get(GetHouseholdRequest request) {
-        return householdDAO.findById(request.getHouseholdId())
-                .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
+    public void delete(Long id) {
+        transactionManager.executeInTransaction(() -> {
+            householdDAO.deleteById(id);
+        });
     }
 }

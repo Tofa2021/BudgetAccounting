@@ -2,12 +2,9 @@ package org.example.presentation.requestHandler;
 
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.UserService;
+import org.example.domain.model.User;
 import org.example.dto.model.UserDTO;
-import org.example.dto.request.AuthorizedRequest;
-import org.example.dto.request.ModelIdAuthorizedRequest;
-import org.example.dto.request.RequestAction;
-import org.example.dto.request.user.LogoutRequest;
-import org.example.dto.request.user.UpdateUserRequest;
+import org.example.dto.request.Request;
 import org.example.dto.response.Response;
 import org.example.util.DTOMapper;
 
@@ -16,20 +13,32 @@ public class UserRequestHandler {
     private final DTOMapper dtoMapper;
     private final UserService userService;
 
-    public Response handle(RequestAction action, AuthorizedRequest request, Long userId) {
-        return switch (action) {
+    public Response handle(Request request, Long userId, String accessToken) {
+        return switch (request.getAction()) {
             case LOGOUT -> {
-                userService.logout((LogoutRequest) request);
+                String refreshToken = request.getParam("refreshToken");
+                
+                userService.logout(accessToken, refreshToken);
                 yield Response.noContent();
             }
 
-            case GET_USER ->
-                    Response.success(dtoMapper.toDTO(userService.get((ModelIdAuthorizedRequest) request), UserDTO.class));
+            case GET_USER -> {
+                Long id = request.getParam("id");
 
-            case GET_ME -> Response.success(dtoMapper.toDTO(userService.getMe(userId), UserDTO.class));
+                User user = userService.get(id);
+                yield Response.success(dtoMapper.toDTO(user, UserDTO.class));
+            }
+
+            case GET_ME -> {
+                User user = userService.getMe(userId);
+                yield Response.success(dtoMapper.toDTO(user, UserDTO.class));
+            }
 
             case UPDATE_USER -> {
-                userService.update((UpdateUserRequest) request, userId);
+                String username = request.getParam("username");
+                String password = request.getParam("password");
+
+                userService.update(username, password, userId);
                 yield Response.noContent();
             }
 
@@ -38,7 +47,7 @@ public class UserRequestHandler {
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + action);
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
         };
     }
 }

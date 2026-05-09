@@ -9,12 +9,9 @@ import org.example.domain.exception.not_found.CategoryNotFoundException;
 import org.example.domain.exception.not_found.OperationNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.*;
-import org.example.dto.request.operation.CreateOperationRequest;
-import org.example.dto.request.operation.DeleteOperationRequest;
-import org.example.dto.request.operation.OperationFilterRequest;
-import org.example.dto.request.operation.UpdateOperationRequest;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,15 +22,21 @@ public class OperationService { // TODO check rights and TODO logging
     private final AccountDAO accountDAO;
     private final UserDAO userDAO;
 
-    public Operation create(CreateOperationRequest request, Long userId) {
+    public Operation create(
+            Long accountId,
+            Long categoryId,
+            String description,
+            BigDecimal amount,
+            Instant dateTime,
+            Long userId
+    ) {
         return transactionManager.executeInTransaction(() -> {
-            BigDecimal amount = request.getAmount();
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
-            Account account = accountDAO.findById(request.getAccountId())
-                    .orElseThrow(() -> new AccountNotFoundException(request.getAccountId()));
-            Category category = categoryDAO.findById(request.getCategoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(request.getCategoryId()));
+            Account account = accountDAO.findById(accountId)
+                    .orElseThrow(() -> new AccountNotFoundException(accountId));
+            Category category = categoryDAO.findById(categoryId)
+                    .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
             if (!account.getHousehold().getId().equals(category.getHousehold().getId())) {
                 throw new BadParameterException("Account and category must be in the same household");
@@ -42,10 +45,10 @@ public class OperationService { // TODO check rights and TODO logging
             Operation operation = new Operation();
             operation.setAccount(account);
             operation.setUser(user);
-            operation.setDescription(request.getDescription());
+            operation.setDescription(description);
             operation.setCategory(category);
-            operation.setAmount(request.getAmount());
-            operation.setDateTime(request.getDateTime());
+            operation.setAmount(amount);
+            operation.setDateTime(dateTime);
             operationDAO.save(operation);
 
             if (category.getType() == OperationType.INCOME) {
@@ -59,30 +62,45 @@ public class OperationService { // TODO check rights and TODO logging
         });
     }
 
-    public List<Operation> getUserFilteredOperations(OperationFilterRequest request) {
+    public List<Operation> getFilteredOperations(
+            Long householdId,
+            Long userId,
+            Long categoryId,
+            BigDecimal maxAmount,
+            BigDecimal minAmount,
+            Instant dateFrom,
+            Instant dateTo,
+            Integer limit
+    ) {
         return operationDAO.find(OperationFilter.builder()
-                .userId(request.getUserId())
-                .householdId(request.getHouseholdId())
-                .minAmount(request.getMinAmount())
-                .maxAmount(request.getMaxAmount())
-                .dateFrom(request.getDateFrom())
-                .dateTo(request.getDateTo())
-                .categoryId(request.getCategoryId())
-                .limit(request.getLimit())
-                .build());
+                .userId(userId)
+                .householdId(householdId)
+                .minAmount(minAmount)
+                .maxAmount(maxAmount)
+                .dateFrom(dateFrom)
+                .dateTo(dateTo)
+                .categoryId(categoryId)
+                .limit(limit)
+                .build()
+        );
     }
 
-    public void update(UpdateOperationRequest request) {
+    public void update(
+            Long id,
+            BigDecimal newAmount,
+            Long newCategoryId,
+            String newDescription,
+            Instant newDateTime
+    ) {
         transactionManager.executeInTransaction(() -> {
-            Operation existingOperation = operationDAO.findById(request.getId())
-                    .orElseThrow(() -> new OperationNotFoundException(request.getId()));
+            Operation existingOperation = operationDAO.findById(id)
+                    .orElseThrow(() -> new OperationNotFoundException(id));
             Account account = existingOperation.getAccount();
 
             BigDecimal oldAmount = existingOperation.getAmount();
-            BigDecimal newAmount = request.getAmount();
 
-            Category requestCategory = categoryDAO.findById(request.getCategoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(request.getCategoryId()));
+            Category requestCategory = categoryDAO.findById(newCategoryId)
+                    .orElseThrow(() -> new CategoryNotFoundException(newCategoryId));
             OperationType requestType = requestCategory.getType();
 
             if (!account.getHousehold().getId().equals(requestCategory.getHousehold().getId())) {
@@ -93,9 +111,9 @@ public class OperationService { // TODO check rights and TODO logging
             OperationType existingType = existingCategory.getType();
 
             existingOperation.setCategory(requestCategory);
-            existingOperation.setDescription(request.getDescription());
-            existingOperation.setDateTime(request.getDateTime());
-            existingOperation.setAmount(request.getAmount());
+            existingOperation.setDescription(newDescription);
+            existingOperation.setDateTime(newDateTime);
+            existingOperation.setAmount(newAmount);
 
             handleAccountAmountChanging(account, existingType, requestType, oldAmount, newAmount);
 
@@ -124,10 +142,10 @@ public class OperationService { // TODO check rights and TODO logging
         }
     }
 
-    public void delete(DeleteOperationRequest request) {
+    public void delete(Long id) {
         transactionManager.executeInTransaction(() -> {
-            Operation operation = operationDAO.findById(request.getId())
-                    .orElseThrow(() -> new OperationNotFoundException(request.getId()));
+            Operation operation = operationDAO.findById(id)
+                    .orElseThrow(() -> new OperationNotFoundException(id));
 
             Account account = operation.getAccount();
 

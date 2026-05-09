@@ -535,7 +535,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_allOperations() {
+    public void getFilteredOperations_allOperations() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -557,7 +557,7 @@ public class OperationServiceMockTest {
                 null
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
@@ -569,7 +569,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_increaseOperations_withCategory() {
+    public void getFilteredOperations_increaseOperations_withCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -604,7 +604,7 @@ public class OperationServiceMockTest {
                 OperationCategory.SALARY
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
         Assertions.assertFalse(actualOperations.contains(operation3));
@@ -616,7 +616,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_increaseOperations_withoutCategory() {
+    public void getFilteredOperations_increaseOperations_withoutCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -644,7 +644,7 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
@@ -654,7 +654,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_decreaseOperations_withCategory() {
+    public void getFilteredOperations_decreaseOperations_withCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -682,7 +682,7 @@ public class OperationServiceMockTest {
                 DecreaseOperationCategory.FOOD
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
@@ -692,7 +692,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_decreaseOperations_withoutCategory() {
+    public void getFilteredOperations_decreaseOperations_withoutCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -720,7 +720,7 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
@@ -730,7 +730,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_withNullParameters() {
+    public void getFilteredOperations_withNullParameters() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -753,7 +753,7 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
@@ -763,7 +763,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getUserFilteredOperations_emptyResult() {
+    public void getFilteredOperations_emptyResult() {
         User user = new User(1L, "user", "123", Set.of());
 
         IncreaseOperationFilterRequest request = new IncreaseOperationFilterRequest(
@@ -784,13 +784,13 @@ public class OperationServiceMockTest {
                 Mockito.eq(OperationCategory.SALARY)
         )).thenReturn(List.of());
 
-        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
 
         Assertions.assertTrue(actualOperations.isEmpty());
     }
 
     @Test
-    public void getUserFilteredOperations_databaseError_throwsException() {
+    public void getFilteredOperations_databaseError_throwsException() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -811,7 +811,7 @@ public class OperationServiceMockTest {
         )).thenThrow(new RuntimeException("Database error"));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            operationService.getUserFilteredOperations(user.getId(), request);
+            operationService.getFilteredOperations(user.getId(), request);
         });
 
         Mockito.verify(sessionManager).openSession();

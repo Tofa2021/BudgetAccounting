@@ -13,9 +13,6 @@ import org.example.domain.model.Account;
 import org.example.domain.model.AccountMember;
 import org.example.domain.model.AccountMemberRole;
 import org.example.domain.model.HouseholdMember;
-import org.example.dto.request.account_member.CreateAccountMemberRequest;
-import org.example.dto.request.account_member.DeleteAccountMemberRequest;
-import org.example.dto.request.account_member.UpdateAccountMemberRoleRequest;
 
 @RequiredArgsConstructor
 public class AccountMemberService { // TODO check rights and TODO logging
@@ -24,17 +21,17 @@ public class AccountMemberService { // TODO check rights and TODO logging
     private final AccountDAO accountDAO;
     private final HouseholdMemberDAO householdMemberDAO;
 
-    public AccountMember create(CreateAccountMemberRequest request) {
+    public AccountMember create(Long householdMemberId, Long accountId, String role) {
         return transactionManager.executeInTransaction(() -> {
-            HouseholdMember householdMember = householdMemberDAO.findById(request.getHouseholdMemberId())
-                    .orElseThrow(() -> new HouseholdMemberNotFoundException(request.getHouseholdMemberId()));
-            Account account = accountDAO.findById(request.getAccountId())
-                    .orElseThrow(() -> new AccountNotFoundException(request.getAccountId()));
+            HouseholdMember householdMember = householdMemberDAO.findById(householdMemberId)
+                    .orElseThrow(() -> new HouseholdMemberNotFoundException(householdMemberId));
+            Account account = accountDAO.findById(accountId)
+                    .orElseThrow(() -> new AccountNotFoundException(accountId));
 
             AccountMember accountMember = new AccountMember();
             accountMember.setHouseholdMember(householdMember);
             accountMember.setAccount(account);
-            accountMember.setRole(AccountMemberRole.fromString(request.getRole()));
+            accountMember.setRole(AccountMemberRole.fromString(role));
 
             return accountMemberDAO.save(accountMember);
         });
@@ -51,23 +48,23 @@ public class AccountMemberService { // TODO check rights and TODO logging
         }
     }
 
-    public void updateRole(UpdateAccountMemberRoleRequest request) {
+    public void updateRole(Long memberId, String role) {
         transactionManager.executeInTransaction(() -> {
-            AccountMember member = accountMemberDAO.findById(request.getMemberId())
-                    .orElseThrow(() -> new AccountMemberNotFound(request.getMemberId()));
+            AccountMember member = accountMemberDAO.findById(memberId)
+                    .orElseThrow(() -> new AccountMemberNotFound(memberId));
 
             checkLastManager(member);
 
-            member.setRole(AccountMemberRole.fromString(request.getRole()));
+            member.setRole(AccountMemberRole.fromString(role));
 
             accountMemberDAO.save(member);
         });
     }
 
-    public void delete(DeleteAccountMemberRequest request) {
+    public void delete(Long id) {
         transactionManager.executeInTransaction(() -> {
-            AccountMember member = accountMemberDAO.findById(request.getMemberId())
-                    .orElseThrow(() -> new AccountMemberNotFound(request.getMemberId()));
+            AccountMember member = accountMemberDAO.findById(id)
+                    .orElseThrow(() -> new AccountMemberNotFound(id));
             checkLastManager(member);
             accountMemberDAO.delete(member);
         });

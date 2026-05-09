@@ -1,6 +1,6 @@
 package org.example.presentation.connection;
 
-import org.example.dto.request.Request;
+import org.example.dto.request.RequestEnvelope;
 import org.example.dto.response.Response;
 import org.example.presentation.RequestProcessor;
 
@@ -27,9 +27,9 @@ public class ClientConnection implements Runnable {
     public void run() {
         try {
             while (true) {
-                Request request = (Request) in.readObject();
-                System.out.println("Received request: " + request.getAction() + " from " + clientSocket.getPort());
-                Response response = requestProcessor.process(request);
+                RequestEnvelope requestEnvelope = (RequestEnvelope) in.readObject();
+                System.out.println("Received request from " + clientSocket.getPort());
+                Response response = requestProcessor.process(requestEnvelope);
                 System.out.println("Send response: " + response.status());
                 send(response);
             }

@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.BusinessException;
-import org.example.dto.request.AuthorizedRequest;
 import org.example.dto.request.Request;
-import org.example.dto.request.RequestAction;
-import org.example.dto.request.user.AuthRequest;
+import org.example.dto.request.RequestEnvelope;
 import org.example.dto.response.Response;
 import org.example.dto.response.Status;
 import org.example.infrastructure.security.TokenProvider;
@@ -26,69 +24,64 @@ public class RequestProcessor {
     private final OperationRequestHandler operationRequestHandler;
     private final UserRequestHandler userRequestHandler;
 
-    public Response process(Request request) {
+    public Response process(RequestEnvelope requestEnvelope) {
         try {
-            log.info("Received request with Action = {}", request.getAction());
-            Response response = processRequest(request);
-            log.info("Send response with Status = {}", request.getAction());
+            log.info("Received request with Action = {}", requestEnvelope.request().getAction());
+            Response response = processRequest(requestEnvelope);
+            log.info("Send response with Status = {}", response.status());
             return response;
         } catch (BusinessException e) {
             log.warn(e.getMessage());
-            return new Response(e.getStatus(), null);
+            return new Response(e.getStatus(), e.getMessage());
         } catch (Exception e) {
             log.warn(e.getMessage());
-            return new Response(Status.SERVER_ERROR, null);
+            return new Response(Status.UNKNOWN_SERVER_ERROR, e.getMessage());
         }
     }
 
-    private Response processRequest(Request request) {
-        RequestAction action = request.getAction();
-
-        if (isAuthorizedRequest(request)) {
-            return processAuthorizedRequest(action, (AuthorizedRequest) request);
+    private Response processRequest(RequestEnvelope requestEnvelope) {
+        Request request = requestEnvelope.request();
+        if (requestEnvelope.isAuthenticated()) {
+            return processAuthorizedRequest(request, requestEnvelope.accessToken());
         }
 
-        return processUnauthorizedRequest(action, request);
+        return processUnauthorizedRequest(request);
     }
 
-    private boolean isAuthorizedRequest(Request request) {
-        return request instanceof AuthorizedRequest;
+    private Response processUnauthorizedRequest(Request request) {
+        return authRequestHandler.handle(request);
     }
 
-    private Response processUnauthorizedRequest(RequestAction action, Request request) {
-        return authRequestHandler.handle(action, (AuthRequest) request);
-    }
-
-    private Response processAuthorizedRequest(RequestAction action, AuthorizedRequest request) {
-        if (!tokenProvider.isValidateAccessToken(request.getToken())) {
+    private Response processAuthorizedRequest(Request request, String accessToken) {
+        if (!tokenProvider.isValidateAccessToken(accessToken)) {
             return new Response(Status.INVALID_TOKEN, null);
         }
 
-        Long userId = tokenProvider.getUserIdFromAccessToken(request.getToken());
+        Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
-        return switch (action) {
+        return switch (request.getAction()) {
             case CREATE_ACCOUNT, GET_ACCOUNT, GET_MY_ACCOUNTS_IN_HOUSEHOLD, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
-                    accountRequestHandler.handle(action, request, userId);
+                    accountRequestHandler.handle(request, userId);
 
             case CREATE_ACCOUNT_MEMBER, UPDATE_ACCOUNT_MEMBER_ROLE, DELETE_ACCOUNT_MEMBER ->
-                    accountMemberRequestHandler.handle(action, request, userId);
+                    accountMemberRequestHandler.handle(request, userId);
 
             case CREATE_CATEGORY, GET_CATEGORIES, GET_EXPENSE_CATEGORIES, GET_INCOME_CATEGORIES, UPDATE_CATEGORY,
-                 DELETE_CATEGORY -> categoryRequestHandler.handle(action, request, userId);
+                 DELETE_CATEGORY -> categoryRequestHandler.handle(request, userId);
 
             case CREATE_HOUSEHOLD_MEMBER, UPDATE_HOUSEHOLD_MEMBER_ROLE, DELETE_HOUSEHOLD_MEMBER ->
-                    householdMemberRequestHandler.handle(action, request, userId);
+                    householdMemberRequestHandler.handle(request, userId);
 
             case CREATE_HOUSEHOLD, GET_HOUSEHOLD, GET_HOUSEHOLD_AMOUNT, UPDATE_HOUSEHOLD, DELETE_HOUSEHOLD ->
-                    householdRequestHandler.handle(action, request, userId);
+                    householdRequestHandler.handle(request, userId);
 
             case CREATE_OPERATION, GET_FILTERED_OPERATIONS,
-                 UPDATE_OPERATION, DELETE_OPERATION -> operationRequestHandler.handle(action, request, userId);
+                 UPDATE_OPERATION, DELETE_OPERATION -> operationRequestHandler.handle(request, userId);
 
             case LOGOUT, GET_ME, GET_USER, UPDATE_USER, DELETE_USER ->
-                    userRequestHandler.handle(action, request, userId);
+                    userRequestHandler.handle(request, userId, accessToken);
 
-            default -> throw new BadParameterException("Request action = " + action + " is not supported");
+            default -> throw new BadParameterException("Request action = " + request.getAction() + " is not supported");
         };
     }
 }

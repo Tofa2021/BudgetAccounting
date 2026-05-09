@@ -14,9 +14,6 @@ import org.example.domain.model.Household;
 import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.User;
-import org.example.dto.request.household.CreateHouseholdMemberRequest;
-import org.example.dto.request.household.DeleteHouseholdMemberRequest;
-import org.example.dto.request.household_member.UpdateHouseholdMemberRoleRequest;
 
 @RequiredArgsConstructor
 public class HouseholdMemberService { // TODO check rights and TODO logging
@@ -25,31 +22,43 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
     private final HouseholdDAO householdDAO;
     private final UserDAO userDAO;
 
-    public HouseholdMember create(CreateHouseholdMemberRequest request) {
+    public HouseholdMember create(Long householdId, String role, Long userId) {
         return transactionManager.executeInTransaction(() -> {
-            User user = userDAO.findById(request.getUserId())
-                    .orElseThrow(() -> new UserNotFoundException(request.getUserId()));
-            Household household = householdDAO.findById(request.getHouseholdId())
-                    .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
+            User user = userDAO.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException(userId));
+            Household household = householdDAO.findById(householdId)
+                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
             if (householdMemberDAO.existsByUserIdAndHouseholdId(user.getId(), household.getId())) {
                 throw new HouseholdMemberAlreadyExistsExceptionException(user.getId(), household.getId());
             }
 
-            HouseholdMemberRole role = HouseholdMemberRole.fromString(request.getRole());
+            HouseholdMemberRole memberRole = HouseholdMemberRole.fromString(role);
 
             HouseholdMember member = new HouseholdMember();
-            member.setRole(role);
+            member.setRole(memberRole);
             member.setHousehold(household);
             member.setUser(user);
             return householdMemberDAO.save(member);
         });
     }
 
-    public void delete(DeleteHouseholdMemberRequest request) {
+    public void updateRole(Long id, String newRole) {
         transactionManager.executeInTransaction(() -> {
-            HouseholdMember member = householdMemberDAO.findById(request.getMemberId())
-                    .orElseThrow(() -> new HouseholdMemberNotFoundException(request.getMemberId()));
+            HouseholdMember member = householdMemberDAO.findById(id)
+                    .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
+
+            checkLastAdmin(member);
+
+            member.setRole(HouseholdMemberRole.fromString(newRole));
+            householdMemberDAO.save(member);
+        });
+    }
+
+    public void delete(Long id) {
+        transactionManager.executeInTransaction(() -> {
+            HouseholdMember member = householdMemberDAO.findById(id)
+                    .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
 
             checkLastAdmin(member);
 
@@ -66,17 +75,5 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
                 throw new LastAdminException(householdId, member.getId());
             }
         }
-    }
-
-    public void updateRole(UpdateHouseholdMemberRoleRequest request) {
-        transactionManager.executeInTransaction(() -> {
-            HouseholdMember member = householdMemberDAO.findById(request.getMemberId())
-                    .orElseThrow(() -> new HouseholdMemberNotFoundException(request.getMemberId()));
-
-            checkLastAdmin(member);
-
-            member.setRole(HouseholdMemberRole.fromString(request.getNewRole()));
-            householdMemberDAO.save(member);
-        });
     }
 }

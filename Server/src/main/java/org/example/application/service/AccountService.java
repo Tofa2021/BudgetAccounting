@@ -10,7 +10,7 @@ import org.example.domain.exception.AccessDeniedException;
 import org.example.domain.exception.not_found.AccountNotFoundException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.model.*;
-import org.example.dto.request.account.*;
+import org.example.enums.Currency;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,18 +23,18 @@ public class AccountService { // TODO check rights and TODO logging
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
 
-    public Account create(CreateAccountRequest request, Long userId) {
+    public Account create(Long householdId, String name, Currency currency, Long userId) {
         return transactionManager.executeInTransaction(() -> {
-            Household household = householdDAO.findById(request.getHouseholdId())
-                    .orElseThrow(() -> new HouseholdNotFoundException(request.getHouseholdId()));
+            Household household = householdDAO.findById(householdId)
+                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
             HouseholdMember householdMember = householdMemberDAO
                     .findByUserIdAndHouseholdId(userId, household.getId())
                     .orElseThrow(() -> new AccessDeniedException("Not a member of this household"));
 
             Account account = new Account();
-            account.setName(request.getName());
-            account.setCurrency(request.getCurrency());
+            account.setName(name);
+            account.setCurrency(currency);
             account.setHousehold(household);
             account.setAmount(BigDecimal.ZERO);
             accountDAO.save(account);
@@ -49,9 +49,9 @@ public class AccountService { // TODO check rights and TODO logging
         });
     }
 
-    public Account getAccount(GetAccountRequest request, Long userId) {
-        Account account = accountDAO.findById(request.getAccountId())
-                .orElseThrow(() -> new AccountNotFoundException(request.getAccountId()));
+    public Account getAccount(Long id, Long userId) {
+        Account account = accountDAO.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException(id));
 
         boolean hasAccess = accountMemberDAO.existsByAccountIdAndUserId(account.getId(), userId);
         if (!hasAccess) {
@@ -61,9 +61,9 @@ public class AccountService { // TODO check rights and TODO logging
         return account;
     }
 
-    public List<Account> getAccounts(GetMyAccountsInHouseholdRequest request, Long userId) {
+    public List<Account> getAccounts(Long householdId, Long userId) {
         return transactionManager.executeInTransaction(() -> {
-            List<AccountMember> members = accountMemberDAO.findByUserIdAndHouseholdId(userId, request.getHouseholdId());
+            List<AccountMember> members = accountMemberDAO.findByUserIdAndHouseholdId(userId, householdId);
             return members
                     .stream()
                     .map(AccountMember::getAccount)
@@ -71,26 +71,26 @@ public class AccountService { // TODO check rights and TODO logging
         });
     }
 
-    public void update(UpdateAccountRequest request) {
+    public void update(Long id, String name, Currency currency) {
         transactionManager.executeInTransaction(() -> {
-            Account account = accountDAO.findById(request.getAccountId())
-                    .orElseThrow(() -> new AccountNotFoundException(request.getAccountId()));
+            Account account = accountDAO.findById(id)
+                    .orElseThrow(() -> new AccountNotFoundException(id));
 
-            if (request.getName() != null) {
-                account.setName(request.getName());
+            if (name != null) {
+                account.setName(name);
             }
 
-            if (request.getCurrency() != null) {
-                account.setCurrency(request.getCurrency());
+            if (currency != null) {
+                account.setCurrency(currency);
             }
 
             accountDAO.save(account);
         });
     }
 
-    public void delete(DeleteAccountRequest request) {
+    public void delete(Long id) {
         transactionManager.executeInTransaction(() -> {
-            accountDAO.deleteById(request.getAccountId());
+            accountDAO.deleteById(id);
         });
     }
 }
