@@ -2,9 +2,7 @@ package org.example.dto.request;
 
 public enum RequestAction {
     CREATE_OPERATION,
-    GET_USER_OPERATIONS,
     GET_FILTERED_OPERATIONS,
-    GET_RECENT_OPERATIONS,
     UPDATE_OPERATION,
     DELETE_OPERATION,
 
