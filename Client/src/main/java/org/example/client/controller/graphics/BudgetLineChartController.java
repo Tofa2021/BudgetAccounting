@@ -7,9 +7,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Tooltip;
+import org.example.dto.OperationDTO;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
-import org.example.dto.model.OperationDTO;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

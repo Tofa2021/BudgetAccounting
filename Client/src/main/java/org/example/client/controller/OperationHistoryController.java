@@ -11,7 +11,7 @@ import org.example.client.controller.periodSelection.PeriodSelectionListener;
 import org.example.client.controller.table.OperationActionListener;
 import org.example.client.controller.table.OperationTableController;
 import org.example.client.viewModel.OperationHistoryViewModel;
-import org.example.dto.model.OperationDTO;
+import org.example.dto.OperationDTO;
 
 import java.time.Instant;
 

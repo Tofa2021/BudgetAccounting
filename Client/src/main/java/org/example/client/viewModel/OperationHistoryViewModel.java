@@ -4,7 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import org.example.client.connection.ServerInteractionManager;
-import org.example.dto.model.OperationDTO;
+import org.example.dto.OperationDTO;
 
 import java.time.Instant;
 import java.util.Comparator;

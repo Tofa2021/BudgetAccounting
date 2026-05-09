@@ -3,7 +3,7 @@ package org.example.client;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 @Getter
 @AllArgsConstructor

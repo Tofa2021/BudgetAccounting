@@ -1,7 +1,7 @@
 package org.example.domain.exception.already_exists;
 
 import org.example.domain.exception.ModelException;
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 public class AlreadyExistsException extends ModelException {
     public AlreadyExistsException(String className, String idName, String idValue) {

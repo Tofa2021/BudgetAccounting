@@ -1,6 +1,6 @@
 package org.example.domain.exception;
 
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 public class LastManagerException extends BusinessException {
     public LastManagerException(Long accountId, Long memberId) {

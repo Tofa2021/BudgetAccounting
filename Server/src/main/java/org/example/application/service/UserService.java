@@ -9,9 +9,9 @@ import org.example.domain.exception.BusinessException;
 import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.User;
-import org.example.dto.response.Status;
 import org.example.infrastructure.security.PasswordEncoder;
 import org.example.infrastructure.security.TokenProvider;
+import org.example.response.Status;
 
 @Slf4j
 @RequiredArgsConstructor

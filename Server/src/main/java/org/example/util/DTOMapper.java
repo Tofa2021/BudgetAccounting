@@ -1,7 +1,7 @@
 package org.example.util;
 
 import org.example.domain.model.BaseModel;
-import org.example.dto.model.DTO;
+import org.example.dto.DTO;
 
 import java.util.Collections;
 import java.util.List;

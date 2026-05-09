@@ -17,9 +17,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.example.dto.DecreaseOperationCategory;
 import org.example.dto.OperationCategory;
+import org.example.dto.OperationDTO;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
-import org.example.dto.model.OperationDTO;
 
 import java.text.NumberFormat;
 import java.util.Arrays;

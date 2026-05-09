@@ -1,8 +1,8 @@
 package org.example.presentation.connection;
 
-import org.example.dto.request.RequestEnvelope;
-import org.example.dto.response.Response;
 import org.example.presentation.RequestProcessor;
+import org.example.request.RequestEnvelope;
+import org.example.response.Response;
 
 import java.io.EOFException;
 import java.io.IOException;

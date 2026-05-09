@@ -1,10 +1,8 @@
 package org.example.client.connection;
 
 import org.example.client.Result;
-import org.example.dto.request.AuthorizedRequest;
-import org.example.dto.request.Request;
-import org.example.dto.response.Response;
-import org.example.dto.response.Status;
+import org.example.request.Request;
+import org.example.request.RequestEnvelope;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;

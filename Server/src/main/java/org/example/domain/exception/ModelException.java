@@ -1,6 +1,6 @@
 package org.example.domain.exception;
 
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 public class ModelException extends BusinessException {
     public ModelException(Status status, String className, String idName, String idValue, String exceptionText) {

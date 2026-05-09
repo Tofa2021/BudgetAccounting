@@ -1,7 +1,7 @@
 package org.example.domain.exception.not_found;
 
 import org.example.domain.exception.ModelException;
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 public class NotFoundException extends ModelException {
     public NotFoundException(String className, String idName, String idValue) {

@@ -1,6 +1,6 @@
 package org.example.domain.exception;
 
-import org.example.dto.response.Status;
+import org.example.response.Status;
 
 public class LastAdminException extends BusinessException {
     public LastAdminException(Long householdId, Long memberId) {

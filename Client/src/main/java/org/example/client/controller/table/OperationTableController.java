@@ -11,9 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Callback;
 import lombok.Setter;
+import org.example.dto.OperationDTO;
 import org.example.dto.model.DecreaseOperationDTO;
 import org.example.dto.model.IncreaseOperationDTO;
-import org.example.dto.model.OperationDTO;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

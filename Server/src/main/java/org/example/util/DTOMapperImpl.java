@@ -1,7 +1,7 @@
 package org.example.util;
 
 import org.example.domain.model.*;
-import org.example.dto.model.*;
+import org.example.dto.*;
 
 import java.util.List;
 import java.util.Map;
