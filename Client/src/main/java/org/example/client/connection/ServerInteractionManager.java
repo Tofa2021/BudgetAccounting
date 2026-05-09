@@ -1,8 +1,12 @@
 package org.example.client.connection;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.client.Result;
 import org.example.request.Request;
 import org.example.request.RequestEnvelope;
+import org.example.response.Response;
+import org.example.response.Status;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
@@ -11,12 +15,17 @@ import java.util.concurrent.SynchronousQueue;
 public class ServerInteractionManager {
     private final ClientConnection clientConnection;
     private final BlockingQueue<Response> responseQueue;
-    private final String accessToken = "";
-    private final String refreshToken = "";
+    @Setter
+    private String accessToken;
+    @Setter
+    @Getter
+    private String refreshToken;
 
     public ServerInteractionManager() {
         responseQueue = new SynchronousQueue<>();
         clientConnection = new ClientConnection(responseQueue);
+        accessToken = "";
+        refreshToken = "";
     }
 
     public <T> Result<T> processRequest(Request request) {
@@ -28,14 +37,10 @@ public class ServerInteractionManager {
         return Result.error(status, getErrorMessage(status));
     }
 
-    public <T> Result<T> processAuthorizedRequest(AuthorizedRequest authorizedRequest) {
-        authorizedRequest.setToken(accessToken);
-        return processRequest(authorizedRequest);
-    }
-
     public Response putRequest(Request request) {
         try {
-            clientConnection.putRequest(request);
+            RequestEnvelope requestEnvelope = new RequestEnvelope(accessToken, request);
+            clientConnection.putRequest(requestEnvelope);
             Response response = responseQueue.take();
             System.out.println(request.action() + " " + response.status());
             return response;

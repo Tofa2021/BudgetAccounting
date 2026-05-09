@@ -2,25 +2,45 @@ package org.example.client.connection.api;
 
 import org.example.client.Result;
 import org.example.client.connection.ServerInteractionManager;
-import org.example.dto.model.HouseholdMemberDTO;
-import org.example.dto.request.household.CreateHouseholdMemberRequest;
-import org.example.dto.request.household.DeleteHouseholdMemberRequest;
-import org.example.dto.request.household_member.UpdateHouseholdMemberRoleRequest;
+import org.example.dto.HouseholdMemberDTO;
+import org.example.request.RequestAction;
+
+import java.util.Map;
 
 public class HouseholdMemberClient extends BaseClient {
     public HouseholdMemberClient(ServerInteractionManager serverInteractionManager) {
         super(serverInteractionManager);
     }
 
-    public Result<HouseholdMemberDTO> create(Long householdMemberId, Long userId, String role) {
-        return sendAuthorizedRequest(new CreateHouseholdMemberRequest(householdMemberId, userId, role));
+    public Result<HouseholdMemberDTO> create(Long householdId, String role) {
+        return sendRequest(
+                RequestAction.CREATE_HOUSEHOLD_MEMBER,
+                Map.of(
+                        "householdId", householdId,
+                        "role", role
+
+                )
+        );
     }
 
-    public Result<Void> updateRole(Long memberId, String newRole) {
-        return sendAuthorizedRequest(new UpdateHouseholdMemberRoleRequest(memberId, newRole));
+    public Result<Void> updateRole(Long id, String role) {
+        return sendRequest(
+                RequestAction.UPDATE_HOUSEHOLD_MEMBER_ROLE,
+                Map.of(
+                        "id", id,
+                        "role", role
+
+                )
+        );
     }
 
-    public Result<Void> delete(Long memberId) {
-        return sendAuthorizedRequest(new DeleteHouseholdMemberRequest(memberId));
+    public Result<Void> delete(Long id) {
+        return sendRequest(
+                RequestAction.DELETE_HOUSEHOLD_MEMBER,
+                Map.of(
+                        "id", id
+
+                )
+        );
     }
 }

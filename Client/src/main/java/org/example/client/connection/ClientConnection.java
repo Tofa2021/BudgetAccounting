@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 public class ClientConnection {
-    private final BlockingQueue<Request> requestQueue;
+    private final BlockingQueue<RequestEnvelope> requestQueue;
     private final BlockingQueue<Response> responseQueue;
     private final Thread connectionThread;
 
@@ -35,8 +35,8 @@ public class ClientConnection {
             ) {
                 System.out.println("Connected to Server");
                 while (true) {
-                    Request request = requestQueue.take();
-                    Response response = send(in, out, request);
+                    RequestEnvelope requestEnvelope = requestQueue.take();
+                    Response response = send(in, out, requestEnvelope);
                     responseQueue.put(response);
                 }
             } catch (ConnectException e) {
@@ -61,22 +61,22 @@ public class ClientConnection {
         }
     }
 
-    private Response send(ObjectInputStream in, ObjectOutputStream out, Request request) throws IOException, ClassNotFoundException {
-        writeRequest(out, request);
+    private Response send(ObjectInputStream in, ObjectOutputStream out, RequestEnvelope requestEnvelope) throws IOException, ClassNotFoundException {
+        writeRequest(out, requestEnvelope);
         return readResponse(in);
     }
 
-    private void writeRequest(ObjectOutputStream out, Request request) throws IOException {
-        out.writeObject(request);
+    private void writeRequest(ObjectOutputStream out, RequestEnvelope requestEnvelope) throws IOException {
+        out.writeObject(requestEnvelope);
     }
 
     private Response readResponse(ObjectInputStream in) throws IOException, ClassNotFoundException {
         return (Response) in.readObject();
     }
 
-    public void putRequest(Request request) {
+    public void putRequest(RequestEnvelope requestEnvelope) {
         try {
-            requestQueue.put(request);
+            requestQueue.put(requestEnvelope);
         } catch (InterruptedException e) {
             throw new RuntimeException("InterruptedException", e);
         }

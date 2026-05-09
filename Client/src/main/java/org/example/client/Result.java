@@ -34,4 +34,11 @@ public class Result<T> {
         }
         throw new IllegalStateException("Error response. Data is null");
     }
+
+    public String getErrorMessage() {
+        if (isSuccess()) {
+            return null;
+        }
+        return errorMessage;
+    }
 }
