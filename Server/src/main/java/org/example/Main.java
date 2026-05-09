@@ -1,16 +1,8 @@
 package org.example;
 
-import org.example.application.service.BudgetService;
-import org.example.application.service.OperationService;
-import org.example.application.service.UserService;
-import org.example.domain.dao.BudgetDAO;
-import org.example.domain.dao.OperationDAO;
-import org.example.domain.dao.RoleDAO;
-import org.example.domain.dao.UserDAO;
-import org.example.infrastructure.dao.HibernateBudgetDAO;
-import org.example.infrastructure.dao.HibernateOperationDAO;
-import org.example.infrastructure.dao.HibernateRoleDAO;
-import org.example.infrastructure.dao.HibernateUserDAO;
+import org.example.application.service.*;
+import org.example.domain.dao.*;
+import org.example.infrastructure.dao.*;
 import org.example.infrastructure.security.BCryptPasswordEncoder;
 import org.example.infrastructure.security.JwtProvider;
 import org.example.infrastructure.security.PasswordEncoder;
@@ -18,25 +10,88 @@ import org.example.infrastructure.security.TokenProvider;
 import org.example.infrastructure.transaction.HibernateTransactionManager;
 import org.example.presentation.RequestProcessor;
 import org.example.presentation.connection.ConnectionManager;
+import org.example.presentation.requestHandler.*;
+import org.example.util.DTOMapper;
+import org.example.util.DTOMapperImpl;
 
 public class Main {
     public static void main(String[] args) {
+        DTOMapper dtoMapper = new DTOMapperImpl();
+
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 
-        BudgetDAO budgetDAO = new HibernateBudgetDAO(transactionManager);
-        RoleDAO roleDAO = new HibernateRoleDAO(transactionManager);
-        UserDAO userDAO = new HibernateUserDAO(transactionManager);
+        AccountMemberDAO accountMemberDAO = new HibernateAccountMemberDAO(transactionManager);
+        AccountDAO accountDAO = new HibernateAccountDAO(transactionManager);
+        CategoryDAO categoryDAO = new HibernateCategoryDAO(transactionManager);
+        HouseholdDAO householdDAO = new HibernateHouseholdDAO(transactionManager);
+        HouseholdMemberDAO householdMemberDAO = new HibernateHouseholdMemberDAO(transactionManager);
         OperationDAO operationDAO = new HibernateOperationDAO(transactionManager);
+        UserDAO userDAO = new HibernateUserDAO(transactionManager);
 
         TokenProvider tokenProvider = new JwtProvider();
-
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        BudgetService budgetService = new BudgetService(budgetDAO, operationDAO, userDAO, transactionManager);
-        UserService userService = new UserService(passwordEncoder, tokenProvider, userDAO, roleDAO, budgetDAO, transactionManager);
-        OperationService operationService = new OperationService(operationDAO, budgetDAO, transactionManager);
+        AccountMemberService accountMemberService = new AccountMemberService(
+                transactionManager,
+                accountMemberDAO,
+                accountDAO,
+                householdMemberDAO
+        );
+        AccountService accountService = new AccountService(
+                transactionManager,
+                accountDAO,
+                accountMemberDAO,
+                householdDAO,
+                householdMemberDAO
+        );
+        CategoryService categoryService = new CategoryService(transactionManager, categoryDAO, householdDAO);
+        HouseholdMemberService householdMemberService = new HouseholdMemberService(
+                transactionManager,
+                householdMemberDAO,
+                householdDAO,
+                userDAO
+        );
+        HouseholdService householdService = new HouseholdService(
+                transactionManager,
+                householdDAO,
+                householdMemberDAO,
+                userDAO,
+                accountDAO
+        );
+        OperationService operationService = new OperationService(
+                transactionManager,
+                operationDAO,
+                categoryDAO,
+                accountDAO,
+                userDAO
+        );
+        UserService userService = new UserService(
+                transactionManager,
+                userDAO,
+                passwordEncoder,
+                tokenProvider
+        );
 
-        RequestProcessor requestProcessor = new RequestProcessor(tokenProvider, budgetService, userService, operationService);
+        AccountMemberRequestHandler accountMemberRequestHandler = new AccountMemberRequestHandler(dtoMapper, accountMemberService);
+        AccountRequestHandler accountRequestHandler = new AccountRequestHandler(dtoMapper, accountService);
+        AuthRequestHandler authRequestHandler = new AuthRequestHandler(userService);
+        CategoryRequestHandler categoryRequestHandler = new CategoryRequestHandler(dtoMapper, categoryService);
+        HouseholdMemberRequestHandler householdMemberRequestHandler = new HouseholdMemberRequestHandler(dtoMapper, householdMemberService);
+        HouseholdRequestHandler householdRequestHandler = new HouseholdRequestHandler(dtoMapper, householdService);
+        OperationRequestHandler operationRequestHandler = new OperationRequestHandler(dtoMapper, operationService);
+        UserRequestHandler userRequestHandler = new UserRequestHandler(dtoMapper, userService);
+
+        RequestProcessor requestProcessor = new RequestProcessor(
+                tokenProvider,
+                accountMemberRequestHandler,
+                accountRequestHandler,
+                authRequestHandler,
+                categoryRequestHandler,
+                householdMemberRequestHandler,
+                householdRequestHandler,
+                operationRequestHandler,
+                userRequestHandler
+        );
 
         ConnectionManager connectionManager = new ConnectionManager(requestProcessor);
 
