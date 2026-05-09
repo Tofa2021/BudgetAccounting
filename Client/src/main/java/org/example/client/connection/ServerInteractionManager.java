@@ -37,7 +37,7 @@ public class ServerInteractionManager {
         try {
             clientConnection.putRequest(request);
             Response response = responseQueue.take();
-            System.out.println(request.getAction() + " " + response.status());
+            System.out.println(request.action() + " " + response.status());
             return response;
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted", e);

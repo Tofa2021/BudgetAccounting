@@ -3,10 +3,10 @@ package org.example.presentation.requestHandler;
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountService;
 import org.example.domain.model.Account;
-import org.example.dto.model.AccountDTO;
-import org.example.dto.request.Request;
-import org.example.dto.response.Response;
+import org.example.dto.AccountDTO;
 import org.example.enums.Currency;
+import org.example.request.Request;
+import org.example.response.Response;
 import org.example.util.DTOMapper;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class AccountRequestHandler {
     private final AccountService accountService;
 
     public Response handle(Request request, Long userId) {
-        return switch (request.getAction()) {
+        return switch (request.action()) {
             case CREATE_ACCOUNT -> {
                 Long householdId = request.getParam("householdId");
                 String name = request.getParam("name");
@@ -57,7 +57,7 @@ public class AccountRequestHandler {
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());
         };
     }
 }

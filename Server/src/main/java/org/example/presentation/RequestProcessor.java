@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.BusinessException;
-import org.example.dto.request.Request;
-import org.example.dto.request.RequestEnvelope;
-import org.example.dto.response.Response;
-import org.example.dto.response.Status;
 import org.example.infrastructure.security.TokenProvider;
 import org.example.presentation.requestHandler.*;
+import org.example.request.Request;
+import org.example.request.RequestEnvelope;
+import org.example.response.Response;
+import org.example.response.Status;
 
 @Slf4j
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class RequestProcessor {
 
     public Response process(RequestEnvelope requestEnvelope) {
         try {
-            log.info("Received request with Action = {}", requestEnvelope.request().getAction());
+            log.info("Received request with Action = {}", requestEnvelope.request().action());
             Response response = processRequest(requestEnvelope);
             log.info("Send response with Status = {}", response.status());
             return response;
@@ -59,7 +59,7 @@ public class RequestProcessor {
 
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
 
-        return switch (request.getAction()) {
+        return switch (request.action()) {
             case CREATE_ACCOUNT, GET_ACCOUNT, GET_MY_ACCOUNTS_IN_HOUSEHOLD, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
                     accountRequestHandler.handle(request, userId);
 
@@ -81,7 +81,7 @@ public class RequestProcessor {
             case LOGOUT, GET_ME, GET_USER, UPDATE_USER, DELETE_USER ->
                     userRequestHandler.handle(request, userId, accessToken);
 
-            default -> throw new BadParameterException("Request action = " + request.getAction() + " is not supported");
+            default -> throw new BadParameterException("Request action = " + request.action() + " is not supported");
         };
     }
 }

@@ -3,9 +3,9 @@ package org.example.presentation.requestHandler;
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.UserService;
 import org.example.domain.model.User;
-import org.example.dto.model.UserDTO;
-import org.example.dto.request.Request;
-import org.example.dto.response.Response;
+import org.example.dto.UserDTO;
+import org.example.request.Request;
+import org.example.response.Response;
 import org.example.util.DTOMapper;
 
 @RequiredArgsConstructor
@@ -14,10 +14,10 @@ public class UserRequestHandler {
     private final UserService userService;
 
     public Response handle(Request request, Long userId, String accessToken) {
-        return switch (request.getAction()) {
+        return switch (request.action()) {
             case LOGOUT -> {
                 String refreshToken = request.getParam("refreshToken");
-                
+
                 userService.logout(accessToken, refreshToken);
                 yield Response.noContent();
             }
@@ -47,7 +47,7 @@ public class UserRequestHandler {
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());
         };
     }
 }

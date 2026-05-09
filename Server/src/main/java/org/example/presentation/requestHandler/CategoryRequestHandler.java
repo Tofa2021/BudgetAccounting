@@ -3,9 +3,9 @@ package org.example.presentation.requestHandler;
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.CategoryService;
 import org.example.domain.model.Category;
-import org.example.dto.model.CategoryDTO;
-import org.example.dto.request.Request;
-import org.example.dto.response.Response;
+import org.example.dto.CategoryDTO;
+import org.example.request.Request;
+import org.example.response.Response;
 import org.example.util.DTOMapper;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class CategoryRequestHandler {
     private final CategoryService categoryService;
 
     public Response handle(Request request, Long userId) {
-        return switch (request.getAction()) {
+        return switch (request.action()) {
             case CREATE_CATEGORY -> {
                 Long householdId = request.getParam("householdId");
                 String name = request.getParam("name");
@@ -35,7 +35,7 @@ public class CategoryRequestHandler {
 
             case GET_INCOME_CATEGORIES -> {
                 Long householdId = request.getParam("householdId");
-                
+
                 List<Category> categories = categoryService.getIncomeCategory(householdId);
                 yield Response.success(dtoMapper.toDTOs(categories, CategoryDTO.class));
             }
@@ -63,7 +63,7 @@ public class CategoryRequestHandler {
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());
         };
     }
 }

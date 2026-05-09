@@ -3,9 +3,9 @@ package org.example.presentation.requestHandler;
 import lombok.RequiredArgsConstructor;
 import org.example.application.service.OperationService;
 import org.example.domain.model.Operation;
-import org.example.dto.model.OperationDTO;
-import org.example.dto.request.Request;
-import org.example.dto.response.Response;
+import org.example.dto.OperationDTO;
+import org.example.request.Request;
+import org.example.response.Response;
 import org.example.util.DTOMapper;
 
 import java.math.BigDecimal;
@@ -18,7 +18,7 @@ public class OperationRequestHandler {
     private final OperationService operationService;
 
     public Response handle(Request request, Long userId) {
-        return switch (request.getAction()) {
+        return switch (request.action()) {
             case CREATE_OPERATION -> {
                 Long accountId = request.getParam("accountId");
                 Long categoryId = request.getParam("categoryId");
@@ -71,7 +71,7 @@ public class OperationRequestHandler {
                 yield Response.noContent();
             }
 
-            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.getAction());
+            default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());
         };
     }
 }
