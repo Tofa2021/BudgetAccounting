@@ -2,25 +2,19 @@ package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.domain.TransactionManager;
-import org.example.domain.dao.AccountDAO;
-import org.example.domain.dao.CategoryDAO;
-import org.example.domain.dao.OperationDAO;
-import org.example.domain.dao.UserDAO;
+import org.example.domain.dao.*;
 import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.not_found.AccountNotFoundException;
 import org.example.domain.exception.not_found.CategoryNotFoundException;
 import org.example.domain.exception.not_found.OperationNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.*;
-import org.example.dto.request.IntegerAuthorizedRequest;
+import org.example.dto.request.operation.CreateOperationRequest;
 import org.example.dto.request.operation.DeleteOperationRequest;
 import org.example.dto.request.operation.OperationFilterRequest;
-import org.example.dto.request.operation.OperationRequest;
 import org.example.dto.request.operation.UpdateOperationRequest;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -31,18 +25,7 @@ public class OperationService { // TODO check rights and TODO logging
     private final AccountDAO accountDAO;
     private final UserDAO userDAO;
 
-    public List<Operation> getAllByUserId(Long userId) {
-        return transactionManager.executeInTransaction(() -> operationDAO.findAllByUserId(userId));
-    }
-
-    public List<Operation> getRecentOperations(IntegerAuthorizedRequest request, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
-            Instant cutoff = Instant.now().minus(request.getInteger(), ChronoUnit.DAYS);
-            return operationDAO.findRecentOperations(userId, cutoff);
-        });
-    }
-
-    public Operation create(OperationRequest request, Long userId) {
+    public Operation create(CreateOperationRequest request, Long userId) {
         return transactionManager.executeInTransaction(() -> {
             BigDecimal amount = request.getAmount();
             User user = userDAO.findById(userId)
@@ -76,42 +59,17 @@ public class OperationService { // TODO check rights and TODO logging
         });
     }
 
-    public void delete(DeleteOperationRequest request) {
-        transactionManager.executeInTransaction(() -> {
-            Operation operation = operationDAO.findById(request.getId())
-                    .orElseThrow(() -> new OperationNotFoundException(request.getId()));
-
-            Account account = operation.getAccount();
-
-            OperationType operationType = operation.getCategory().getType();
-            if (operationType == OperationType.INCOME) {
-                account.decrease(operation.getAmount());
-            } else if (operationType == OperationType.EXPENSE) {
-                account.increase(operation.getAmount());
-            }
-            operationDAO.delete(operation);
-            accountDAO.save(account);
-        });
-    }
-
-    private void handleAccountAmountChanging(
-            Account account,
-            OperationType existingType,
-            OperationType requestType,
-            BigDecimal existingAmount,
-            BigDecimal requestAmount
-    ) {
-        if (existingType == OperationType.EXPENSE) {
-            account.increase(existingAmount);
-        } else {
-            account.decrease(existingAmount);
-        }
-
-        if (requestType == OperationType.EXPENSE) {
-            account.decrease(requestAmount);
-        } else {
-            account.increase(requestAmount);
-        }
+    public List<Operation> getUserFilteredOperations(OperationFilterRequest request) {
+        return operationDAO.find(OperationFilter.builder()
+                .userId(request.getUserId())
+                .householdId(request.getHouseholdId())
+                .minAmount(request.getMinAmount())
+                .maxAmount(request.getMaxAmount())
+                .dateFrom(request.getDateFrom())
+                .dateTo(request.getDateTo())
+                .categoryId(request.getCategoryId())
+                .limit(request.getLimit())
+                .build());
     }
 
     public void update(UpdateOperationRequest request) {
@@ -146,14 +104,41 @@ public class OperationService { // TODO check rights and TODO logging
         });
     }
 
-    public List<Operation> getFilteredOperations(OperationFilterRequest request, Long userId) {
-        return operationDAO.findFilteredOperations(
-                userId,
-                request.getMinAmount(),
-                request.getMaxAmount(),
-                request.getDateFrom(),
-                request.getDateTo(),
-                request.getCategoryId()
-        );
+    private void handleAccountAmountChanging(
+            Account account,
+            OperationType existingType,
+            OperationType requestType,
+            BigDecimal existingAmount,
+            BigDecimal requestAmount
+    ) {
+        if (existingType == OperationType.EXPENSE) {
+            account.increase(existingAmount);
+        } else {
+            account.decrease(existingAmount);
+        }
+
+        if (requestType == OperationType.EXPENSE) {
+            account.decrease(requestAmount);
+        } else {
+            account.increase(requestAmount);
+        }
+    }
+
+    public void delete(DeleteOperationRequest request) {
+        transactionManager.executeInTransaction(() -> {
+            Operation operation = operationDAO.findById(request.getId())
+                    .orElseThrow(() -> new OperationNotFoundException(request.getId()));
+
+            Account account = operation.getAccount();
+
+            OperationType operationType = operation.getCategory().getType();
+            if (operationType == OperationType.INCOME) {
+                account.decrease(operation.getAmount());
+            } else if (operationType == OperationType.EXPENSE) {
+                account.increase(operation.getAmount());
+            }
+            operationDAO.delete(operation);
+            accountDAO.save(account);
+        });
     }
 }
