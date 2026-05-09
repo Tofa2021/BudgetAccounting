@@ -1,7 +1,6 @@
 package org.example.domain.dao;
 
 import org.example.domain.model.Operation;
-import org.example.dto.OperationCategory;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,6 +17,6 @@ public interface OperationDAO extends DAO<Operation, Long> {
             BigDecimal maxAmount,
             Instant dateFrom,
             Instant dateTo,
-            OperationCategory category
+            Long categoryId
     );
 }

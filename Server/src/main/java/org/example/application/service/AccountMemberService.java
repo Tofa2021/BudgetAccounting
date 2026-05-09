@@ -44,7 +44,7 @@ public class AccountMemberService { // TODO check rights and TODO logging
         if (member.getRole() == AccountMemberRole.MANAGER) {
             Long accountId = member.getAccount().getId();
 
-            int adminCount = accountMemberDAO.countByAccountIdAndRole(accountId, AccountMemberRole.MANAGER);
+            long adminCount = accountMemberDAO.countByAccountIdAndRole(accountId, AccountMemberRole.MANAGER);
             if (adminCount == 1) {
                 throw new LastManagerException(accountId, member.getId());
             }

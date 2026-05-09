@@ -10,5 +10,5 @@ public interface AccountMemberDAO extends DAO<AccountMember, Long> {
 
     boolean existsByAccountIdAndUserId(Long id, Long userId);
 
-    int countByAccountIdAndRole(Long accountId, AccountMemberRole role);
+    long countByAccountIdAndRole(Long accountId, AccountMemberRole role);
 }

@@ -34,7 +34,7 @@ public class HibernateTransactionManager implements TransactionManager {
     @Override
     public void executeInTransaction(Runnable action) {
         Transaction transaction = null;
-        try (Session session = getCurrentSession()) {
+        try (Session session = sessionFactory.openSession()) {
             transaction = session.beginTransaction();
             action.run();
             transaction.commit();

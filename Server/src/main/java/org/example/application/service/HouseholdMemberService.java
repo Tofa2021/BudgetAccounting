@@ -61,7 +61,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
         if (member.getRole() == HouseholdMemberRole.ADMIN) {
             Long householdId = member.getHousehold().getId();
 
-            int adminCount = householdMemberDAO.countByHouseholdIdAndRole(householdId, HouseholdMemberRole.ADMIN);
+            long adminCount = householdMemberDAO.countByHouseholdIdAndRole(householdId, HouseholdMemberRole.ADMIN);
             if (adminCount == 1) {
                 throw new LastAdminException(householdId, member.getId());
             }

@@ -21,9 +21,10 @@ public abstract class HibernateDAO<T, ID> implements DAO<T, ID> {
     }
 
     @Override
-    public void save(T model) {
+    public T save(T model) {
         try {
             getCurrentSession().persist(model);
+            return model;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

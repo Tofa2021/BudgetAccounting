@@ -11,5 +11,5 @@ public interface HouseholdMemberDAO extends DAO<HouseholdMember, Long> {
 
     Optional<HouseholdMember> findByUserIdAndHouseholdId(Long userId, Long householdId);
 
-    int countByHouseholdIdAndRole(Long householdId, HouseholdMemberRole role);
+    long countByHouseholdIdAndRole(Long householdId, HouseholdMemberRole role);
 }

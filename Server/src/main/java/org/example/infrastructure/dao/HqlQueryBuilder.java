@@ -1,6 +1,7 @@
 package org.example.infrastructure.dao;
 
 import org.hibernate.Session;
+import org.hibernate.query.CommonQueryContract;
 import org.hibernate.query.MutationQuery;
 import org.hibernate.query.Query;
 
@@ -27,6 +28,11 @@ public class HqlQueryBuilder<T> {
 
     public HqlQueryBuilder<T> select() {
         hql.append("SELECT o FROM ").append(resultClass.getSimpleName()).append(" o");
+        return this;
+    }
+
+    public HqlQueryBuilder<T> selectCount() {
+        hql.append("SELECT COUNT(o) FROM ").append(resultClass.getSimpleName()).append(" o");
         return this;
     }
 
@@ -72,12 +78,24 @@ public class HqlQueryBuilder<T> {
     public Query<T> build(Session session) {
         System.out.println(hql);
         var query = session.createQuery(hql.toString(), resultClass);
-        for (var parameter : parameters.entrySet()) {
-            System.out.println(parameter.getKey() + " " + parameter.getValue());
-            query.setParameter(parameter.getKey(), parameter.getValue());
-        }
+        applyParameters(query);
 
         return query;
+    }
+
+    public Query<Long> buildCount(Session session) {
+        System.out.println(hql);
+        String queryString = hql.toString();
+
+        var query = session.createQuery(queryString, Long.class);
+        applyParameters(query);
+        return query;
+    }
+
+    private void applyParameters(CommonQueryContract query) {
+        for (var parameter : parameters.entrySet()) {
+            query.setParameter(parameter.getKey(), parameter.getValue());
+        }
     }
 
     public MutationQuery buildMutation(Session session) {
