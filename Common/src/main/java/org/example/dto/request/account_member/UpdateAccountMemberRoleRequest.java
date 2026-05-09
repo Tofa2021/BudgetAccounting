@@ -9,8 +9,8 @@ public class UpdateAccountMemberRoleRequest extends AuthorizedRequest {
     private final Long memberId;
     private final String role;
 
-    public UpdateAccountMemberRoleRequest(String token, Long memberId, String role) {
-        super(RequestAction.UPDATE_ACCOUNT_MEMBER_ROLE, token);
+    public UpdateAccountMemberRoleRequest(Long memberId, String role) {
+        super(RequestAction.UPDATE_ACCOUNT_MEMBER_ROLE);
         this.memberId = memberId;
         this.role = role;
     }

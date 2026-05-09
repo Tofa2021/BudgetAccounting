@@ -11,8 +11,8 @@ public class CreateAccountRequest extends AuthorizedRequest {
     private final Currency currency;
     private final Long householdId;
 
-    public CreateAccountRequest(String token, String name, Currency currency, Long householdId) {
-        super(RequestAction.CREATE_ACCOUNT, token);
+    public CreateAccountRequest(String name, Currency currency, Long householdId) {
+        super(RequestAction.CREATE_ACCOUNT);
         this.name = name;
         this.currency = currency;
         this.householdId = householdId;

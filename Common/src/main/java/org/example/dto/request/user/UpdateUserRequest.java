@@ -9,8 +9,8 @@ public class UpdateUserRequest extends AuthorizedRequest {
     private final String username;
     private final String password;
 
-    public UpdateUserRequest(String token, String username, String password) {
-        super(RequestAction.UPDATE_USER, token);
+    public UpdateUserRequest(String username, String password) {
+        super(RequestAction.UPDATE_USER);
         this.username = username;
         this.password = password;
     }

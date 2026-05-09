@@ -8,15 +8,15 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
-public class OperationRequest extends AuthorizedRequest {
+public class CreateOperationRequest extends AuthorizedRequest {
     private final Long accountId;
     private final String description;
     private final BigDecimal amount;
     private final Long categoryId;
     private final Instant dateTime;
 
-    public OperationRequest(String token, Long budgetId, Long accountId, String description, BigDecimal amount, Long categoryId, Instant dateTime) {
-        super(RequestAction.CREATE_OPERATION, token);
+    public CreateOperationRequest(Long accountId, String description, BigDecimal amount, Long categoryId, Instant dateTime) {
+        super(RequestAction.CREATE_OPERATION);
         this.accountId = accountId;
         this.description = description;
         this.amount = amount;

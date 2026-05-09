@@ -8,8 +8,8 @@ import org.example.dto.request.RequestAction;
 public class GetMyAccountsInHouseholdRequest extends AuthorizedRequest {
     private final Long householdId;
 
-    public GetMyAccountsInHouseholdRequest(String token, Long householdId) {
-        super(RequestAction.GET_MY_ACCOUNTS_IN_HOUSEHOLD, token);
+    public GetMyAccountsInHouseholdRequest(Long householdId) {
+        super(RequestAction.GET_MY_ACCOUNTS_IN_HOUSEHOLD);
         this.householdId = householdId;
     }
 }

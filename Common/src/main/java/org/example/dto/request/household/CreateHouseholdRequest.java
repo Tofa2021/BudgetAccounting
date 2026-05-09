@@ -11,8 +11,8 @@ public class CreateHouseholdRequest extends AuthorizedRequest {
     private final String name;
     private final Map<Long, String> additionalMemberRoleMap;
 
-    public CreateHouseholdRequest(String token, String name, Map<Long, String> additionalMemberRoleMap) {
-        super(RequestAction.CREATE_HOUSEHOLD, token);
+    public CreateHouseholdRequest(String name, Map<Long, String> additionalMemberRoleMap) {
+        super(RequestAction.CREATE_HOUSEHOLD);
         this.name = name;
         this.additionalMemberRoleMap = additionalMemberRoleMap;
     }

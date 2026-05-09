@@ -8,8 +8,8 @@ import org.example.dto.request.RequestAction;
 public class DeleteCategoryRequest extends AuthorizedRequest {
     private final Long categoryId;
 
-    public DeleteCategoryRequest(String token, Long categoryId) {
-        super(RequestAction.DELETE_CATEGORY, token);
+    public DeleteCategoryRequest(Long categoryId) {
+        super(RequestAction.DELETE_CATEGORY);
         this.categoryId = categoryId;
     }
 }

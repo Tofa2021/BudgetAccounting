@@ -5,11 +5,11 @@ import org.example.dto.request.AuthorizedRequest;
 import org.example.dto.request.RequestAction;
 
 @Getter
-public class DeleteMemberHouseholdRequest extends AuthorizedRequest {
+public class DeleteHouseholdMemberRequest extends AuthorizedRequest {
     private final Long memberId;
 
-    public DeleteMemberHouseholdRequest(String token, Long memberId) {
-        super(RequestAction.DELETE_HOUSEHOLD_MEMBER, token);
+    public DeleteHouseholdMemberRequest(Long memberId) {
+        super(RequestAction.DELETE_HOUSEHOLD_MEMBER);
         this.memberId = memberId;
     }
 }

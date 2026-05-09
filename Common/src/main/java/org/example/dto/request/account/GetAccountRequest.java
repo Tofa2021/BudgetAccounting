@@ -8,8 +8,8 @@ import org.example.dto.request.RequestAction;
 public class GetAccountRequest extends AuthorizedRequest {
     private final Long accountId;
 
-    public GetAccountRequest(String token, Long accountId) {
-        super(RequestAction.GET_ACCOUNT, token);
+    public GetAccountRequest(Long accountId) {
+        super(RequestAction.GET_ACCOUNT);
         this.accountId = accountId;
     }
 }

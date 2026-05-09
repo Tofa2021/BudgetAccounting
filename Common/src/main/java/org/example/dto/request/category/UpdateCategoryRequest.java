@@ -10,8 +10,8 @@ public class UpdateCategoryRequest extends AuthorizedRequest {
     private final String name;
     private final String type;
 
-    public UpdateCategoryRequest(String token, Long id, String name, String type) {
-        super(RequestAction.UPDATE_CATEGORY, token);
+    public UpdateCategoryRequest(Long id, String name, String type) {
+        super(RequestAction.UPDATE_CATEGORY);
         this.id = id;
         this.name = name;
         this.type = type;

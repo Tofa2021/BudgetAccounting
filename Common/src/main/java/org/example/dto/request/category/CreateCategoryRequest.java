@@ -10,8 +10,8 @@ public class CreateCategoryRequest extends AuthorizedRequest {
     private final String type;
     private final Long householdId;
 
-    public CreateCategoryRequest(String token, String name, String type, Long householdId) {
-        super(RequestAction.CREATE_CATEGORY, token);
+    public CreateCategoryRequest(String name, String type, Long householdId) {
+        super(RequestAction.CREATE_CATEGORY);
         this.name = name;
         this.type = type;
         this.householdId = householdId;

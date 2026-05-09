@@ -11,8 +11,8 @@ public class UpdateAccountRequest extends AuthorizedRequest {
     private final String name;
     private final Currency currency;
 
-    public UpdateAccountRequest(RequestAction action, String token, Long accountId, String name, Currency currency) {
-        super(action, token);
+    public UpdateAccountRequest(Long accountId, String name, Currency currency) {
+        super(RequestAction.UPDATE_ACCOUNT);
         this.accountId = accountId;
         this.name = name;
         this.currency = currency;

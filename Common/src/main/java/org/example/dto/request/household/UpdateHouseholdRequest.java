@@ -9,8 +9,8 @@ public class UpdateHouseholdRequest extends AuthorizedRequest {
     private final Long householdId;
     private final String name;
 
-    public UpdateHouseholdRequest(String token, Long householdId, String name) {
-        super(RequestAction.UPDATE_HOUSEHOLD, token);
+    public UpdateHouseholdRequest(Long householdId, String name) {
+        super(RequestAction.UPDATE_HOUSEHOLD);
         this.householdId = householdId;
         this.name = name;
     }

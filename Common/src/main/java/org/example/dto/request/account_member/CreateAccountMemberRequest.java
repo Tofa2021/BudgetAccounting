@@ -10,8 +10,8 @@ public class CreateAccountMemberRequest extends AuthorizedRequest {
     private final Long accountId;
     private final String role;
 
-    public CreateAccountMemberRequest(String token, Long householdMemberId, Long accountId, String role) {
-        super(RequestAction.CREATE_ACCOUNT_MEMBER, token);
+    public CreateAccountMemberRequest(Long householdMemberId, Long accountId, String role) {
+        super(RequestAction.CREATE_ACCOUNT_MEMBER);
         this.householdMemberId = householdMemberId;
         this.accountId = accountId;
         this.role = role;

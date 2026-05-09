@@ -8,8 +8,8 @@ import org.example.dto.request.RequestAction;
 public class DeleteAccountMemberRequest extends AuthorizedRequest {
     private final Long memberId;
 
-    public DeleteAccountMemberRequest(String token, Long memberId) {
-        super(RequestAction.DELETE_ACCOUNT_MEMBER, token);
+    public DeleteAccountMemberRequest(Long memberId) {
+        super(RequestAction.DELETE_ACCOUNT_MEMBER);
         this.memberId = memberId;
     }
 }

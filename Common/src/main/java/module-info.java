@@ -9,6 +9,8 @@ module org.example.common {
     exports org.example.dto.request.account;
     exports org.example.dto.request.household_member;
     exports org.example;
+    exports org.example.dto.request.account_member;
+    exports org.example.dto.request.category;
     requires static lombok;
     requires jdk.dynalink;
 }

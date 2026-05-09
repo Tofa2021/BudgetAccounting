@@ -9,8 +9,8 @@ public class UpdateHouseholdMemberRoleRequest extends AuthorizedRequest {
     private final Long memberId;
     private final String newRole;
 
-    public UpdateHouseholdMemberRoleRequest(String token, Long memberId, String newRole) {
-        super(RequestAction.UPDATE_HOUSEHOLD_MEMBER_ROLE, token);
+    public UpdateHouseholdMemberRoleRequest(Long memberId, String newRole) {
+        super(RequestAction.UPDATE_HOUSEHOLD_MEMBER_ROLE);
         this.memberId = memberId;
         this.newRole = newRole;
     }

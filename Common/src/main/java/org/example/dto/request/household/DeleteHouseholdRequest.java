@@ -8,8 +8,8 @@ import org.example.dto.request.RequestAction;
 public class DeleteHouseholdRequest extends AuthorizedRequest {
     private final Long id;
 
-    public DeleteHouseholdRequest(String token, Long id) {
-        super(RequestAction.DELETE_HOUSEHOLD, token);
+    public DeleteHouseholdRequest(Long id) {
+        super(RequestAction.DELETE_HOUSEHOLD);
         this.id = id;
     }
 }

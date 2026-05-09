@@ -6,8 +6,8 @@ import lombok.Getter;
 public class ModelIdAuthorizedRequest extends AuthorizedRequest {
     private final Long id;
 
-    public ModelIdAuthorizedRequest(RequestAction action, String token, Long id) {
-        super(action, token);
+    public ModelIdAuthorizedRequest(RequestAction action, Long id) {
+        super(action);
         this.id = id;
     }
 }
