@@ -1,11 +1,13 @@
 package org.example.dto.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+
+import java.io.Serializable;
 
 @Getter
-@Setter
-public class AccountMemberDTO implements DTO {
+@AllArgsConstructor
+public class AccountMemberDTO implements DTO, Serializable {
     private Long id;
     private String role;
     private Long householdMemberId;
