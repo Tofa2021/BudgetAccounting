@@ -153,7 +153,7 @@ public class OperationService { // TODO check rights and TODO logging
                 request.getMaxAmount(),
                 request.getDateFrom(),
                 request.getDateTo(),
-                request.getCategory()
+                request.getCategoryId()
         );
     }
 }

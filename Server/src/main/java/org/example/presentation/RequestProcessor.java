@@ -67,7 +67,7 @@ public class RequestProcessor {
         Long userId = tokenProvider.getUserIdFromAccessToken(request.getToken());
 
         return switch (action) {
-            case CREATE_ACCOUNT, GET_ACCOUNT, GET_ACCOUNTS, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
+            case CREATE_ACCOUNT, GET_ACCOUNT, GET_MY_ACCOUNTS_IN_HOUSEHOLD, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
                     accountRequestHandler.handle(action, request, userId);
 
             case CREATE_ACCOUNT_MEMBER, UPDATE_ACCOUNT_MEMBER_ROLE, DELETE_ACCOUNT_MEMBER ->

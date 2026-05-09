@@ -22,8 +22,8 @@ public class AccountRequestHandler {
             case GET_ACCOUNT ->
                     Response.success(dtoMapper.toDTO(accountService.getAccount((GetAccountRequest) request, userId), AccountDTO.class));
 
-            case GET_ACCOUNTS ->
-                    Response.success(dtoMapper.toDTOs(accountService.getAccounts((GetAccountsRequest) request, userId), AccountDTO.class));
+            case GET_MY_ACCOUNTS_IN_HOUSEHOLD ->
+                    Response.success(dtoMapper.toDTOs(accountService.getAccounts((GetMyAccountsInHouseholdRequest) request, userId), AccountDTO.class));
 
             case UPDATE_ACCOUNT -> {
                 accountService.update((UpdateAccountRequest) request);

@@ -1,7 +1,6 @@
 package org.example.dto.request.operation;
 
 import lombok.Getter;
-import org.example.dto.OperationCategory;
 import org.example.dto.request.AuthorizedRequest;
 import org.example.dto.request.RequestAction;
 
@@ -10,21 +9,22 @@ import java.time.Instant;
 
 @Getter
 public class OperationFilterRequest extends AuthorizedRequest {
-    private final OperationCategory category;
+    private final Long categoryId;
     private final BigDecimal maxAmount;
     private final BigDecimal minAmount;
     private final Instant dateFrom;
     private final Instant dateTo;
 
     public OperationFilterRequest(
-            String token, OperationCategory category,
+            String token,
+            Long categoryId,
             BigDecimal maxAmount,
             BigDecimal minAmount,
             Instant dateFrom,
             Instant dateTo
     ) {
         super(RequestAction.GET_FILTERED_OPERATIONS, token);
-        this.category = category;
+        this.categoryId = categoryId;
         this.maxAmount = maxAmount;
         this.minAmount = minAmount;
         this.dateFrom = dateFrom;

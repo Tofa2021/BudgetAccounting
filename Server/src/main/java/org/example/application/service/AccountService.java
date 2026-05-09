@@ -61,7 +61,7 @@ public class AccountService { // TODO check rights and TODO logging
         return account;
     }
 
-    public List<Account> getAccounts(GetAccountsRequest request, Long userId) {
+    public List<Account> getAccounts(GetMyAccountsInHouseholdRequest request, Long userId) {
         return transactionManager.executeInTransaction(() -> {
             List<AccountMember> members = accountMemberDAO.findByUserIdAndHouseholdId(userId, request.getHouseholdId());
             return members

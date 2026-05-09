@@ -5,11 +5,11 @@ import org.example.dto.request.AuthorizedRequest;
 import org.example.dto.request.RequestAction;
 
 @Getter
-public class GetAccountsRequest extends AuthorizedRequest {
+public class GetMyAccountsInHouseholdRequest extends AuthorizedRequest {
     private final Long householdId;
 
-    public GetAccountsRequest(String token, Long householdId) {
-        super(RequestAction.GET_ACCOUNTS, token);
+    public GetMyAccountsInHouseholdRequest(String token, Long householdId) {
+        super(RequestAction.GET_MY_ACCOUNTS_IN_HOUSEHOLD, token);
         this.householdId = householdId;
     }
 }
