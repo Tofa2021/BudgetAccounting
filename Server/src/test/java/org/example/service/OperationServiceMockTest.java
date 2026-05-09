@@ -67,7 +67,7 @@ public class OperationServiceMockTest {
 
         Mockito.when(hibernateOperationDAO.findAllByUserId(session, user.getId())).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getAllByUserId(user.getId());
+        List<Operation> actualOperations = operationService.getAllUserOperations(user.getId());
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
         Mockito.verify(sessionManager).openSession();
@@ -76,8 +76,8 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getRecentOperations() {
-        IntegerAuthorizedRequest request = new IntegerAuthorizedRequest(RequestAction.GET_RECENT_OPERATIONS, "token", 7);
+    public void getUserRecentOperations() {
+        IntegerAuthorizedRequest request = new IntegerAuthorizedRequest(RequestAction.GET_USER_RECENT_OPERATIONS, "token", 7);
 
         Instant fixedNow = Instant.parse("2026-03-11T10:00:00Z");
 
@@ -88,16 +88,16 @@ public class OperationServiceMockTest {
         try (MockedStatic<Instant> instantMock = Mockito.mockStatic(Instant.class)) {
             instantMock.when(Instant::now).thenReturn(fixedNow);
             Instant expectedCutoff = fixedNow.minus(request.getInteger(), ChronoUnit.DAYS);
-            Mockito.when(hibernateOperationDAO.findRecentOperations(
+            Mockito.when(hibernateOperationDAO.findUserRecentOperations(
                     session,
                     user.getId(),
                     expectedCutoff
             )).thenReturn(List.of(operation1, operation2));
 
-            List<Operation> actualOperations = operationService.getRecentOperations(user.getId(), request);
+            List<Operation> actualOperations = operationService.getUserRecentOperations(user.getId(), request);
 
             Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
-            Mockito.verify(hibernateOperationDAO).findRecentOperations(session, user.getId(), expectedCutoff);
+            Mockito.verify(hibernateOperationDAO).findUserRecentOperations(session, user.getId(), expectedCutoff);
         }
 
         Mockito.verify(sessionManager).openSession();
@@ -105,24 +105,24 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getRecentOperations_noOperations_returnEmptyList() {
-        IntegerAuthorizedRequest request = new IntegerAuthorizedRequest(RequestAction.GET_RECENT_OPERATIONS, "token", 7);
+    public void getUserRecentOperations_noOperations_returnEmptyList() {
+        IntegerAuthorizedRequest request = new IntegerAuthorizedRequest(RequestAction.GET_USER_RECENT_OPERATIONS, "token", 7);
         Instant fixedNow = Instant.parse("2026-03-11T10:00:00Z");
         User user = new User(1L, "user", "123", Set.of());
 
         try (MockedStatic<Instant> instantMock = Mockito.mockStatic(Instant.class)) {
             instantMock.when(Instant::now).thenReturn(fixedNow);
             Instant expectedCutoff = fixedNow.minus(request.getInteger(), ChronoUnit.DAYS);
-            Mockito.when(hibernateOperationDAO.findRecentOperations(
+            Mockito.when(hibernateOperationDAO.findUserRecentOperations(
                     session,
                     user.getId(),
                     expectedCutoff
             )).thenReturn(List.of());
 
-            List<Operation> actualOperations = operationService.getRecentOperations(user.getId(), request);
+            List<Operation> actualOperations = operationService.getUserRecentOperations(user.getId(), request);
 
             Assertions.assertTrue(actualOperations.isEmpty());
-            Mockito.verify(hibernateOperationDAO).findRecentOperations(session, user.getId(), expectedCutoff);
+            Mockito.verify(hibernateOperationDAO).findUserRecentOperations(session, user.getId(), expectedCutoff);
         }
 
         Mockito.verify(sessionManager).openSession();
@@ -535,7 +535,7 @@ public class OperationServiceMockTest {
     }
 
     @Test
-    public void getFilteredOperations_allOperations() {
+    public void getUserFilteredOperations_allOperations() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -549,7 +549,7 @@ public class OperationServiceMockTest {
         Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 session, user.getId(),
                 null,
                 null,
@@ -557,19 +557,19 @@ public class OperationServiceMockTest {
                 null
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), null, null, null, null
         );
     }
 
     @Test
-    public void getFilteredOperations_increaseOperations_withCategory() {
+    public void getUserFilteredOperations_increaseOperations_withCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -594,7 +594,7 @@ public class OperationServiceMockTest {
         Operation operation4 = new IncreaseOperation(4L, 350.,
                 Instant.parse("2025-01-01T00:00:00Z"), user, OperationCategory.SALARY);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 session,
                 user.getId(),
                 100.,
@@ -604,19 +604,19 @@ public class OperationServiceMockTest {
                 OperationCategory.SALARY
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
         Assertions.assertFalse(actualOperations.contains(operation3));
         Assertions.assertFalse(actualOperations.contains(operation4));
 
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), 100., 500., dateFrom, dateTo, OperationCategory.SALARY
         );
     }
 
     @Test
-    public void getFilteredOperations_increaseOperations_withoutCategory() {
+    public void getUserFilteredOperations_increaseOperations_withoutCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -634,7 +634,7 @@ public class OperationServiceMockTest {
         Operation operation1 = new IncreaseOperation(1L, 200., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new IncreaseOperation(2L, 300., Instant.now(), user, OperationCategory.BONUS);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 Mockito.eq(session),
                 Mockito.eq(user.getId()),
                 Mockito.eq(100.),
@@ -644,17 +644,17 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), 100., 500., dateFrom, dateTo, (OperationCategory) null
         );
     }
 
     @Test
-    public void getFilteredOperations_decreaseOperations_withCategory() {
+    public void getUserFilteredOperations_decreaseOperations_withCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -672,7 +672,7 @@ public class OperationServiceMockTest {
         Operation operation1 = new DecreaseOperation(1L, 20., Instant.now(), user, DecreaseOperationCategory.FOOD);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 session,
                 user.getId(),
                 10.,
@@ -682,17 +682,17 @@ public class OperationServiceMockTest {
                 DecreaseOperationCategory.FOOD
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), 10., 100., dateFrom, dateTo, DecreaseOperationCategory.FOOD
         );
     }
 
     @Test
-    public void getFilteredOperations_decreaseOperations_withoutCategory() {
+    public void getUserFilteredOperations_decreaseOperations_withoutCategory() {
         User user = new User(1L, "user", "123", Set.of());
 
         Instant dateFrom = Instant.parse("2024-01-01T00:00:00Z");
@@ -710,7 +710,7 @@ public class OperationServiceMockTest {
         Operation operation1 = new DecreaseOperation(1L, 20., Instant.now(), user, DecreaseOperationCategory.FOOD);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.TRANSPORT);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 Mockito.eq(session),
                 Mockito.eq(user.getId()),
                 Mockito.eq(10.),
@@ -720,17 +720,17 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), 10., 100., dateFrom, dateTo, (DecreaseOperationCategory) null
         );
     }
 
     @Test
-    public void getFilteredOperations_withNullParameters() {
+    public void getUserFilteredOperations_withNullParameters() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -744,7 +744,7 @@ public class OperationServiceMockTest {
         Operation operation1 = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
         Operation operation2 = new DecreaseOperation(2L, 50., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 Mockito.eq(session),
                 Mockito.eq(user.getId()),
                 Mockito.eq(null),
@@ -753,17 +753,17 @@ public class OperationServiceMockTest {
                 Mockito.eq(null)
         )).thenReturn(List.of(operation1, operation2));
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertEquals(List.of(operation1, operation2), actualOperations);
 
-        Mockito.verify(hibernateOperationDAO).findFilteredOperations(
+        Mockito.verify(hibernateOperationDAO).findUserFilteredOperations(
                 session, user.getId(), null, null, null, null
         );
     }
 
     @Test
-    public void getFilteredOperations_emptyResult() {
+    public void getUserFilteredOperations_emptyResult() {
         User user = new User(1L, "user", "123", Set.of());
 
         IncreaseOperationFilterRequest request = new IncreaseOperationFilterRequest(
@@ -774,7 +774,7 @@ public class OperationServiceMockTest {
                 OperationCategory.SALARY
         );
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 Mockito.eq(session),
                 Mockito.eq(user.getId()),
                 Mockito.eq(1000.),
@@ -784,13 +784,13 @@ public class OperationServiceMockTest {
                 Mockito.eq(OperationCategory.SALARY)
         )).thenReturn(List.of());
 
-        List<Operation> actualOperations = operationService.getFilteredOperations(user.getId(), request);
+        List<Operation> actualOperations = operationService.getUserFilteredOperations(user.getId(), request);
 
         Assertions.assertTrue(actualOperations.isEmpty());
     }
 
     @Test
-    public void getFilteredOperations_databaseError_throwsException() {
+    public void getUserFilteredOperations_databaseError_throwsException() {
         User user = new User(1L, "user", "123", Set.of());
 
         OperationFilterRequest request = new OperationFilterRequest(
@@ -801,7 +801,7 @@ public class OperationServiceMockTest {
                 null
         );
 
-        Mockito.when(hibernateOperationDAO.findFilteredOperations(
+        Mockito.when(hibernateOperationDAO.findUserFilteredOperations(
                 Mockito.eq(session),
                 Mockito.eq(user.getId()),
                 Mockito.eq(null),
@@ -811,7 +811,7 @@ public class OperationServiceMockTest {
         )).thenThrow(new RuntimeException("Database error"));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
-            operationService.getFilteredOperations(user.getId(), request);
+            operationService.getUserFilteredOperations(user.getId(), request);
         });
 
         Mockito.verify(sessionManager).openSession();

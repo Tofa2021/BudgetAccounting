@@ -1,20 +1,11 @@
 package org.example.client.connection;
 
-import org.example.Pair;
 import org.example.client.Result;
-import org.example.dto.OperationCategory;
-import org.example.dto.model.OperationDTO;
-import org.example.dto.request.*;
-import org.example.dto.request.operation.DeleteOperationRequest;
-import org.example.dto.request.operation.OperationFilterRequest;
-import org.example.dto.request.operation.OperationRequest;
-import org.example.dto.request.user.AuthRequest;
+import org.example.dto.request.AuthorizedRequest;
+import org.example.dto.request.Request;
 import org.example.dto.response.Response;
 import org.example.dto.response.Status;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -22,22 +13,29 @@ import java.util.concurrent.SynchronousQueue;
 public class ServerInteractionManager {
     private final ClientConnection clientConnection;
     private final BlockingQueue<Response> responseQueue;
-    private String assessToken = "";
-    private String refreshToken = "";
+    private final String accessToken = "";
+    private final String refreshToken = "";
 
     public ServerInteractionManager() {
         responseQueue = new SynchronousQueue<>();
         clientConnection = new ClientConnection(responseQueue);
     }
 
-    private <T> Result<T> processRequest(Request request) {
+    public <T> Result<T> processRequest(Request request) {
         Response response = putRequest(request);
         Status status = response.status();
-        if (status == Status.OK) {
-            return Result.success((T) response.body());
+        if (status.isSuccess()) {
+            return Result.success(status, (T) response.body());
         }
         return Result.error(status, getErrorMessage(status));
     }
+
+    public <T> Result<T> processAuthorizedRequest(AuthorizedRequest authorizedRequest) {
+        authorizedRequest.setToken(accessToken);
+        return processRequest(authorizedRequest);
+    }
+
+    /*
 
     public Result<Double> getAmount() {
         return processRequest(new AuthorizedRequest(RequestAction.GET_HOUSEHOLD_AMOUNT, assessToken));
@@ -139,6 +137,7 @@ public class ServerInteractionManager {
         };
         return processRequest(request);
     }
+    */
 
     public Response putRequest(Request request) {
         try {

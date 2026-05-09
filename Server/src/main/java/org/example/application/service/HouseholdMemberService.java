@@ -14,8 +14,8 @@ import org.example.domain.model.Household;
 import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.User;
-import org.example.dto.request.household.CreateMemberHouseholdRequest;
-import org.example.dto.request.household.DeleteMemberHouseholdRequest;
+import org.example.dto.request.household.CreateHouseholdMemberRequest;
+import org.example.dto.request.household.DeleteHouseholdMemberRequest;
 import org.example.dto.request.household_member.UpdateHouseholdMemberRoleRequest;
 
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
     private final HouseholdDAO householdDAO;
     private final UserDAO userDAO;
 
-    public HouseholdMember create(CreateMemberHouseholdRequest request) {
+    public HouseholdMember create(CreateHouseholdMemberRequest request) {
         return transactionManager.executeInTransaction(() -> {
             User user = userDAO.findById(request.getUserId())
                     .orElseThrow(() -> new UserNotFoundException(request.getUserId()));
@@ -46,7 +46,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
         });
     }
 
-    public void delete(DeleteMemberHouseholdRequest request) {
+    public void delete(DeleteHouseholdMemberRequest request) {
         transactionManager.executeInTransaction(() -> {
             HouseholdMember member = householdMemberDAO.findById(request.getMemberId())
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(request.getMemberId()));
