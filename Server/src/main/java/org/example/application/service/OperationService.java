@@ -1,7 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.*;
 import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.not_found.AccountNotFoundException;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class OperationService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final OperationDAO operationDAO;
     private final CategoryDAO categoryDAO;
     private final AccountDAO accountDAO;
@@ -30,7 +30,7 @@ public class OperationService { // TODO check rights and TODO logging
             Instant dateTime,
             Long userId
     ) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             Account account = accountDAO.findById(accountId)
@@ -72,24 +72,26 @@ public class OperationService { // TODO check rights and TODO logging
                                                   Instant dateTo,
                                                   Integer limit
     ) {
-        return operationDAO.find(OperationFilter.builder()
-                .userId(userId)
-                .householdId(householdId)
-                .minAmount(minAmount)
-                .maxAmount(maxAmount)
-                .dateFrom(dateFrom)
-                .dateTo(dateTo)
-                .categoryId(categoryId)
-                .limit(limit)
-                .build()
-        );
+        return persistenceManager.executeReadOnly(() ->
+                operationDAO.find(OperationFilter.builder()
+                        .userId(userId)
+                        .householdId(householdId)
+                        .minAmount(minAmount)
+                        .maxAmount(maxAmount)
+                        .dateFrom(dateFrom)
+                        .dateTo(dateTo)
+                        .categoryId(categoryId)
+                        .limit(limit)
+                        .build()
+                ));
     }
 
     public List<Operation> getUserHouseholdOperations(Long householdId, Long userId) {
-        return operationDAO.find(OperationFilter.builder()
-                .householdId(householdId)
-                .userId(userId)
-                .build());
+        return persistenceManager.executeReadOnly(() ->
+                operationDAO.find(OperationFilter.builder()
+                        .householdId(householdId)
+                        .userId(userId)
+                        .build()));
     }
 
     public void update(
@@ -99,7 +101,7 @@ public class OperationService { // TODO check rights and TODO logging
             String newDescription,
             Instant newDateTime
     ) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             Operation existingOperation = operationDAO.findById(id)
                     .orElseThrow(() -> new OperationNotFoundException(id));
             Account account = existingOperation.getAccount();
@@ -150,7 +152,7 @@ public class OperationService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             Operation operation = operationDAO.findById(id)
                     .orElseThrow(() -> new OperationNotFoundException(id));
 

@@ -7,7 +7,7 @@ import org.example.infrastructure.security.BCryptPasswordEncoder;
 import org.example.infrastructure.security.JwtProvider;
 import org.example.infrastructure.security.PasswordEncoder;
 import org.example.infrastructure.security.TokenProvider;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 import org.example.presentation.RequestProcessor;
 import org.example.presentation.connection.ConnectionManager;
 import org.example.presentation.requestHandler.*;
@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         DTOMapper dtoMapper = new DTOMapperImpl();
 
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        HibernatePersistenceManager transactionManager = new HibernatePersistenceManager();
 
         AccountMemberDAO accountMemberDAO = new HibernateAccountMemberDAO(transactionManager);
         AccountDAO accountDAO = new HibernateAccountDAO(transactionManager);

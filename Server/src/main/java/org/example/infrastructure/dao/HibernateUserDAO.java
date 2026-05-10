@@ -2,12 +2,12 @@ package org.example.infrastructure.dao;
 
 import org.example.domain.dao.UserDAO;
 import org.example.domain.model.User;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.Optional;
 
 public class HibernateUserDAO extends HibernateDAO<User, Long> implements UserDAO {
-    public HibernateUserDAO(HibernateTransactionManager transactionManager) {
+    public HibernateUserDAO(HibernatePersistenceManager transactionManager) {
         super(User.class, transactionManager);
     }
 

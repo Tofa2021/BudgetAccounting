@@ -23,7 +23,7 @@ public class UserClient extends BaseClient {
 
     public Result<UserDTO> getMe() {
         return sendRequest(
-                RequestAction.GET_USER,
+                RequestAction.GET_ME,
                 Map.of()
         );
     }

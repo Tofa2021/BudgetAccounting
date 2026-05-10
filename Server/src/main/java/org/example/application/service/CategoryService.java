@@ -2,7 +2,7 @@ package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.CategoryDAO;
 import org.example.domain.dao.HouseholdDAO;
 import org.example.domain.exception.already_exists.CategoryAlreadyExistsException;
@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class CategoryService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final CategoryDAO categoryDAO;
     private final HouseholdDAO householdDAO;
 
     public Category create(Long householdId, String name, String type) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             Household household = householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
@@ -40,8 +40,8 @@ public class CategoryService { // TODO check rights and TODO logging
         });
     }
 
-    public List<Category> getAll(Long householdId) {
-        return transactionManager.executeInTransaction(() -> {
+    public List<Category> getAllByHouseholdId(Long householdId) {
+        return persistenceManager.executeReadOnlyTransaction(() -> {
             householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdId(householdId);
@@ -49,7 +49,7 @@ public class CategoryService { // TODO check rights and TODO logging
     }
 
     public List<Category> getIncomeCategory(Long householdId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.INCOME);
@@ -57,7 +57,7 @@ public class CategoryService { // TODO check rights and TODO logging
     }
 
     public List<Category> getExpenseCategory(Long householdId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
             return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.EXPENSE);
@@ -65,25 +65,27 @@ public class CategoryService { // TODO check rights and TODO logging
     }
 
     public void update(Long id, String newName, String newType) {
-        Category category = categoryDAO.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(id));
+        persistenceManager.executeTransaction(() -> {
+            Category category = categoryDAO.findById(id)
+                    .orElseThrow(() -> new CategoryNotFoundException(id));
 
-        if (newName != null && !newName.equals(category.getName())) {
-            if (categoryDAO.existsByHouseholdIdAndName(category.getHousehold().getId(), newName)) {
-                throw new CategoryAlreadyExistsException(newName);
+            if (newName != null && !newName.equals(category.getName())) {
+                if (categoryDAO.existsByHouseholdIdAndName(category.getHousehold().getId(), newName)) {
+                    throw new CategoryAlreadyExistsException(newName);
+                }
+                category.setName(newName);
             }
-            category.setName(newName);
-        }
 
-        if (newType != null) {
-            category.setType(OperationType.fromString(newType));
-        }
+            if (newType != null) {
+                category.setType(OperationType.fromString(newType));
+            }
 
-        categoryDAO.save(category);
+            categoryDAO.save(category);
+        });
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             Category category = categoryDAO.findById(id)
                     .orElseThrow(() -> new CategoryNotFoundException(id));
 

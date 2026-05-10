@@ -3,7 +3,7 @@ package org.example.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.Pair;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.UserDAO;
 import org.example.domain.exception.BusinessException;
 import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
@@ -16,13 +16,13 @@ import org.example.response.Status;
 @Slf4j
 @RequiredArgsConstructor
 public class UserService { // TODO check rights
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
 
     public Pair<String, String> signUp(String username, String password) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             if (userDAO.findByUsername(username).isPresent()) {
                 throw new UserAlreadyExistsExceptionException(username);
             }
@@ -39,7 +39,7 @@ public class UserService { // TODO check rights
     }
 
     public Pair<String, String> signIn(String username, String password) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeReadOnly(() -> {
             User user = userDAO.findByUsername(username)
                     .orElseThrow(() -> new UserNotFoundException(username));
             Long userId = user.getId();
@@ -54,7 +54,7 @@ public class UserService { // TODO check rights
     }
 
     public User update(String username, String password, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             if (username != null) {
@@ -74,7 +74,7 @@ public class UserService { // TODO check rights
     }
 
     public void delete(Long userId) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             log.info("User with id = {} deleted", userId);
@@ -103,12 +103,9 @@ public class UserService { // TODO check rights
     }
 
     public User get(Long id) {
-        return userDAO.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-    }
-
-    public User getMe(Long userId) {
-        return userDAO.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
+        return persistenceManager.executeReadOnly(() ->
+                userDAO.findById(id)
+                        .orElseThrow(() -> new UserNotFoundException(id))
+        );
     }
 }

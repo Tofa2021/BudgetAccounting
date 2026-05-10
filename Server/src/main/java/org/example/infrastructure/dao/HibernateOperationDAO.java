@@ -3,12 +3,12 @@ package org.example.infrastructure.dao;
 import org.example.domain.dao.OperationDAO;
 import org.example.domain.dao.OperationFilter;
 import org.example.domain.model.Operation;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.List;
 
 public class HibernateOperationDAO extends HibernateDAO<Operation, Long> implements OperationDAO {
-    public HibernateOperationDAO(HibernateTransactionManager transactionManager) {
+    public HibernateOperationDAO(HibernatePersistenceManager transactionManager) {
         super(Operation.class, transactionManager);
     }
 

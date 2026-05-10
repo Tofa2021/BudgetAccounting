@@ -1,7 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.AccountDAO;
 import org.example.domain.dao.AccountMemberDAO;
 import org.example.domain.dao.HouseholdDAO;
@@ -17,14 +17,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class AccountService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final AccountDAO accountDAO;
     private final AccountMemberDAO accountMemberDAO;
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
 
     public Account create(Long householdId, String name, Currency currency, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             Household household = householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
@@ -50,19 +50,21 @@ public class AccountService { // TODO check rights and TODO logging
     }
 
     public Account getAccount(Long id, Long userId) {
-        Account account = accountDAO.findById(id)
-                .orElseThrow(() -> new AccountNotFoundException(id));
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            Account account = accountDAO.findById(id)
+                    .orElseThrow(() -> new AccountNotFoundException(id));
 
-        boolean hasAccess = accountMemberDAO.existsByAccountIdAndUserId(account.getId(), userId);
-        if (!hasAccess) {
-            throw new AccessDeniedException("No access to this account");
-        }
+            boolean hasAccess = accountMemberDAO.existsByAccountIdAndUserId(account.getId(), userId);
+            if (!hasAccess) {
+                throw new AccessDeniedException("No access to this account");
+            }
 
-        return account;
+            return account;
+        });
     }
 
     public List<Account> getAccounts(Long householdId, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeReadOnly(() -> {
             List<AccountMember> members = accountMemberDAO.findByUserIdAndHouseholdId(userId, householdId);
             return members
                     .stream()
@@ -72,7 +74,7 @@ public class AccountService { // TODO check rights and TODO logging
     }
 
     public void update(Long id, String name, Currency currency) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             Account account = accountDAO.findById(id)
                     .orElseThrow(() -> new AccountNotFoundException(id));
 
@@ -89,7 +91,7 @@ public class AccountService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             accountDAO.deleteById(id);
         });
     }

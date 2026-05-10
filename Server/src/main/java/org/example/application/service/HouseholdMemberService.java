@@ -1,7 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.HouseholdDAO;
 import org.example.domain.dao.HouseholdMemberDAO;
 import org.example.domain.dao.UserDAO;
@@ -17,13 +17,13 @@ import org.example.domain.model.User;
 
 @RequiredArgsConstructor
 public class HouseholdMemberService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final HouseholdMemberDAO householdMemberDAO;
     private final HouseholdDAO householdDAO;
     private final UserDAO userDAO;
 
     public HouseholdMember create(Long householdId, String role, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             Household household = householdDAO.findById(householdId)
@@ -44,7 +44,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
     }
 
     public void updateRole(Long id, String newRole) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             HouseholdMember member = householdMemberDAO.findById(id)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
 
@@ -56,7 +56,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             HouseholdMember member = householdMemberDAO.findById(id)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
 

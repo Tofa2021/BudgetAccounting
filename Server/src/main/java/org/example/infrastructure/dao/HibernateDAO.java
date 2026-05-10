@@ -1,7 +1,7 @@
 package org.example.infrastructure.dao;
 
 import org.example.domain.dao.DAO;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public abstract class HibernateDAO<T, ID> implements DAO<T, ID> {
     private final Class<T> modelClass;
-    private final HibernateTransactionManager transactionManager;
+    private final HibernatePersistenceManager transactionManager;
 
-    public HibernateDAO(Class<T> modelClass, HibernateTransactionManager transactionManager) {
+    public HibernateDAO(Class<T> modelClass, HibernatePersistenceManager transactionManager) {
         this.modelClass = modelClass;
         this.transactionManager = transactionManager;
     }

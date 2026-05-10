@@ -3,12 +3,12 @@ package org.example.infrastructure.dao;
 import org.example.domain.dao.HouseholdMemberDAO;
 import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.Optional;
 
 public class HibernateHouseholdMemberDAO extends HibernateDAO<HouseholdMember, Long> implements HouseholdMemberDAO {
-    public HibernateHouseholdMemberDAO(HibernateTransactionManager transactionManager) {
+    public HibernateHouseholdMemberDAO(HibernatePersistenceManager transactionManager) {
         super(HouseholdMember.class, transactionManager);
     }
 

@@ -29,7 +29,7 @@ public class CategoryRequestHandler {
             case GET_CATEGORIES -> {
                 Long householdId = request.getParam("householdId");
 
-                List<Category> categories = categoryService.getAll(householdId);
+                List<Category> categories = categoryService.getAllByHouseholdId(householdId);
                 yield Response.success(dtoMapper.toDTOs(categories, CategoryDTO.class));
             }
 

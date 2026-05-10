@@ -3,13 +3,13 @@ package org.example.infrastructure.dao;
 import org.example.domain.dao.CategoryDAO;
 import org.example.domain.model.Category;
 import org.example.domain.model.OperationType;
-import org.example.infrastructure.transaction.HibernateTransactionManager;
+import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.List;
 import java.util.Optional;
 
 public class HibernateCategoryDAO extends HibernateDAO<Category, Long> implements CategoryDAO {
-    public HibernateCategoryDAO(HibernateTransactionManager transactionManager) {
+    public HibernateCategoryDAO(HibernatePersistenceManager transactionManager) {
         super(Category.class, transactionManager);
     }
 

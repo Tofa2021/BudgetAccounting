@@ -13,7 +13,7 @@ import org.example.response.Status;
 
 @Slf4j
 @AllArgsConstructor
-public class RequestProcessor {
+public class RequestProcessor { // TODO if request have token user cannot use SIGN_IN and SIGN_UP
     private final TokenProvider tokenProvider;
     private final AccountMemberRequestHandler accountMemberRequestHandler;
     private final AccountRequestHandler accountRequestHandler;
@@ -58,6 +58,7 @@ public class RequestProcessor {
         }
 
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
+        log.info("Current userId access token from token = {}", userId);
 
         return switch (request.action()) {
             case CREATE_ACCOUNT, GET_ACCOUNT, GET_MY_ACCOUNTS_IN_HOUSEHOLD, UPDATE_ACCOUNT, DELETE_ACCOUNT ->

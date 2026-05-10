@@ -1,7 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.AccountDAO;
 import org.example.domain.dao.HouseholdDAO;
 import org.example.domain.dao.HouseholdMemberDAO;
@@ -18,14 +18,14 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class HouseholdService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
     private final UserDAO userDAO;
     private final AccountDAO accountDAO;
 
     public Household create(String name, Map<Long, String> startMembers, Long userId) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
 
@@ -78,17 +78,18 @@ public class HouseholdService { // TODO check rights and TODO logging
     }
 
     public Household get(Long id) {
-        return householdDAO.findById(id)
-                .orElseThrow(() -> new HouseholdNotFoundException(id));
+        return persistenceManager.executeReadOnly(() -> householdDAO.findById(id).orElseThrow(() -> new HouseholdNotFoundException(id)));
     }
 
     public BigDecimal getAmount(Long id) {
-        List<Account> accounts = accountDAO.getAllByHouseholdId(id);
-        return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        return persistenceManager.executeReadOnly(() -> {
+            List<Account> accounts = accountDAO.getAllByHouseholdId(id);
+            return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        });
     }
 
     public void update(Long id, String name) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             Household household = householdDAO.findById(id)
                     .orElseThrow(() -> new HouseholdNotFoundException(id));
             household.setName(name);
@@ -97,7 +98,7 @@ public class HouseholdService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             householdDAO.deleteById(id);
         });
     }

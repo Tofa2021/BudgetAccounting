@@ -1,6 +1,7 @@
 package org.example.presentation.requestHandler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.application.service.UserService;
 import org.example.domain.model.User;
 import org.example.dto.UserDTO;
@@ -8,6 +9,7 @@ import org.example.request.Request;
 import org.example.response.Response;
 import org.example.util.DTOMapper;
 
+@Slf4j
 @RequiredArgsConstructor
 public class UserRequestHandler {
     private final DTOMapper dtoMapper;
@@ -30,7 +32,8 @@ public class UserRequestHandler {
             }
 
             case GET_ME -> {
-                User user = userService.getMe(userId);
+                log.info("In GET_ME RequestHandler");
+                User user = userService.get(userId);
                 yield Response.success(dtoMapper.toDTO(user, UserDTO.class));
             }
 

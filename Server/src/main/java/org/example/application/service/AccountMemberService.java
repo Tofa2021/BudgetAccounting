@@ -1,7 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.domain.TransactionManager;
+import org.example.domain.PersistenceManager;
 import org.example.domain.dao.AccountDAO;
 import org.example.domain.dao.AccountMemberDAO;
 import org.example.domain.dao.HouseholdMemberDAO;
@@ -16,13 +16,13 @@ import org.example.domain.model.HouseholdMember;
 
 @RequiredArgsConstructor
 public class AccountMemberService { // TODO check rights and TODO logging
-    private final TransactionManager transactionManager;
+    private final PersistenceManager persistenceManager;
     private final AccountMemberDAO accountMemberDAO;
     private final AccountDAO accountDAO;
     private final HouseholdMemberDAO householdMemberDAO;
 
     public AccountMember create(Long householdMemberId, Long accountId, String role) {
-        return transactionManager.executeInTransaction(() -> {
+        return persistenceManager.executeTransaction(() -> {
             HouseholdMember householdMember = householdMemberDAO.findById(householdMemberId)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(householdMemberId));
             Account account = accountDAO.findById(accountId)
@@ -49,7 +49,7 @@ public class AccountMemberService { // TODO check rights and TODO logging
     }
 
     public void updateRole(Long memberId, String role) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             AccountMember member = accountMemberDAO.findById(memberId)
                     .orElseThrow(() -> new AccountMemberNotFound(memberId));
 
@@ -62,7 +62,7 @@ public class AccountMemberService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
-        transactionManager.executeInTransaction(() -> {
+        persistenceManager.executeTransaction(() -> {
             AccountMember member = accountMemberDAO.findById(id)
                     .orElseThrow(() -> new AccountMemberNotFound(id));
             checkLastManager(member);
