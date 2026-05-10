@@ -85,6 +85,13 @@ public class OperationService { // TODO check rights and TODO logging
         );
     }
 
+    public List<Operation> getUserHouseholdOperations(Long householdId, Long userId) {
+        return operationDAO.find(OperationFilter.builder()
+                .householdId(householdId)
+                .userId(userId)
+                .build());
+    }
+
     public void update(
             Long id,
             BigDecimal newAmount,

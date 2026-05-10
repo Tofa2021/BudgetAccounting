@@ -30,7 +30,7 @@ public class OperationRequestHandler {
                 yield Response.created(dtoMapper.toDTO(operation, OperationDTO.class));
             }
 
-            case GET_FILTERED_OPERATIONS -> {
+            case GET_FILTERED_OPERATIONS -> { // TODO check if absent
                 Long householdId = request.getParam("householdId");
                 Long filteringUserId = request.getParam("userId");
                 Long categoryId = request.getParam("categoryId");
@@ -50,6 +50,13 @@ public class OperationRequestHandler {
                         dateTo,
                         limit
                 );
+                yield Response.success(dtoMapper.toDTOs(operations, OperationDTO.class));
+            }
+
+            case GET_MY_HOUSEHOLD_OPERATIONS -> {
+                Long householdId = request.getParam("householdId");
+
+                List<Operation> operations = operationService.getUserHouseholdOperations(householdId, userId);
                 yield Response.success(dtoMapper.toDTOs(operations, OperationDTO.class));
             }
 

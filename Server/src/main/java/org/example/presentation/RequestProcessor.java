@@ -75,7 +75,7 @@ public class RequestProcessor {
             case CREATE_HOUSEHOLD, GET_HOUSEHOLD, GET_HOUSEHOLD_AMOUNT, UPDATE_HOUSEHOLD, DELETE_HOUSEHOLD ->
                     householdRequestHandler.handle(request, userId);
 
-            case CREATE_OPERATION, GET_FILTERED_OPERATIONS,
+            case CREATE_OPERATION, GET_FILTERED_OPERATIONS, GET_MY_HOUSEHOLD_OPERATIONS,
                  UPDATE_OPERATION, DELETE_OPERATION -> operationRequestHandler.handle(request, userId);
 
             case LOGOUT, GET_ME, GET_USER, UPDATE_USER, DELETE_USER ->

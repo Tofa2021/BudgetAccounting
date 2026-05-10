@@ -3,6 +3,7 @@ package org.example.request;
 public enum RequestAction {
     CREATE_OPERATION,
     GET_FILTERED_OPERATIONS,
+    GET_MY_HOUSEHOLD_OPERATIONS,
     UPDATE_OPERATION,
     DELETE_OPERATION,
 
