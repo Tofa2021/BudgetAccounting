@@ -14,12 +14,12 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
-public class ClientConnection {
+public class ServerConnection {
     private final BlockingQueue<RequestEnvelope> requestQueue;
     private final BlockingQueue<Response> responseQueue;
     private final Thread connectionThread;
 
-    public ClientConnection(BlockingQueue<Response> responseQueue) {
+    public ServerConnection(BlockingQueue<Response> responseQueue) {
         this.requestQueue = new SynchronousQueue<>();
         this.responseQueue = responseQueue;
         connectionThread = new Thread(this::start);

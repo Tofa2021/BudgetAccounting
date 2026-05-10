@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
 public class ServerInteractionManager {
-    private final ClientConnection clientConnection;
+    private final ServerConnection serverConnection;
     private final BlockingQueue<Response> responseQueue;
     @Setter
     private String accessToken;
@@ -23,7 +23,7 @@ public class ServerInteractionManager {
 
     public ServerInteractionManager() {
         responseQueue = new SynchronousQueue<>();
-        clientConnection = new ClientConnection(responseQueue);
+        serverConnection = new ServerConnection(responseQueue);
         accessToken = "";
         refreshToken = "";
     }
@@ -40,7 +40,7 @@ public class ServerInteractionManager {
     public Response putRequest(Request request) {
         try {
             RequestEnvelope requestEnvelope = new RequestEnvelope(accessToken, request);
-            clientConnection.putRequest(requestEnvelope);
+            serverConnection.putRequest(requestEnvelope);
             Response response = responseQueue.take();
             System.out.println(request.action() + " " + response.status());
             return response;
@@ -61,6 +61,6 @@ public class ServerInteractionManager {
     }
 
     public void close() {
-        clientConnection.close();
+        serverConnection.close();
     }
 }
