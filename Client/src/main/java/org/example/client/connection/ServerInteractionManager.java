@@ -1,8 +1,7 @@
 package org.example.client.connection;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.example.client.Result;
+import org.example.client.SessionContext;
 import org.example.request.Request;
 import org.example.request.RequestEnvelope;
 import org.example.response.Response;
@@ -15,17 +14,12 @@ import java.util.concurrent.SynchronousQueue;
 public class ServerInteractionManager {
     private final ServerConnection serverConnection;
     private final BlockingQueue<Response> responseQueue;
-    @Setter
-    private String accessToken;
-    @Setter
-    @Getter
-    private String refreshToken;
+    private final SessionContext sessionContext;
 
-    public ServerInteractionManager() {
+    public ServerInteractionManager(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
         responseQueue = new SynchronousQueue<>();
         serverConnection = new ServerConnection(responseQueue);
-        accessToken = "";
-        refreshToken = "";
     }
 
     public <T> Result<T> processRequest(Request request) {
@@ -39,7 +33,7 @@ public class ServerInteractionManager {
 
     public Response putRequest(Request request) {
         try {
-            RequestEnvelope requestEnvelope = new RequestEnvelope(accessToken, request);
+            RequestEnvelope requestEnvelope = new RequestEnvelope(sessionContext.getAccessToken(), request);
             serverConnection.putRequest(requestEnvelope);
             Response response = responseQueue.take();
             System.out.println(request.action() + " " + response.status());
@@ -51,11 +45,13 @@ public class ServerInteractionManager {
 
     private String getErrorMessage(Status status) {
         return switch (status) {
-            case Status.NOT_FOUND -> "Не найдено";
-            case Status.ALREADY_EXISTS -> "Уже существует";
-            case Status.UNKNOWN_SERVER_ERROR -> "Неизвестная ошибка сервера";
-            case Status.INVALID_TOKEN -> "Неверный токен";
-            case Status.UNAUTHORIZED -> "Неправильный пароль";
+            case NOT_FOUND -> "Не найдено";
+            case ALREADY_EXISTS -> "Уже существует";
+            case UNKNOWN_SERVER_ERROR -> "Неизвестная ошибка сервера";
+            case INVALID_TOKEN -> "Неверный токен";
+            case UNAUTHORIZED -> "Неправильный пароль";
+            case BAD_REQUEST -> "Неверный запрос";
+            case CONNECTION_ERROR -> "Проблема с подключением к серверу";
             default -> throw new NoSuchElementException();
         };
     }

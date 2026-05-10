@@ -43,6 +43,40 @@ public class OperationClient extends BaseClient {
         );
     }
 
+    public Result<List<OperationDTO>> getMyHouseholdOperations(Long householdId) {
+        return sendRequest(
+                RequestAction.GET_FILTERED_OPERATIONS,
+                Map.of("householdId", householdId)
+        );
+    }
+
+    public Result<List<OperationDTO>> getFilteredOperations(
+            Long userId,
+            Long householdId,
+            Long categoryId,
+            String type,
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            Instant dateTo,
+            Instant dateFrom,
+            Integer limit
+    ) {
+        return sendRequest(
+                RequestAction.GET_FILTERED_OPERATIONS,
+                Map.of(
+                        "householdId", householdId,
+                        "userId", userId,
+                        "categoryId", categoryId,
+                        "type", type,
+                        "minAmount", minAmount,
+                        "maxAmount", maxAmount,
+                        "dateTo", dateTo,
+                        "dateFrom", dateFrom,
+                        "limit", limit
+                )
+        );
+    }
+
     public Result<List<OperationDTO>> getHouseholdRecentOperations(Long householdId, Instant dateFrom) {
         return sendRequest(
                 RequestAction.GET_FILTERED_OPERATIONS,
@@ -53,15 +87,15 @@ public class OperationClient extends BaseClient {
         );
     }
 
-    public Result<Void> update(Long id, BigDecimal amount, Long categoryId, String description, Instant dateTime) {
+    public Result<Void> update(OperationDTO operationDTO) {
         return sendRequest(
                 RequestAction.UPDATE_OPERATION,
                 Map.of(
-                        "id", id,
-                        "amount", amount,
-                        "categoryId", categoryId,
-                        "description", description,
-                        "dateTime", dateTime
+                        "id", operationDTO.getId(),
+                        "amount", operationDTO.getAmount(),
+                        "categoryId", operationDTO.getCategoryId(),
+                        "description", operationDTO.getDescription(),
+                        "dateTime", operationDTO.getDateTime()
                 )
         );
     }

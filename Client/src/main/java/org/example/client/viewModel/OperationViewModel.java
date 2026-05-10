@@ -3,27 +3,31 @@ package org.example.client.viewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.example.client.connection.ServerInteractionManager;
+import lombok.RequiredArgsConstructor;
+import org.example.client.SessionContext;
+import org.example.client.connection.api.OperationClient;
 import org.example.dto.OperationDTO;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.Objects;
 
 @Getter
-public class OperationHistoryViewModel extends BaseViewModel {
+@RequiredArgsConstructor
+public class OperationViewModel extends BaseViewModel {
+    private final OperationClient operationClient;
+    private final SessionContext sessionContext;
     private final ObservableList<OperationDTO> operations = FXCollections.observableArrayList();
 
-    public OperationHistoryViewModel(ServerInteractionManager serverInteractionManager) {
-        super(serverInteractionManager);
-    }
-
     @Override
-    public void init() {
+    public void onViewShown() {
+        refreshOperations();
     }
 
     public void refreshOperations() {
-        var result = serverInteractionManager.getUserOperations();
+        var result = operationClient.getMyHouseholdOperations(sessionContext.getCurrentHousehold().getId());
         if (result.isSuccess()) {
             operations.setAll(result.getData().stream()
                     .sorted(Comparator.comparing(OperationDTO::getDateTime))
@@ -33,14 +37,14 @@ public class OperationHistoryViewModel extends BaseViewModel {
     }
 
     public void delete(OperationDTO operationDTO) {
-        var result = serverInteractionManager.deleteOperation(operationDTO.getId());
+        var result = operationClient.delete(operationDTO.getId());
         if (result.isSuccess()) {
             operations.remove(operationDTO);
         }
     }
 
     public void update(OperationDTO operationDTO) {
-        if (serverInteractionManager.updateOperation(operationDTO).isSuccess()) {
+        if (operationClient.update(operationDTO).isSuccess()) {
             operations.stream()
                     .filter(operationDTO1 -> Objects.equals(operationDTO1.getId(), operationDTO.getId()))
                     .findFirst()
@@ -52,31 +56,27 @@ public class OperationHistoryViewModel extends BaseViewModel {
     }
 
     public void loadRecentOperations(int days) {
-        var result = serverInteractionManager.getRecentOperations(days);
+        Instant dateFrom = Instant.now().minus(days, ChronoUnit.DAYS);
+        var result = operationClient.getHouseholdRecentOperations(sessionContext.getCurrentHousehold().getId(), dateFrom);
         if (result.isSuccess()) {
             operations.setAll(result.getData());
         }
     }
 
     public void getFilteredOperations(
+            Long userId,
+            Long householdId,
+            Long categoryId,
             String type,
-            String category,
             Instant dateFrom,
             Instant dateTo,
-            Double minAmount,
-            Double maxAmount
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            Integer limit
     ) {
-        var result = serverInteractionManager.getFilteredOperations(type, category, dateFrom, dateTo, minAmount, maxAmount);
+        var result = operationClient.getFilteredOperations(userId, householdId, categoryId, type, minAmount, maxAmount, dateTo, dateFrom, limit);
         if (result.isSuccess()) {
             operations.setAll(result.getData());
         }
-    }
-
-    public double getBalance() {
-        var result = serverInteractionManager.getAmount();
-        if (result.isSuccess()) {
-            return result.getData();
-        }
-        throw new RuntimeException();
     }
 }

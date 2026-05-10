@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx"
+      fx:controller="org.example.client.view.AuthView"
+      spacing="20"
+      alignment="CENTER"
+      styleClass="main-background">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <Label text="Вход в аккаунт" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <VBox>
+        <TextField fx:id="usernameField" promptText="Имя пользователя" maxWidth="400"/>
+        <PasswordField fx:id="passwordField" promptText="Пароль" maxWidth="400"/>
+        <Label fx:id="errorLabel" disable="true" styleClass="error-label"/>
+        <Button fx:id="signInButton" text="Войти" onAction="#handleSignInButton" styleClass="primary-button"/>
+
+        <HBox>
+            <Label text="Нет аккаунта? "/>
+            <Hyperlink fx:id="signUpLink" text="Зарегистрироваться" onAction="#handleSignUpLink"/>
+        </HBox>
+    </VBox>
+</VBox>

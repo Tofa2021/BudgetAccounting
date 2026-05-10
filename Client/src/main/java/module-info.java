@@ -10,25 +10,24 @@ module org.example.client {
     requires org.example.common;
     requires java.xml;
     requires static lombok;
+    requires jdk.compiler;
+    requires java.desktop;
 
-    opens org.example.client to javafx.fxml;
     exports org.example.client;
-    exports org.example.client.controller;
-    opens org.example.client.controller to javafx.fxml;
+    opens org.example.client to javafx.fxml;
+
+    exports org.example.client.view;
+    opens org.example.client.view to javafx.fxml;
+
     exports org.example.client.viewModel;
     opens org.example.client.viewModel to javafx.fxml;
-    exports org.example.client.scene;
-    opens org.example.client.scene to javafx.fxml;
-    exports org.example.client.controller.filter;
-    opens org.example.client.controller.filter to javafx.fxml;
-    exports org.example.client.controller.overlay;
-    opens org.example.client.controller.overlay to javafx.fxml;
-    exports org.example.client.controller.periodSelection;
-    opens org.example.client.controller.periodSelection to javafx.fxml;
-    exports org.example.client.controller.table;
-    opens org.example.client.controller.table to javafx.fxml;
-    exports org.example.client.controller.graphics;
-    opens org.example.client.controller.graphics to javafx.fxml;
+
+    exports org.example.client.screen;
+    opens org.example.client.screen to javafx.fxml;
+
     exports org.example.client.connection;
     opens org.example.client.connection to javafx.fxml;
+
+    exports org.example.client.connection.api;
+    opens org.example.client.connection.api to javafx.fxml;
 }
