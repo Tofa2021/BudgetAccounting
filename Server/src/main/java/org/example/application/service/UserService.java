@@ -48,7 +48,7 @@ public class UserService { // TODO check rights
                 throw new BusinessException(Status.UNAUTHORIZED, "Invalid password");
             }
 
-            log.info("User sign in with username = {}", username);
+            log.info("User signed in with username = {}", username);
             return new Pair<>(tokenProvider.generateAccessToken(userId), tokenProvider.generateRefreshToken(userId));
         });
     }

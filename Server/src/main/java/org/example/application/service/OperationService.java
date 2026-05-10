@@ -62,15 +62,15 @@ public class OperationService { // TODO check rights and TODO logging
         });
     }
 
-    public List<Operation> getFilteredOperations(
-            Long householdId,
-            Long userId,
-            Long categoryId,
-            BigDecimal maxAmount,
-            BigDecimal minAmount,
-            Instant dateFrom,
-            Instant dateTo,
-            Integer limit
+    public List<Operation> getFilteredOperations( // TODO get by operation type
+                                                  Long householdId,
+                                                  Long userId,
+                                                  Long categoryId,
+                                                  BigDecimal maxAmount,
+                                                  BigDecimal minAmount,
+                                                  Instant dateFrom,
+                                                  Instant dateTo,
+                                                  Integer limit
     ) {
         return operationDAO.find(OperationFilter.builder()
                 .userId(userId)
