@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface UserDAO extends DAO<User, Long> {
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByIdWithMembers(Long id);
 }

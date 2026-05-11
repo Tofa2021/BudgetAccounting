@@ -103,7 +103,7 @@ public class UserService { // TODO check rights
 
     public User get(Long id) {
         return persistenceManager.executeReadOnly(() ->
-                userDAO.findById(id)
+                userDAO.findByIdWithMembers(id)
                         .orElseThrow(() -> new UserNotFoundException(id))
         );
     }

@@ -20,4 +20,15 @@ public class HibernateUserDAO extends HibernateDAO<User, Long> implements UserDA
                 .build(getCurrentSession())
                 .uniqueResultOptional();
     }
+
+    @Override
+    public Optional<User> findByIdWithMembers(Long id) {
+        return HqlQueryBuilder
+                .builder(User.class)
+                .select()
+                .leftJoinFetch("members")
+                .where("id", "=", id)
+                .build(getCurrentSession())
+                .uniqueResultOptional();
+    }
 }

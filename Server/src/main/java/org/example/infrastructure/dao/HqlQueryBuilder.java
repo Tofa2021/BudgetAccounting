@@ -41,6 +41,11 @@ public class HqlQueryBuilder<T> {
         return this;
     }
 
+    public HqlQueryBuilder<T> leftJoinFetch(String columnName) {
+        hql.append(" LEFT JOIN FETCH o.").append(columnName);
+        return this;
+    }
+
     public HqlQueryBuilder<T> where(String columnName, String operation, Object value) {
         if (value == null) {
             return this;
