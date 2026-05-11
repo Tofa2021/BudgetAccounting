@@ -18,7 +18,7 @@ public class AccountMember implements BaseModel {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "household_member_id", nullable = false)
     private HouseholdMember householdMember;
 
     @ManyToOne(fetch = FetchType.LAZY)

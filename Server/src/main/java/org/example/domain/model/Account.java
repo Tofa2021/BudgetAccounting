@@ -39,6 +39,7 @@ public class Account implements BaseModel, Serializable {
     private List<Operation> operations;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "household_id", nullable = false)
     private Household household;
 
     public void increase(BigDecimal amount) {

@@ -23,7 +23,7 @@ public class Household implements BaseModel, Serializable {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "household")
+    @OneToMany(mappedBy = "household", fetch = FetchType.LAZY)
     private List<HouseholdMember> members;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "household")

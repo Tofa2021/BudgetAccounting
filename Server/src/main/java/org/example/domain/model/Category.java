@@ -25,10 +25,10 @@ public class Category implements BaseModel, Serializable {
     @Column(nullable = false)
     private OperationType type;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Operation> operations;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "household_id")
+    @JoinColumn(name = "household_id") // TODO think if we need system category if we dont need it add nullable = false
     private Household household;
 }
