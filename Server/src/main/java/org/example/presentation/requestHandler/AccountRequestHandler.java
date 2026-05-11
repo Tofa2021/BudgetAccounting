@@ -1,22 +1,35 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountService;
 import org.example.domain.model.Account;
 import org.example.dto.AccountDTO;
 import org.example.enums.Currency;
 import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
 import java.util.List;
 
-@RequiredArgsConstructor
-public class AccountRequestHandler {
+public class AccountRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final AccountService accountService;
 
-    public Response handle(Request request, Long userId) {
+    public AccountRequestHandler(DTOMapper dtoMapper, AccountService accountService) {
+        super(
+                RequestAction.CREATE_ACCOUNT,
+                RequestAction.GET_ACCOUNT,
+                RequestAction.GET_MY_ACCOUNTS_IN_HOUSEHOLD,
+                RequestAction.UPDATE_ACCOUNT,
+                RequestAction.DELETE_ACCOUNT
+        );
+        this.dtoMapper = dtoMapper;
+        this.accountService = accountService;
+    }
+
+    @Override
+    public Response handle(Request request, Long userId, String accessToken) {
         return switch (request.action()) {
             case CREATE_ACCOUNT -> {
                 Long householdId = request.getParam("householdId");

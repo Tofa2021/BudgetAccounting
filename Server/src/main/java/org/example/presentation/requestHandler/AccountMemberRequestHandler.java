@@ -1,19 +1,30 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountMemberService;
 import org.example.domain.model.AccountMember;
 import org.example.dto.AccountMemberDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
-@RequiredArgsConstructor
-public class AccountMemberRequestHandler {
+public class AccountMemberRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final AccountMemberService accountMemberService;
 
-    public Response handle(Request request, Long userId) {
+    public AccountMemberRequestHandler(DTOMapper dtoMapper, AccountMemberService accountMemberService) {
+        super(
+                RequestAction.CREATE_ACCOUNT_MEMBER,
+                RequestAction.UPDATE_ACCOUNT_MEMBER_ROLE,
+                RequestAction.DELETE_ACCOUNT_MEMBER
+        );
+        this.dtoMapper = dtoMapper;
+        this.accountMemberService = accountMemberService;
+    }
+
+    @Override
+    public Response handle(Request request, Long userId, String accessToken) {
         return switch (request.action()) {
             case CREATE_ACCOUNT_MEMBER -> {
                 Long householdMemberId = request.getParam("householdMemberId");

@@ -1,22 +1,35 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.application.service.HouseholdService;
 import org.example.domain.model.Household;
 import org.example.dto.HouseholdDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
-@RequiredArgsConstructor
-public class HouseholdRequestHandler {
+public class HouseholdRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final HouseholdService householdService;
 
-    public Response handle(Request request, Long userId) {
+    public HouseholdRequestHandler(DTOMapper dtoMapper, HouseholdService householdService) {
+        super(
+                RequestAction.CREATE_HOUSEHOLD,
+                RequestAction.GET_HOUSEHOLD,
+                RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.UPDATE_HOUSEHOLD,
+                RequestAction.DELETE_HOUSEHOLD
+        );
+        this.dtoMapper = dtoMapper;
+        this.householdService = householdService;
+    }
+
+    @Override
+    public Response handle(Request request, Long userId, String accessToken) {
         return switch (request.action()) {
             case CREATE_HOUSEHOLD -> {
                 String name = request.getParam("name");

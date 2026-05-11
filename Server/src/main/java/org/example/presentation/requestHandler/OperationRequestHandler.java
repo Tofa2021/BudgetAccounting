@@ -1,23 +1,36 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.application.service.OperationService;
 import org.example.domain.model.Operation;
 import org.example.dto.OperationDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-@RequiredArgsConstructor
-public class OperationRequestHandler {
+public class OperationRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final OperationService operationService;
 
-    public Response handle(Request request, Long userId) {
+    public OperationRequestHandler(DTOMapper dtoMapper, OperationService operationService) {
+        super(
+                RequestAction.CREATE_OPERATION,
+                RequestAction.GET_FILTERED_OPERATIONS,
+                RequestAction.GET_MY_HOUSEHOLD_OPERATIONS,
+                RequestAction.UPDATE_OPERATION,
+                RequestAction.DELETE_OPERATION
+        );
+        this.dtoMapper = dtoMapper;
+        this.operationService = operationService;
+    }
+
+    @Override
+    public Response handle(Request request, Long userId, String accessToken) {
         return switch (request.action()) {
             case CREATE_OPERATION -> {
                 Long accountId = request.getParam("accountId");
@@ -30,7 +43,7 @@ public class OperationRequestHandler {
                 yield Response.created(dtoMapper.toDTO(operation, OperationDTO.class));
             }
 
-            case GET_FILTERED_OPERATIONS -> { // TODO check if absent
+            case GET_FILTERED_OPERATIONS -> {
                 Long householdId = request.getParam("householdId");
                 Long filteringUserId = request.getParam("userId");
                 Long categoryId = request.getParam("categoryId");

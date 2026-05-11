@@ -83,6 +83,7 @@ public class UserService { // TODO check rights
 
     public void logout(String accessToken, String refreshToken) {
         Long userId = tokenProvider.getUserIdFromRefreshToken(refreshToken);
+        tokenProvider.invalidateAccessToken(accessToken);
         tokenProvider.invalidateRefreshToken(refreshToken);
         log.info("User with id = {} logged out", userId);
     }

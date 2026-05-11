@@ -1,20 +1,33 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.application.service.UserService;
 import org.example.domain.model.User;
 import org.example.dto.UserDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
 @Slf4j
-@RequiredArgsConstructor
-public class UserRequestHandler {
+public class UserRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final UserService userService;
 
+    public UserRequestHandler(DTOMapper dtoMapper, UserService userService) {
+        super(
+                RequestAction.LOGOUT,
+                RequestAction.GET_USER,
+                RequestAction.GET_ME,
+                RequestAction.UPDATE_USER,
+                RequestAction.DELETE_USER
+        );
+        this.dtoMapper = dtoMapper;
+        this.userService = userService;
+    }
+
+    @Override
     public Response handle(Request request, Long userId, String accessToken) {
         return switch (request.action()) {
             case LOGOUT -> {
