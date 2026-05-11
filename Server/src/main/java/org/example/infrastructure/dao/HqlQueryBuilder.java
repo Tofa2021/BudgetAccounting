@@ -26,6 +26,11 @@ public class HqlQueryBuilder<T> {
         return this;
     }
 
+    public HqlQueryBuilder<T> selectDistinct() {
+        hql.append("SELECT DISTINCT o FROM ").append(resultClass.getSimpleName()).append(" o");
+        return this;
+    }
+
     public HqlQueryBuilder<T> select() {
         hql.append("SELECT o FROM ").append(resultClass.getSimpleName()).append(" o");
         return this;
@@ -43,6 +48,11 @@ public class HqlQueryBuilder<T> {
 
     public HqlQueryBuilder<T> leftJoinFetch(String columnName) {
         hql.append(" LEFT JOIN FETCH o.").append(columnName);
+        return this;
+    }
+
+    public HqlQueryBuilder<T> joinFetch(String columnName) {
+        hql.append(" JOIN FETCH o.").append(columnName);
         return this;
     }
 
@@ -77,6 +87,16 @@ public class HqlQueryBuilder<T> {
                 .append(operation)
                 .append(" :").append(placeholder);
         parameters.put(placeholder, value);
+        return this;
+    }
+
+    public HqlQueryBuilder<T> orderByAsc(String columnName) {
+        hql.append(" ORDER BY o.").append(columnName).append(" ASC");
+        return this;
+    }
+
+    public HqlQueryBuilder<T> orderByDesc(String columnName) {
+        hql.append(" ORDER BY o.").append(columnName).append(" DESC");
         return this;
     }
 
