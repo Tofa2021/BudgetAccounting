@@ -78,7 +78,7 @@ public class HouseholdService { // TODO check rights and TODO logging
     }
 
     public Household get(Long id) {
-        return persistenceManager.executeReadOnly(() -> householdDAO.findById(id).orElseThrow(() -> new HouseholdNotFoundException(id)));
+        return persistenceManager.executeReadOnly(() -> householdDAO.findByIdWithRelations(id).orElseThrow(() -> new HouseholdNotFoundException(id)));
     }
 
     public BigDecimal getAmount(Long id) {

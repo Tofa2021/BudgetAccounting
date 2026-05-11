@@ -51,26 +51,19 @@ public class AccountService { // TODO check rights and TODO logging
 
     public Account getAccount(Long id, Long userId) {
         return persistenceManager.executeReadOnlyTransaction(() -> {
-            Account account = accountDAO.findById(id)
-                    .orElseThrow(() -> new AccountNotFoundException(id));
 
-            boolean hasAccess = accountMemberDAO.existsByAccountIdAndUserId(account.getId(), userId);
+            boolean hasAccess = accountMemberDAO.existsByAccountIdAndUserId(id, userId);
             if (!hasAccess) {
                 throw new AccessDeniedException("No access to this account");
             }
 
-            return account;
+            return accountDAO.findByIdWithRelations(id)
+                    .orElseThrow(() -> new AccountNotFoundException(id));
         });
     }
 
     public List<Account> getAccounts(Long householdId, Long userId) {
-        return persistenceManager.executeReadOnly(() -> {
-            List<AccountMember> members = accountMemberDAO.findByUserIdAndHouseholdId(userId, householdId);
-            return members
-                    .stream()
-                    .map(AccountMember::getAccount)
-                    .toList();
-        });
+        return persistenceManager.executeReadOnly(() -> accountDAO.getAllByHouseholdIdWithRelations(householdId));
     }
 
     public void update(Long id, String name, Currency currency) {

@@ -41,27 +41,15 @@ public class CategoryService { // TODO check rights and TODO logging
     }
 
     public List<Category> getAllByHouseholdId(Long householdId) {
-        return persistenceManager.executeReadOnlyTransaction(() -> {
-            householdDAO.findById(householdId)
-                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
-            return categoryDAO.findByHouseholdId(householdId);
-        });
+        return persistenceManager.executeReadOnlyTransaction(() -> categoryDAO.findAllByHouseholdIdWithRelations(householdId));
     }
 
     public List<Category> getIncomeCategory(Long householdId) {
-        return persistenceManager.executeTransaction(() -> {
-            householdDAO.findById(householdId)
-                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
-            return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.INCOME);
-        });
+        return persistenceManager.executeTransaction(() -> categoryDAO.findAllByHouseholdIdAndTypeWithRelations(householdId, OperationType.INCOME));
     }
 
     public List<Category> getExpenseCategory(Long householdId) {
-        return persistenceManager.executeTransaction(() -> {
-            householdDAO.findById(householdId)
-                    .orElseThrow(() -> new HouseholdNotFoundException(householdId));
-            return categoryDAO.findByHouseholdIdAndType(householdId, OperationType.EXPENSE);
-        });
+        return persistenceManager.executeTransaction(() -> categoryDAO.findAllByHouseholdIdAndTypeWithRelations(householdId, OperationType.EXPENSE));
     }
 
     public void update(Long id, String newName, String newType) {

@@ -73,7 +73,7 @@ public class OperationService { // TODO check rights and TODO logging
                                                   Integer limit
     ) {
         return persistenceManager.executeReadOnly(() ->
-                operationDAO.find(OperationFilter.builder()
+                operationDAO.findWithRelations(OperationFilter.builder()
                         .userId(userId)
                         .householdId(householdId)
                         .minAmount(minAmount)
@@ -88,7 +88,7 @@ public class OperationService { // TODO check rights and TODO logging
 
     public List<Operation> getUserHouseholdOperations(Long householdId, Long userId) {
         return persistenceManager.executeReadOnly(() ->
-                operationDAO.find(OperationFilter.builder()
+                operationDAO.findWithRelations(OperationFilter.builder()
                         .householdId(householdId)
                         .userId(userId)
                         .build()));

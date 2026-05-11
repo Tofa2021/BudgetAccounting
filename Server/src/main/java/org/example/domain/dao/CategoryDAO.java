@@ -9,9 +9,13 @@ import java.util.Optional;
 public interface CategoryDAO extends DAO<Category, Long> {
     Optional<Category> findByName(String name);
 
-    List<Category> findByHouseholdId(Long householdId);
+    List<Category> findAllByHouseholdId(Long householdId);
 
-    List<Category> findByHouseholdIdAndType(Long householdId, OperationType operationType);
+    List<Category> findAllByHouseholdIdWithRelations(Long householdId);
+
+    List<Category> findAllByHouseholdIdAndType(Long householdId, OperationType operationType);
+
+    List<Category> findAllByHouseholdIdAndTypeWithRelations(Long householdId, OperationType operationType);
 
     boolean existsByHouseholdIdAndName(Long householdId, String name);
 }

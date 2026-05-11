@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface OperationDAO extends DAO<Operation, Long> {
     List<Operation> find(OperationFilter filter);
+
+    List<Operation> findWithRelations(OperationFilter filter);
 }
 
