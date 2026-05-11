@@ -1,15 +1,24 @@
 package org.example.presentation.requestHandler;
 
-import lombok.RequiredArgsConstructor;
 import org.example.Pair;
 import org.example.application.service.UserService;
+import org.example.presentation.requestHandler.interfaces.UnauthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.response.Response;
 
-@RequiredArgsConstructor
-public class AuthRequestHandler {
+public class AuthRequestHandler extends UnauthorizedRequestHandler {
     private final UserService userService;
 
+    public AuthRequestHandler(UserService userService) {
+        super(
+                RequestAction.SIGN_UP,
+                RequestAction.SIGN_IN
+        );
+        this.userService = userService;
+    }
+
+    @Override
     public Response handle(Request request) {
         return switch (request.action()) {
             case SIGN_UP -> {

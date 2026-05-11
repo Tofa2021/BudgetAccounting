@@ -1,18 +1,23 @@
 package org.example.presentation;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.domain.exception.BadParameterException;
 import org.example.domain.exception.BusinessException;
 import org.example.infrastructure.security.TokenProvider;
 import org.example.presentation.requestHandler.*;
+import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
+import org.example.presentation.requestHandler.interfaces.RequestHandler;
+import org.example.presentation.requestHandler.interfaces.UnauthorizedRequestHandler;
 import org.example.request.Request;
+import org.example.request.RequestAction;
 import org.example.request.RequestEnvelope;
 import org.example.response.Response;
 import org.example.response.Status;
 
+import java.util.Set;
+
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RequestProcessor { // TODO if request have token user cannot use SIGN_IN and SIGN_UP
     private final TokenProvider tokenProvider;
     private final AccountMemberRequestHandler accountMemberRequestHandler;
@@ -23,6 +28,20 @@ public class RequestProcessor { // TODO if request have token user cannot use SI
     private final HouseholdRequestHandler householdRequestHandler;
     private final OperationRequestHandler operationRequestHandler;
     private final UserRequestHandler userRequestHandler;
+
+    private final Set<AuthorizedRequestHandler> authorizedRequestHandlers = Set.of(
+            accountMemberRequestHandler,
+            accountRequestHandler,
+            categoryRequestHandler,
+            householdMemberRequestHandler,
+            householdRequestHandler,
+            operationRequestHandler,
+            userRequestHandler
+    );
+
+    private final Set<UnauthorizedRequestHandler> unauthorizedRequestHandlers = Set.of(
+            authRequestHandler
+    );
 
     public Response process(RequestEnvelope requestEnvelope) {
         try {
@@ -49,7 +68,8 @@ public class RequestProcessor { // TODO if request have token user cannot use SI
     }
 
     private Response processUnauthorizedRequest(Request request) {
-        return authRequestHandler.handle(request);
+        UnauthorizedRequestHandler requestHandler = getSupportedActionRequestHandler(request.action(), unauthorizedRequestHandlers);
+        return requestHandler.handle(request);
     }
 
     private Response processAuthorizedRequest(Request request, String accessToken) {
@@ -60,29 +80,15 @@ public class RequestProcessor { // TODO if request have token user cannot use SI
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
         log.info("Current userId access token from token = {}", userId);
 
-        return switch (request.action()) {
-            case CREATE_ACCOUNT, GET_ACCOUNT, GET_MY_ACCOUNTS_IN_HOUSEHOLD, UPDATE_ACCOUNT, DELETE_ACCOUNT ->
-                    accountRequestHandler.handle(request, userId);
+        AuthorizedRequestHandler requestHandler = getSupportedActionRequestHandler(request.action(), authorizedRequestHandlers);
+        return requestHandler.handle(request, userId, accessToken);
+    }
 
-            case CREATE_ACCOUNT_MEMBER, UPDATE_ACCOUNT_MEMBER_ROLE, DELETE_ACCOUNT_MEMBER ->
-                    accountMemberRequestHandler.handle(request, userId);
-
-            case CREATE_CATEGORY, GET_CATEGORIES, GET_EXPENSE_CATEGORIES, GET_INCOME_CATEGORIES, UPDATE_CATEGORY,
-                 DELETE_CATEGORY -> categoryRequestHandler.handle(request, userId);
-
-            case CREATE_HOUSEHOLD_MEMBER, UPDATE_HOUSEHOLD_MEMBER_ROLE, DELETE_HOUSEHOLD_MEMBER ->
-                    householdMemberRequestHandler.handle(request, userId);
-
-            case CREATE_HOUSEHOLD, GET_HOUSEHOLD, GET_HOUSEHOLD_AMOUNT, UPDATE_HOUSEHOLD, DELETE_HOUSEHOLD ->
-                    householdRequestHandler.handle(request, userId);
-
-            case CREATE_OPERATION, GET_FILTERED_OPERATIONS, GET_MY_HOUSEHOLD_OPERATIONS,
-                 UPDATE_OPERATION, DELETE_OPERATION -> operationRequestHandler.handle(request, userId);
-
-            case LOGOUT, GET_ME, GET_USER, UPDATE_USER, DELETE_USER ->
-                    userRequestHandler.handle(request, userId, accessToken);
-
-            default -> throw new BadParameterException("Request action = " + request.action() + " is not supported");
-        };
+    private <T extends RequestHandler> T getSupportedActionRequestHandler(RequestAction action, Set<T> handlers) {
+        return handlers
+                .stream()
+                .filter(t -> t.canHandle(action))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported request action: " + action));
     }
 }

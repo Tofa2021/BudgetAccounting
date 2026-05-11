@@ -14,4 +14,6 @@ public interface TokenProvider {
     Long getUserIdFromRefreshToken(String token);
 
     void invalidateRefreshToken(String token);
+
+    void invalidateAccessToken(String token);
 }

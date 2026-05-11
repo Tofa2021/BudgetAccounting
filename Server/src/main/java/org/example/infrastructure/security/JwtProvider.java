@@ -100,7 +100,12 @@ public class JwtProvider implements TokenProvider {
 
     @Override
     public void invalidateRefreshToken(String token) {
-        // TODO
+        // TODO add method realization
+    }
+
+    @Override
+    public void invalidateAccessToken(String token) {
+        // TODO add method realization
     }
 
     private Claims getAccessClaims(String token) {
