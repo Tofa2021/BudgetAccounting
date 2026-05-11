@@ -10,9 +10,9 @@ import org.example.infrastructure.security.TokenProvider;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 import org.example.presentation.RequestProcessor;
 import org.example.presentation.connection.ConnectionManager;
+import org.example.presentation.dtoMapper.DTOMapper;
+import org.example.presentation.dtoMapper.DTOMapperImpl;
 import org.example.presentation.requestHandler.*;
-import org.example.util.DTOMapper;
-import org.example.util.DTOMapperImpl;
 
 public class Main {
     public static void main(String[] args) {

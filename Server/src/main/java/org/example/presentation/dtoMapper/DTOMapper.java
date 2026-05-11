@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.presentation.dtoMapper;
 
 import org.example.domain.model.BaseModel;
 import org.example.dto.DTO;

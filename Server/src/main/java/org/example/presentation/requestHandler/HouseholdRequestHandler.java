@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.service.HouseholdService;
 import org.example.domain.model.Household;
 import org.example.dto.HouseholdDTO;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 import java.math.BigDecimal;
 import java.util.Map;

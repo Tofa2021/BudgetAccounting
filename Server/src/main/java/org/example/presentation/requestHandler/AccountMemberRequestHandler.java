@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.service.AccountMemberService;
 import org.example.domain.model.AccountMember;
 import org.example.dto.AccountMemberDTO;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 @RequiredArgsConstructor
 public class AccountMemberRequestHandler {

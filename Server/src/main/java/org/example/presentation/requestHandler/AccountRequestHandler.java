@@ -5,9 +5,9 @@ import org.example.application.service.AccountService;
 import org.example.domain.model.Account;
 import org.example.dto.AccountDTO;
 import org.example.enums.Currency;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 import java.util.List;
 

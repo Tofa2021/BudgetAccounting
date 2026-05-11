@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.service.HouseholdMemberService;
 import org.example.domain.model.HouseholdMember;
 import org.example.dto.HouseholdMemberDTO;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 @RequiredArgsConstructor
 public class HouseholdMemberRequestHandler {

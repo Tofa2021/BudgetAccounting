@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.service.CategoryService;
 import org.example.domain.model.Category;
 import org.example.dto.CategoryDTO;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 import java.util.List;
 

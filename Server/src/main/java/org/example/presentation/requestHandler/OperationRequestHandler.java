@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.application.service.OperationService;
 import org.example.domain.model.Operation;
 import org.example.dto.OperationDTO;
+import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.request.Request;
 import org.example.response.Response;
-import org.example.util.DTOMapper;
 
 import java.math.BigDecimal;
 import java.time.Instant;
