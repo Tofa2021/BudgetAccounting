@@ -43,7 +43,11 @@ public abstract class HibernateDAO<T, ID> implements DAO<T, ID> {
     @Override
     public List<T> getAll() {
         try {
-            return HqlQueryBuilder.builder(modelClass).select().build(getCurrentSession()).list();
+            return HqlQueryBuilder
+                    .builder(modelClass)
+                    .select()
+                    .build(getCurrentSession())
+                    .list();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -24,7 +24,7 @@ public class HibernateCategoryDAO extends HibernateDAO<Category, Long> implement
     }
 
     @Override
-    public List<Category> findByHouseholdId(Long householdId) {
+    public List<Category> findAllByHouseholdId(Long householdId) {
         return HqlQueryBuilder
                 .builder(Category.class)
                 .select()
@@ -34,10 +34,33 @@ public class HibernateCategoryDAO extends HibernateDAO<Category, Long> implement
     }
 
     @Override
-    public List<Category> findByHouseholdIdAndType(Long householdId, OperationType operationType) {
+    public List<Category> findAllByHouseholdIdWithRelations(Long householdId) {
         return HqlQueryBuilder
                 .builder(Category.class)
                 .select()
+                .joinFetch("household")
+                .where("household.id", "=", householdId)
+                .build(getCurrentSession())
+                .list();
+    }
+
+    @Override
+    public List<Category> findAllByHouseholdIdAndType(Long householdId, OperationType operationType) {
+        return HqlQueryBuilder
+                .builder(Category.class)
+                .select()
+                .where("household.id", "=", householdId)
+                .and("type", "=", operationType)
+                .build(getCurrentSession())
+                .list();
+    }
+
+    @Override
+    public List<Category> findAllByHouseholdIdAndTypeWithRelations(Long householdId, OperationType operationType) {
+        return HqlQueryBuilder
+                .builder(Category.class)
+                .select()
+                .joinFetch("household")
                 .where("household.id", "=", householdId)
                 .and("type", "=", operationType)
                 .build(getCurrentSession())

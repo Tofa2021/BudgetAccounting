@@ -31,4 +31,28 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
 
         return query.list();
     }
+
+    @Override
+    public List<Operation> findWithRelations(OperationFilter filter) {
+        var query = HqlQueryBuilder.builder(Operation.class)
+                .selectDistinct()
+                .joinFetch("account")
+                .joinFetch("user")
+                .joinFetch("category")
+                .where("user.id", "=", filter.userId())
+                .and("account.household.id", "=", filter.householdId())
+                .and("amount", ">=", filter.minAmount())
+                .and("amount", "<=", filter.maxAmount())
+                .and("dateTime", ">=", filter.dateFrom())
+                .and("dateTime", "<=", filter.dateTo())
+                .and("category.id", "=", filter.categoryId())
+                .orderByDesc("dateTime")
+                .build(getCurrentSession());
+
+        if (filter.limit() != null && filter.limit() > 0) {
+            query.setMaxResults(filter.limit());
+        }
+
+        return query.list();
+    }
 }

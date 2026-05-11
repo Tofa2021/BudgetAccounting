@@ -22,10 +22,6 @@ public class HibernatePersistenceManager implements PersistenceManager {
         }
     }
 
-    public void close() {
-        sessionFactory.close();
-    }
-
     public Session getCurrentSession() {
         Session session = currentSession.get();
         if (session == null) {
@@ -91,6 +87,10 @@ public class HibernatePersistenceManager implements PersistenceManager {
     @Override
     public <R> R executeReadOnly(Supplier<R> action) {
         return executeInSession(session -> action.get());
+    }
+
+    public void close() {
+        sessionFactory.close();
     }
 
     @FunctionalInterface
