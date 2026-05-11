@@ -84,7 +84,6 @@ public class HqlQueryBuilder<T> {
     }
 
     public Query<Long> buildCount(Session session) {
-        System.out.println(hql);
         String queryString = hql.toString();
 
         var query = session.createQuery(queryString, Long.class);
@@ -99,7 +98,6 @@ public class HqlQueryBuilder<T> {
     }
 
     public MutationQuery buildMutation(Session session) {
-        System.out.println(hql);
         var query = session.createMutationQuery(hql.toString());
         for (var parameter : parameters.entrySet()) {
             System.out.println(parameter.getKey() + " " + parameter.getValue());

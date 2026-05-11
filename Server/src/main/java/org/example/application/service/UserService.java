@@ -53,8 +53,8 @@ public class UserService { // TODO check rights
         });
     }
 
-    public User update(String username, String password, Long userId) {
-        return persistenceManager.executeTransaction(() -> {
+    public void update(String username, String password, Long userId) {
+        persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             if (username != null) {
@@ -69,7 +69,6 @@ public class UserService { // TODO check rights
 
             userDAO.save(user);
             log.info("User with id = {} updated. New username = {}", userId, username != null);
-            return user;
         });
     }
 
