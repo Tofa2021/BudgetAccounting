@@ -51,7 +51,7 @@ public class RequestProcessor { // TODO if request have token user cannot use SI
             log.warn(e.getMessage());
             return new Response(e.getStatus(), e.getMessage());
         } catch (Exception e) {
-            log.warn(e.getMessage());
+            log.error(e.getMessage());
             return new Response(Status.UNKNOWN_SERVER_ERROR, e.getMessage());
         }
     }
@@ -76,7 +76,7 @@ public class RequestProcessor { // TODO if request have token user cannot use SI
         }
 
         Long userId = tokenProvider.getUserIdFromAccessToken(accessToken);
-        log.info("Current userId access token from token = {}", userId);
+        log.info("Current userId from access token = {}", userId);
 
         AuthorizedRequestHandler requestHandler = getSupportedActionRequestHandler(request.action(), authorizedRequestHandlers);
         return requestHandler.handle(request, userId, accessToken);

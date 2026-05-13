@@ -37,7 +37,12 @@ public class AuthRequestHandler extends UnauthorizedRequestHandler {
                 yield Response.success(tokens);
             }
 
-            //TODO refresh
+            case REFRESH_TOKENS -> {
+                String refreshToken = request.getParam("refreshToken");
+
+                Pair<String, String> tokens = userService.refreshTokens(refreshToken);
+                yield Response.success(tokens);
+            }
 
             default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());
         };

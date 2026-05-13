@@ -1,6 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.domain.PersistenceManager;
 import org.example.domain.dao.*;
 import org.example.domain.exception.BadParameterException;
@@ -14,8 +15,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
-public class OperationService { // TODO check rights and TODO logging
+public class OperationService { // TODO check rights
     private final PersistenceManager persistenceManager;
     private final OperationDAO operationDAO;
     private final CategoryDAO categoryDAO;
@@ -30,7 +32,10 @@ public class OperationService { // TODO check rights and TODO logging
             Instant dateTime,
             Long userId
     ) {
-        return persistenceManager.executeTransaction(() -> {
+        log.debug("Creating operation with accountId = {} categoryId = {} description = {} amount = {} dateTime = {} userId = {}",
+                accountId, categoryId, description, amount, dateTime, userId);
+
+        return persistenceManager.executeTransaction(() -> { // TODO check role
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
             Account account = accountDAO.findById(accountId)
@@ -58,6 +63,8 @@ public class OperationService { // TODO check rights and TODO logging
             }
             accountDAO.save(account);
 
+            log.info("Operation created with id = {} accountId = {} categoryId = {} description = {} amount = {} dateTime = {} userId = {}",
+                    operation.getId(), accountId, categoryId, description, amount, dateTime, userId);
             return operation;
         });
     }
@@ -72,26 +79,41 @@ public class OperationService { // TODO check rights and TODO logging
                                                   Instant dateTo,
                                                   Integer limit
     ) {
-        return persistenceManager.executeReadOnly(() ->
-                operationDAO.findWithRelations(OperationFilter.builder()
-                        .userId(userId)
-                        .householdId(householdId)
-                        .minAmount(minAmount)
-                        .maxAmount(maxAmount)
-                        .dateFrom(dateFrom)
-                        .dateTo(dateTo)
-                        .categoryId(categoryId)
-                        .limit(limit)
-                        .build()
-                ));
+        log.debug("Getting filtered operations with householdId = {} userId = {} categoryId = {} maxAmount = {} " +
+                        "minAmount = {} dateFrom = {} dateTo = {} limit = {}",
+                householdId, userId, categoryId, maxAmount, minAmount, dateFrom, dateTo, limit);
+
+        return persistenceManager.executeReadOnly(() -> {
+            List<Operation> operations = operationDAO.findWithRelations(OperationFilter.builder()
+                    .userId(userId)
+                    .householdId(householdId)
+                    .minAmount(minAmount)
+                    .maxAmount(maxAmount)
+                    .dateFrom(dateFrom)
+                    .dateTo(dateTo)
+                    .categoryId(categoryId)
+                    .limit(limit)
+                    .build());
+
+            log.info("Filtered operations gotten with householdId = {} userId = {} categoryId = {} maxAmount = {} " +
+                            "minAmount = {} dateFrom = {} dateTo = {} limit = {} count = {}",
+                    householdId, userId, categoryId, maxAmount, minAmount, dateFrom, dateTo, limit, operations.size());
+            return operations;
+        });
     }
 
-    public List<Operation> getUserHouseholdOperations(Long householdId, Long userId) {
-        return persistenceManager.executeReadOnly(() ->
-                operationDAO.findWithRelations(OperationFilter.builder()
-                        .householdId(householdId)
-                        .userId(userId)
-                        .build()));
+    public List<Operation> getUserHouseholdOperations(Long householdId, Long userId) { // TODO check if user can do this
+        log.debug("Getting operations with householdId = {} userId = {}", householdId, userId);
+
+        return persistenceManager.executeReadOnly(() -> {
+            List<Operation> operations = operationDAO.findWithRelations(OperationFilter.builder()
+                    .householdId(householdId)
+                    .userId(userId)
+                    .build());
+
+            log.info("Operations gotten with householdId = {} userId = {} count = {}", householdId, userId, operations.size());
+            return operations;
+        });
     }
 
     public void update(
@@ -101,9 +123,17 @@ public class OperationService { // TODO check rights and TODO logging
             String newDescription,
             Instant newDateTime
     ) {
+        log.debug("Updating operation with id = {} newAmount = {} newCategoryId = {} newDescription = {} newDateTime = {}",
+                id, newAmount, newCategoryId, newDescription, newDateTime);
+
         persistenceManager.executeTransaction(() -> {
             Operation existingOperation = operationDAO.findById(id)
                     .orElseThrow(() -> new OperationNotFoundException(id));
+
+            Long oldCategoryId = existingOperation.getCategory().getId();
+            String oldDescription = existingOperation.getDescription();
+            Instant oldDateTime = existingOperation.getDateTime();
+
             Account account = existingOperation.getAccount();
 
             BigDecimal oldAmount = existingOperation.getAmount();
@@ -128,6 +158,10 @@ public class OperationService { // TODO check rights and TODO logging
 
             accountDAO.save(account);
             operationDAO.update(existingOperation);
+
+            log.info("Operation updated with id = {} oldAmount = {} newAmount = {} oldCategoryId = {} newCategoryId = {} " +
+                            "oldDescription = {} newDescription = {} oldDateTime = {} newDateTime = {}",
+                    id, oldAmount, newAmount, oldCategoryId, newCategoryId, oldDescription, newDescription, oldDateTime, newDateTime);
         });
     }
 
@@ -152,6 +186,8 @@ public class OperationService { // TODO check rights and TODO logging
     }
 
     public void delete(Long id) {
+        log.debug("Deleting operation with id = {}", id);
+
         persistenceManager.executeTransaction(() -> {
             Operation operation = operationDAO.findById(id)
                     .orElseThrow(() -> new OperationNotFoundException(id));
@@ -166,6 +202,8 @@ public class OperationService { // TODO check rights and TODO logging
             }
             operationDAO.delete(operation);
             accountDAO.save(account);
+
+            log.info("Operation deleted with id = {}", id);
         });
     }
 }

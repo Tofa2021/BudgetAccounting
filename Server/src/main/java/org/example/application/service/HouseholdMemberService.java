@@ -1,6 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.domain.PersistenceManager;
 import org.example.domain.dao.HouseholdDAO;
 import org.example.domain.dao.HouseholdMemberDAO;
@@ -15,14 +16,17 @@ import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.User;
 
+@Slf4j
 @RequiredArgsConstructor
-public class HouseholdMemberService { // TODO check rights and TODO logging
+public class HouseholdMemberService { // TODO check rights
     private final PersistenceManager persistenceManager;
     private final HouseholdMemberDAO householdMemberDAO;
     private final HouseholdDAO householdDAO;
     private final UserDAO userDAO;
 
     public HouseholdMember create(Long householdId, String role, Long userId) {
+        log.debug("Creating household member with householdId = {} role = {} userId = {}", householdId, role, userId);
+
         return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -39,23 +43,33 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
             member.setRole(memberRole);
             member.setHousehold(household);
             member.setUser(user);
-            return householdMemberDAO.save(member);
+            householdMemberDAO.save(member);
+
+            log.info("Household member created with id = {} householdId = {} role = {} userId = {}", member.getId(), householdId, role, userId);
+            return member;
         });
     }
 
     public void updateRole(Long id, String newRole) {
+        log.debug("Updating household member with id = {} newRole = {}", id, newRole);
+
         persistenceManager.executeTransaction(() -> {
             HouseholdMember member = householdMemberDAO.findById(id)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
+
+            HouseholdMemberRole oldRole = member.getRole();
 
             checkLastAdmin(member);
 
             member.setRole(HouseholdMemberRole.fromString(newRole));
             householdMemberDAO.save(member);
+            log.info("Household member updated with id = {} oldRole = {} newRole = {}", id, oldRole, newRole);
         });
     }
 
     public void delete(Long id) {
+        log.debug("Deleting household member with id = {}", id);
+
         persistenceManager.executeTransaction(() -> {
             HouseholdMember member = householdMemberDAO.findById(id)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(id));
@@ -63,6 +77,7 @@ public class HouseholdMemberService { // TODO check rights and TODO logging
             checkLastAdmin(member);
 
             householdMemberDAO.delete(member);
+            log.info("Household member deleted with id = {}", id);
         });
     }
 

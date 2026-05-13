@@ -1,6 +1,7 @@
 package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.domain.PersistenceManager;
 import org.example.domain.dao.AccountDAO;
 import org.example.domain.dao.HouseholdDAO;
@@ -16,8 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
-public class HouseholdService { // TODO check rights and TODO logging
+public class HouseholdService { // TODO check rights
     private final PersistenceManager persistenceManager;
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
@@ -25,6 +27,8 @@ public class HouseholdService { // TODO check rights and TODO logging
     private final AccountDAO accountDAO;
 
     public Household create(String name, Map<Long, String> startMembers, Long userId) {
+        log.debug("Creating household with name = {} startMembers = {} userId = {}", name, startMembers, userId);
+
         return persistenceManager.executeTransaction(() -> {
             User user = userDAO.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException(userId));
@@ -36,6 +40,7 @@ public class HouseholdService { // TODO check rights and TODO logging
             List<HouseholdMember> members = createMembers(startMembers, household, user);
             household.setMembers(members);
 
+            log.info("Household created with id = {} name = {} startMembersCount = {} userId = {}", household.getId(), name, members.size(), userId);
             return household;
         });
     }
@@ -60,7 +65,11 @@ public class HouseholdService { // TODO check rights and TODO logging
         member.setRole(role);
         member.setHousehold(household);
         member.setUser(user);
-        return householdMemberDAO.save(member);
+        householdMemberDAO.save(member);
+
+        log.info("Household member created with id = {} householdId = {} userId = {} role = {}",
+                member.getId(), household.getId(), user.getId(), role);
+        return member;
     }
 
     private List<HouseholdMember> createAdditionalMembers(Map<Long, String> additionalMemberMap, Household household) {
@@ -78,28 +87,47 @@ public class HouseholdService { // TODO check rights and TODO logging
     }
 
     public Household get(Long id) {
-        return persistenceManager.executeReadOnly(() -> householdDAO.findByIdWithRelations(id).orElseThrow(() -> new HouseholdNotFoundException(id)));
+        log.debug("Getting household with id = {}", id);
+
+        return persistenceManager.executeReadOnly(() -> {
+            Household household = householdDAO.findByIdWithRelations(id).orElseThrow(() -> new HouseholdNotFoundException(id));
+            log.info("Household gotten with id = {}", id);
+            return household;
+        });
     }
 
     public BigDecimal getAmount(Long id) {
+        log.debug("Getting amount for household with id = {}", id);
+
         return persistenceManager.executeReadOnly(() -> {
             List<Account> accounts = accountDAO.getAllByHouseholdId(id);
-            return accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            BigDecimal amount = accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            log.info("Amount gotten amount = {} for householdId = {}", amount, id);
+            return amount;
         });
     }
 
     public void update(Long id, String name) {
+        log.debug("Updating household with id = {} newName = {}", id, name);
+
         persistenceManager.executeTransaction(() -> {
             Household household = householdDAO.findById(id)
                     .orElseThrow(() -> new HouseholdNotFoundException(id));
+
+            String oldName = household.getName();
+
             household.setName(name);
             householdDAO.save(household);
+            log.info("Household updated with id = {} oldName = {} newName = {}", id, oldName, name);
         });
     }
 
     public void delete(Long id) {
+        log.debug("Deleting household with id = {}", id);
+
         persistenceManager.executeTransaction(() -> {
             householdDAO.deleteById(id);
+            log.info("Household deleted with id = {}", id);
         });
     }
 }
