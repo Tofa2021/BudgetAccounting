@@ -2,11 +2,7 @@ package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.domain.PersistenceManager;
-import org.example.domain.dao.AccountDAO;
-import org.example.domain.dao.AccountMemberDAO;
-import org.example.domain.dao.HouseholdDAO;
-import org.example.domain.dao.HouseholdMemberDAO;
+import org.example.domain.dao.*;
 import org.example.domain.exception.AccessDeniedException;
 import org.example.domain.exception.not_found.AccountNotFoundException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
@@ -50,7 +46,7 @@ public class AccountService { // TODO check rights
             accountMemberDAO.save(accountMember);
 
             log.info("Account created with id = {} householdId = {} name = {} currency = {} userId = {}",
-                    accountMember.getId(), householdId, name, currency, userId);
+                    account.getId(), householdId, name, currency, userId);
             return account;
         });
     }

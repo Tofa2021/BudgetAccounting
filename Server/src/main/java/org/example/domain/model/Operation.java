@@ -35,8 +35,8 @@ public class Operation implements BaseModel, Serializable {
     private Instant dateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "account_member_id", nullable = false)
+    private AccountMember accountMember;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

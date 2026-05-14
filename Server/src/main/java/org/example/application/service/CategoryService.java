@@ -2,9 +2,9 @@ package org.example.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.domain.PersistenceManager;
 import org.example.domain.dao.CategoryDAO;
 import org.example.domain.dao.HouseholdDAO;
+import org.example.domain.dao.PersistenceManager;
 import org.example.domain.exception.already_exists.CategoryAlreadyExistsException;
 import org.example.domain.exception.not_found.CategoryNotFoundException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;

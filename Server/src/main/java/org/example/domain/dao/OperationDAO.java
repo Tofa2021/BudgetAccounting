@@ -8,5 +8,7 @@ public interface OperationDAO extends DAO<Operation, Long> {
     List<Operation> find(OperationFilter filter);
 
     List<Operation> findWithRelations(OperationFilter filter);
+
+    List<Operation> getAllByAccountMemberIdsWithRelations(List<Long> accountMemberIds);
 }
 

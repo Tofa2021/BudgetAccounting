@@ -3,7 +3,7 @@ package org.example.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.Pair;
-import org.example.domain.PersistenceManager;
+import org.example.domain.dao.PersistenceManager;
 import org.example.domain.dao.UserDAO;
 import org.example.domain.exception.BusinessException;
 import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;

@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Builder
 public record OperationFilter(
-        Long userId,
+        Long accountMemberId,
         Long householdId,
         BigDecimal minAmount,
         BigDecimal maxAmount,

@@ -45,7 +45,7 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
 
             case GET_FILTERED_OPERATIONS -> {
                 Long householdId = request.getParam("householdId");
-                Long filteringUserId = request.getParam("userId");
+                Long accountMemberId = request.getParam("accountMemberId");
                 Long categoryId = request.getParam("categoryId");
                 BigDecimal minAmount = request.getParam("minAmount");
                 BigDecimal maxAmount = request.getParam("maxAmount");
@@ -55,7 +55,7 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
 
                 List<Operation> operations = operationService.getFilteredOperations(
                         householdId,
-                        filteringUserId,
+                        accountMemberId,
                         categoryId,
                         minAmount,
                         maxAmount,

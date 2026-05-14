@@ -34,24 +34,15 @@ public class OperationClient extends BaseClient {
         );
     }
 
-    public Result<List<OperationDTO>> getAllByUserId(Long userId) { // TODO other filter methods
-        return sendRequest(
-                RequestAction.GET_FILTERED_OPERATIONS,
-                Map.of(
-                        "userId", userId
-                )
-        );
-    }
-
     public Result<List<OperationDTO>> getMyHouseholdOperations(Long householdId) {
         return sendRequest(
-                RequestAction.GET_FILTERED_OPERATIONS,
+                RequestAction.GET_MY_HOUSEHOLD_OPERATIONS,
                 Map.of("householdId", householdId)
         );
     }
 
     public Result<List<OperationDTO>> getFilteredOperations(
-            Long userId,
+            Long accountMemberId,
             Long householdId,
             Long categoryId,
             String type,
@@ -65,7 +56,7 @@ public class OperationClient extends BaseClient {
                 RequestAction.GET_FILTERED_OPERATIONS,
                 Map.of(
                         "householdId", householdId,
-                        "userId", userId,
+                        "accountMemberId", accountMemberId,
                         "categoryId", categoryId,
                         "type", type,
                         "minAmount", minAmount,

@@ -1,4 +1,4 @@
-package org.example.domain;
+package org.example.domain.dao;
 
 import java.util.function.Supplier;
 

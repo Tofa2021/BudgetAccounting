@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "account_members")
 @Getter
@@ -28,4 +30,7 @@ public class AccountMember implements BaseModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccountMemberRole role;
+
+    @OneToMany(mappedBy = "accountMember", fetch = FetchType.LAZY)
+    private List<Operation> operations;
 }

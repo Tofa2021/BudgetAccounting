@@ -1,6 +1,6 @@
 package org.example.infrastructure.transaction;
 
-import org.example.domain.PersistenceManager;
+import org.example.domain.dao.PersistenceManager;
 import org.example.domain.exception.BusinessException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

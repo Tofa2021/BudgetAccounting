@@ -27,7 +27,7 @@ public class OperationViewModel extends BaseViewModel {
     }
 
     public void refreshOperations() {
-        var result = operationClient.getMyHouseholdOperations(sessionContext.getCurrentHousehold().getId());
+        var result = operationClient.getHouseholdOperations(sessionContext.getCurrentHousehold().getId());
         if (result.isSuccess()) {
             operations.setAll(result.getData().stream()
                     .sorted(Comparator.comparing(OperationDTO::getDateTime))
