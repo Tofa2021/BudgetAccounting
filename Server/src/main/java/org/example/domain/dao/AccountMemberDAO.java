@@ -17,7 +17,11 @@ public interface AccountMemberDAO extends DAO<AccountMember, Long> {
 
     Optional<AccountMember> findByAccountIdAndUserIdWithRelations(Long accountId, Long userId);
 
-    AccountMemberRole findRoleByAccountIdAndUserId(Long accountId, Long userId);
+    Optional<AccountMemberRole> findRoleByAccountIdAndUserId(Long accountId, Long userId);
 
     List<AccountMember> getAllByHouseholdIdAndUserId(Long householdId, Long userId);
+
+    List<Long> getIdsByUserIdAndHouseholdId(Long userId, Long householdId);
+
+    boolean existsByAccountIdAndHouseholdMemberId(Long accountId, Long householdMemberId);
 }

@@ -3,7 +3,8 @@ package org.example.domain.model;
 import org.example.domain.exception.BadParameterException;
 
 public enum HouseholdMemberRole {
-    ADMIN,
+    OWNER,
+    MANAGER,
     MEMBER,
     ;
 

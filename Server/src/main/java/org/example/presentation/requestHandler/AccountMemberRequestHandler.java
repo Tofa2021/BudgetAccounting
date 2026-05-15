@@ -2,7 +2,6 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.AccountMemberService;
 import org.example.domain.model.AccountMember;
-import org.example.dto.AccountMemberDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -31,22 +30,22 @@ public class AccountMemberRequestHandler extends AuthorizedRequestHandler {
                 Long accountId = request.getParam("accountId");
                 String role = request.getParam("role");
 
-                AccountMember member = accountMemberService.create(householdMemberId, accountId, role);
-                yield Response.created(dtoMapper.toDTO(member, AccountMemberDTO.class));
+                AccountMember member = accountMemberService.create(householdMemberId, accountId, role, userId);
+                yield Response.created(dtoMapper.toAccountMemberDTO(member));
             }
 
             case UPDATE_ACCOUNT_MEMBER_ROLE -> {
                 Long memberId = request.getParam("memberId");
                 String role = request.getParam("role");
 
-                accountMemberService.updateRole(memberId, role);
+                accountMemberService.updateRole(memberId, role, userId);
                 yield Response.noContent();
             }
 
             case DELETE_ACCOUNT_MEMBER -> {
                 Long id = request.getParam("id");
 
-                accountMemberService.delete(id);
+                accountMemberService.delete(id, userId);
                 yield Response.noContent();
             }
 

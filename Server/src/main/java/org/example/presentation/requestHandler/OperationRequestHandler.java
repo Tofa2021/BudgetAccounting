@@ -2,7 +2,7 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.OperationService;
 import org.example.domain.model.Operation;
-import org.example.dto.OperationDTO;
+import org.example.domain.model.OperationType;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -21,7 +21,9 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
         super(
                 RequestAction.CREATE_OPERATION,
                 RequestAction.GET_FILTERED_OPERATIONS,
-                RequestAction.GET_MY_HOUSEHOLD_OPERATIONS,
+                RequestAction.GET_HOUSEHOLD_OPERATIONS,
+                RequestAction.GET_ACCOUNT_OPERATIONS,
+                RequestAction.GET_MY_OPERATIONS,
                 RequestAction.UPDATE_OPERATION,
                 RequestAction.DELETE_OPERATION
         );
@@ -40,37 +42,60 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
                 Instant dateTime = request.getParam("dateTime");
 
                 Operation operation = operationService.create(accountId, categoryId, description, amount, dateTime, userId);
-                yield Response.created(dtoMapper.toDTO(operation, OperationDTO.class));
+                yield Response.created(dtoMapper.toOperationDTO(operation));
             }
 
             case GET_FILTERED_OPERATIONS -> {
                 Long householdId = request.getParam("householdId");
-                Long accountMemberId = request.getParam("accountMemberId");
-                Long categoryId = request.getParam("categoryId");
+                Long accountId = request.getParam("accountId");
+                Long creatorUserId = request.getParam("creatorUserId");
                 BigDecimal minAmount = request.getParam("minAmount");
                 BigDecimal maxAmount = request.getParam("maxAmount");
                 Instant dateFrom = request.getParam("dateFrom");
                 Instant dateTo = request.getParam("dateTo");
+                Long categoryId = request.getParam("categoryId");
+                OperationType operationType = request.getParam("operationType");
                 Integer limit = request.getParam("limit");
+                String sortBy = request.getParam("sortBy");
+                String sortDirection = request.getParam("sortDirection");
 
                 List<Operation> operations = operationService.getFilteredOperations(
                         householdId,
-                        accountMemberId,
-                        categoryId,
+                        accountId,
+                        creatorUserId,
                         minAmount,
                         maxAmount,
                         dateFrom,
                         dateTo,
-                        limit
+                        categoryId,
+                        operationType,
+                        limit,
+                        sortBy,
+                        sortDirection,
+                        userId
                 );
-                yield Response.success(dtoMapper.toDTOs(operations, OperationDTO.class));
+                yield Response.success(dtoMapper.toOperationDTOs(operations));
             }
 
-            case GET_MY_HOUSEHOLD_OPERATIONS -> {
+            case GET_ACCOUNT_OPERATIONS -> {
+                Long accountId = request.getParam("accountId");
+
+                List<Operation> operations = operationService.getAccountOperations(accountId, userId);
+                yield Response.success(dtoMapper.toOperationDTOs(operations));
+            }
+
+            case GET_HOUSEHOLD_OPERATIONS -> {
                 Long householdId = request.getParam("householdId");
 
-                List<Operation> operations = operationService.getUserHouseholdOperations(householdId, userId);
-                yield Response.success(dtoMapper.toDTOs(operations, OperationDTO.class));
+                List<Operation> operations = operationService.getHouseholdOperations(householdId, userId);
+                yield Response.success(dtoMapper.toOperationDTOs(operations));
+            }
+
+            case GET_MY_OPERATIONS -> {
+                Long householdId = request.getParam("householdId");
+
+                List<Operation> operations = operationService.getMyOperations(householdId, userId);
+                yield Response.success(dtoMapper.toOperationDTOs(operations));
             }
 
             case UPDATE_OPERATION -> {
@@ -80,14 +105,14 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
                 String description = request.getParam("description");
                 Instant dateTime = request.getParam("dateTime");
 
-                operationService.update(id, amount, categoryId, description, dateTime);
+                operationService.update(id, amount, categoryId, description, dateTime, userId);
                 yield Response.noContent();
             }
 
             case DELETE_OPERATION -> {
                 Long id = request.getParam("id");
 
-                operationService.delete(id);
+                operationService.delete(id, userId);
                 yield Response.noContent();
             }
 

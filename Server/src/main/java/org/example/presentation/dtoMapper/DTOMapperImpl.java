@@ -4,47 +4,30 @@ import org.example.domain.model.*;
 import org.example.dto.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 public class DTOMapperImpl implements DTOMapper {
-    private final Map<Class<? extends BaseModel>, Function<BaseModel, DTO>> modelToDTOMap = new ConcurrentHashMap<>();
-
-    public DTOMapperImpl() {
-        modelToDTOMap.put(Operation.class, (model) -> createOperationDTO((Operation) model));
-        modelToDTOMap.put(Account.class, (model) -> createAccountDTO((Account) model));
-        modelToDTOMap.put(AccountMember.class, (model) -> createAccountMemberDTO((AccountMember) model));
-        modelToDTOMap.put(Category.class, (model) -> createCategory((Category) model));
-        modelToDTOMap.put(Household.class, (model) -> createHouseholdDTO((Household) model));
-        modelToDTOMap.put(HouseholdMember.class, (model) -> createHouseholdMemberDTO((HouseholdMember) model));
-        modelToDTOMap.put(User.class, (model) -> createUserDTO((User) model));
+    private List<Long> convertToIdList(List<? extends BaseModel> elements) {
+        return elements
+                .stream()
+                .map(BaseModel::getId)
+                .toList();
     }
 
     @Override
-    public <T extends BaseModel, R extends DTO> R toDTO(T model, Class<R> dtoClass) {
-        Function<BaseModel, DTO> mapper = modelToDTOMap.get(model.getClass());
-        return (R) mapper.apply(model);
-    }
-
-    @Override
-    public <T extends DTO, R extends BaseModel> R fromDTO(T dto, Class<R> modelClass) {
-        return null;
-    }
-
-    private OperationDTO createOperationDTO(Operation operation) {
+    public OperationDTO toOperationDTO(Operation operation) {
         return new OperationDTO(
                 operation.getId(),
                 operation.getAccount().getId(),
                 operation.getDescription(),
                 operation.getAmount(),
                 operation.getDateTime(),
-                operation.getUser().getId(),
+                operation.getAccountMember().getId(),
                 operation.getCategory().getId()
         );
     }
 
-    private AccountDTO createAccountDTO(Account account) {
+    @Override
+    public AccountDTO toAccountDTO(Account account) {
         return new AccountDTO(
                 account.getId(),
                 account.getName(),
@@ -55,16 +38,18 @@ public class DTOMapperImpl implements DTOMapper {
         );
     }
 
-    private AccountMemberDTO createAccountMemberDTO(AccountMember accountMember) {
+    @Override
+    public AccountMemberDTO toAccountMemberDTO(AccountMember member) {
         return new AccountMemberDTO(
-                accountMember.getId(),
-                accountMember.getRole().name(),
-                accountMember.getHouseholdMember().getId(),
-                accountMember.getAccount().getId()
+                member.getId(),
+                member.getRole().name(),
+                member.getHouseholdMember().getId(),
+                member.getAccount().getId()
         );
     }
 
-    private CategoryDTO createCategory(Category category) {
+    @Override
+    public CategoryDTO toCategoryDTO(Category category) {
         return new CategoryDTO(
                 category.getId(),
                 category.getName(),
@@ -73,7 +58,8 @@ public class DTOMapperImpl implements DTOMapper {
         );
     }
 
-    private HouseholdDTO createHouseholdDTO(Household household) {
+    @Override
+    public HouseholdDTO toHouseholdDTO(Household household) {
         return new HouseholdDTO(
                 household.getId(),
                 household.getName(),
@@ -83,17 +69,19 @@ public class DTOMapperImpl implements DTOMapper {
         );
     }
 
-    private HouseholdMemberDTO createHouseholdMemberDTO(HouseholdMember householdMember) {
+    @Override
+    public HouseholdMemberDTO toHouseholdMemberDTO(HouseholdMember member) {
         return new HouseholdMemberDTO(
-                householdMember.getId(),
-                householdMember.getUser().getId(),
-                householdMember.getHousehold().getId(),
-                convertToIdList(householdMember.getAccountMembers()),
-                householdMember.getRole().name()
+                member.getId(),
+                member.getUser().getId(),
+                member.getHousehold().getId(),
+                convertToIdList(member.getAccountMembers()),
+                member.getRole().name()
         );
     }
 
-    private UserDTO createUserDTO(User user) {
+    @Override
+    public UserDTO toUserDTO(User user) {
         return new UserDTO(
                 user.getId(),
                 user.getUsername(),
@@ -101,10 +89,11 @@ public class DTOMapperImpl implements DTOMapper {
         );
     }
 
-    private List<Long> convertToIdList(List<? extends BaseModel> elements) {
-        return elements
-                .stream()
-                .map(BaseModel::getId)
-                .toList();
+    @Override
+    public UserPublicDTO toUserPublicDTO(User user) {
+        return new UserPublicDTO(
+                user.getId(),
+                user.getUsername()
+        );
     }
 }

@@ -15,7 +15,7 @@ public class OperationDTO implements DTO, Serializable {
     private String description;
     private BigDecimal amount;
     private Instant dateTime;
-    private Long userId;
+    private Long accountMemberId;
     private Long categoryId;
 }
 

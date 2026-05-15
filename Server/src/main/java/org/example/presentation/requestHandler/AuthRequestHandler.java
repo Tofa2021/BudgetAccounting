@@ -13,7 +13,8 @@ public class AuthRequestHandler extends UnauthorizedRequestHandler {
     public AuthRequestHandler(UserService userService) {
         super(
                 RequestAction.SIGN_UP,
-                RequestAction.SIGN_IN
+                RequestAction.SIGN_IN,
+                RequestAction.REFRESH_TOKENS
         );
         this.userService = userService;
     }

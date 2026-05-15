@@ -36,7 +36,7 @@ public class OperationClient extends BaseClient {
 
     public Result<List<OperationDTO>> getMyHouseholdOperations(Long householdId) {
         return sendRequest(
-                RequestAction.GET_MY_HOUSEHOLD_OPERATIONS,
+                RequestAction.GET_HOUSEHOLD_OPERATIONS,
                 Map.of("householdId", householdId)
         );
     }

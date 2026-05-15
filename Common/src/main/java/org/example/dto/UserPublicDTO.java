@@ -2,14 +2,12 @@ package org.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.List;
-
-@Getter
 @AllArgsConstructor
-public class UserDTO implements DTO, Serializable {
+@Setter
+@Getter
+public class UserPublicDTO implements DTO {
     private Long id;
     private String username;
-    private List<Long> memberIds;
 }

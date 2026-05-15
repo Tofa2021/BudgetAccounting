@@ -6,7 +6,8 @@ import org.example.Pair;
 import org.example.domain.dao.PersistenceManager;
 import org.example.domain.dao.UserDAO;
 import org.example.domain.exception.BusinessException;
-import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
+import org.example.domain.exception.already_exists.UserAlreadyExistsException;
+import org.example.domain.exception.forbidden.ForbiddenException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.User;
 import org.example.infrastructure.security.PasswordEncoder;
@@ -15,7 +16,7 @@ import org.example.response.Status;
 
 @Slf4j
 @RequiredArgsConstructor
-public class UserService { // TODO check rights
+public class UserService {
     private final PersistenceManager persistenceManager;
     private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
@@ -26,7 +27,7 @@ public class UserService { // TODO check rights
 
         return persistenceManager.executeTransaction(() -> {
             if (userDAO.findByUsername(username).isPresent()) {
-                throw new UserAlreadyExistsExceptionException(username);
+                throw new UserAlreadyExistsException(username);
             }
 
             User user = new User();
@@ -65,7 +66,7 @@ public class UserService { // TODO check rights
                     .orElseThrow(() -> new UserNotFoundException(userId));
             if (username != null) {
                 if (userDAO.findByUsername(username).isPresent()) {
-                    throw new UserAlreadyExistsExceptionException(username);
+                    throw new UserAlreadyExistsException(username);
                 }
                 user.setUsername(username);
             }
@@ -87,8 +88,12 @@ public class UserService { // TODO check rights
         });
     }
 
-    public void logout(String accessToken, String refreshToken) { // TODO is it need to check if userId from refresh and access tokens match
+    public void logout(String accessToken, String refreshToken) {
         log.debug("Logging out");
+
+        if (!tokenProvider.getUserIdFromAccessToken(accessToken).equals(tokenProvider.getUserIdFromRefreshToken(refreshToken))) {
+            throw new ForbiddenException("Tokens mismatch");
+        }
 
         Long userId = tokenProvider.getUserIdFromRefreshToken(refreshToken);
         tokenProvider.invalidateAccessToken(accessToken);
@@ -112,13 +117,24 @@ public class UserService { // TODO check rights
         return new Pair<>(newAccessToken, newRefreshToken);
     }
 
-    public User get(Long id) {
+    public User getMe(Long id) {
         log.debug("Getting user with id = {}", id);
 
         return persistenceManager.executeReadOnly(() -> {
             User user = userDAO.findByIdWithMembers(id)
                     .orElseThrow(() -> new UserNotFoundException(id));
             log.info("User gotten with id = {}", id);
+            return user;
+        });
+    }
+
+    public User getByUsername(String username) {
+        log.debug("Getting by username = {}", username);
+
+        return persistenceManager.executeReadOnly(() -> {
+            User user = userDAO.findByUsername(username)
+                    .orElseThrow(() -> new UserNotFoundException(username));
+            log.info("User gotten with id = {} username = {}", user.getId(), username);
             return user;
         });
     }

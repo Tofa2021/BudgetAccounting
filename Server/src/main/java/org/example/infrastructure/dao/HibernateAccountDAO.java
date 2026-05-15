@@ -4,6 +4,7 @@ import org.example.domain.dao.AccountDAO;
 import org.example.domain.model.Account;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 

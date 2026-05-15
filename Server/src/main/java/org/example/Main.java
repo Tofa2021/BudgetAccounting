@@ -15,7 +15,7 @@ import org.example.presentation.dtoMapper.DTOMapperImpl;
 import org.example.presentation.requestHandler.*;
 
 public class Main {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         DTOMapper dtoMapper = new DTOMapperImpl();
 
         HibernatePersistenceManager transactionManager = new HibernatePersistenceManager();
@@ -63,7 +63,9 @@ public class Main {
                 operationDAO,
                 categoryDAO,
                 accountDAO,
-                userDAO
+                accountMemberDAO,
+                userDAO,
+                householdMemberDAO
         );
         UserService userService = new UserService(
                 transactionManager,

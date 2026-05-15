@@ -2,7 +2,6 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.HouseholdService;
 import org.example.domain.model.Household;
-import org.example.dto.HouseholdDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -36,20 +35,20 @@ public class HouseholdRequestHandler extends AuthorizedRequestHandler {
                 Map<Long, String> startMembers = request.getParam("startMembers");
 
                 Household household = householdService.create(name, startMembers, userId);
-                yield Response.created(dtoMapper.toDTO(household, HouseholdDTO.class));
+                yield Response.created(dtoMapper.toHouseholdDTO(household));
             }
 
             case GET_HOUSEHOLD -> {
                 Long id = request.getParam("id");
 
-                Household household = householdService.get(id);
-                yield Response.success(dtoMapper.toDTO(household, HouseholdDTO.class));
+                Household household = householdService.get(id, userId);
+                yield Response.success(dtoMapper.toHouseholdDTO(household));
             }
 
             case GET_HOUSEHOLD_AMOUNT -> {
                 Long id = request.getParam("id");
 
-                BigDecimal amount = householdService.getAmount(id);
+                BigDecimal amount = householdService.getAmount(id, userId);
                 yield Response.success(amount);
             }
 
@@ -57,14 +56,14 @@ public class HouseholdRequestHandler extends AuthorizedRequestHandler {
                 Long id = request.getParam("id");
                 String name = request.getParam("name");
 
-                householdService.update(id, name);
+                householdService.update(id, name, userId);
                 yield Response.noContent();
             }
 
             case DELETE_HOUSEHOLD -> {
                 Long id = request.getParam("id");
 
-                householdService.delete(id);
+                householdService.delete(id, userId);
                 yield Response.noContent();
             }
 

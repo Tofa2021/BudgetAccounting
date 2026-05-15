@@ -4,7 +4,7 @@ import org.example.Pair;
 import org.example.application.service.UserService;
 import org.example.domain.SessionManager;
 import org.example.domain.exception.BusinessException;
-import org.example.domain.exception.already_exists.UserAlreadyExistsExceptionException;
+import org.example.domain.exception.already_exists.UserAlreadyExistsException;
 import org.example.domain.exception.not_found.RoleNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
 import org.example.domain.model.Household;
@@ -184,7 +184,7 @@ class UserServiceMockTest {
 
         Mockito.when(hibernateUserDAO.findByUsername(session, "user")).thenReturn(Optional.of(user));
 
-        Assertions.assertThrows(UserAlreadyExistsExceptionException.class, () -> {
+        Assertions.assertThrows(UserAlreadyExistsException.class, () -> {
             userService.signUp(authRequest);
         });
 

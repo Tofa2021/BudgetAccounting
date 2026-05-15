@@ -10,21 +10,25 @@ import org.example.domain.exception.not_found.CategoryNotFoundException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.model.Category;
 import org.example.domain.model.Household;
+import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.OperationType;
 
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryService { // TODO check rights
+public class CategoryService {
     private final PersistenceManager persistenceManager;
+    private final HouseholdPermissionChecker householdPermissionChecker;
     private final CategoryDAO categoryDAO;
     private final HouseholdDAO householdDAO;
 
-    public Category create(Long householdId, String name, String type) {
+    public Category create(Long householdId, String name, String type, Long userId) {
         log.debug("Creating category with household = {} name = {} type = {}", householdId, name, type);
 
         return persistenceManager.executeTransaction(() -> {
+            householdPermissionChecker.checkRole(householdId, userId, HouseholdMemberRole.OWNER, HouseholdMemberRole.MANAGER);
+
             Household household = householdDAO.findById(householdId)
                     .orElseThrow(() -> new HouseholdNotFoundException(householdId));
 
@@ -43,42 +47,50 @@ public class CategoryService { // TODO check rights
         });
     }
 
-    public List<Category> getAllByHouseholdId(Long householdId) {
+    public List<Category> getAllByHouseholdId(Long householdId, Long userId) {
         log.debug("Getting categories with householdId = {}", householdId);
 
         return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
             List<Category> categories = categoryDAO.findAllByHouseholdIdWithRelations(householdId);
-            log.info("Categories gotten householdId = {} count = {}", householdId, categories.size());
+            log.debug("Categories gotten householdId = {} count = {}", householdId, categories.size());
             return categories;
         });
     }
 
-    public List<Category> getIncomeCategory(Long householdId) {
+    public List<Category> getIncomeCategories(Long householdId, Long userId) {
         log.debug("Getting categories with householdId = {} type = INCOME", householdId);
 
-        return persistenceManager.executeTransaction(() -> {
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
             List<Category> categories = categoryDAO.findAllByHouseholdIdAndTypeWithRelations(householdId, OperationType.INCOME);
-            log.info("Categories gotten with householdId = {} type = INCOME count = {}", householdId, categories.size());
+            log.debug("Categories gotten with householdId = {} type = INCOME count = {}", householdId, categories.size());
             return categories;
         });
     }
 
-    public List<Category> getExpenseCategory(Long householdId) {
+    public List<Category> getExpenseCategories(Long householdId, Long userId) {
         log.debug("Getting categories with householdId = {} type = EXPENSE", householdId);
 
-        return persistenceManager.executeTransaction(() -> {
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
             List<Category> categories = categoryDAO.findAllByHouseholdIdAndTypeWithRelations(householdId, OperationType.EXPENSE);
-            log.info("Categories gotten with householdId = {} type = EXPENSE count = {}", householdId, categories.size());
+            log.debug("Categories gotten with householdId = {} type = EXPENSE count = {}", householdId, categories.size());
             return categories;
         });
     }
 
-    public void update(Long id, String newName, String newType) {
+    public void update(Long id, String newName, String newType, Long userId) {
         log.debug("Updating category with id = {} newName = {} newType = {}", id, newName, newType);
 
         persistenceManager.executeTransaction(() -> {
             Category category = categoryDAO.findById(id)
                     .orElseThrow(() -> new CategoryNotFoundException(id));
+
+            householdPermissionChecker.checkRole(category.getHousehold().getId(), userId, HouseholdMemberRole.OWNER, HouseholdMemberRole.MANAGER);
 
             String oldName = category.getName();
             OperationType oldType = category.getType();
@@ -99,10 +111,15 @@ public class CategoryService { // TODO check rights
         });
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long userId) {
         log.debug("Deleting category with id = {}", id);
 
         persistenceManager.executeTransaction(() -> {
+            Category category = categoryDAO.findById(id)
+                    .orElseThrow(() -> new CategoryNotFoundException(id));
+
+            householdPermissionChecker.checkRole(category.getHousehold().getId(), userId, HouseholdMemberRole.OWNER, HouseholdMemberRole.MANAGER);
+
             categoryDAO.deleteById(id);
             log.info("Category deleted with id = {}", id);
         });

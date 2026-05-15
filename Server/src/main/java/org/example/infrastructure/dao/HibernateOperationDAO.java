@@ -16,7 +16,7 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
     public List<Operation> find(OperationFilter filter) {
         var query = HqlQueryBuilder.builder(Operation.class)
                 .select()
-                .where("user.id", "=", filter.userId())
+                .where("accountMember.id", "=", filter.accountMemberId())
                 .and("household.id", "=", filter.householdId())
                 .and("amount", ">=", filter.minAmount())
                 .and("amount", "<=", filter.maxAmount())
@@ -39,7 +39,7 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
                 .joinFetch("account")
                 .joinFetch("user")
                 .joinFetch("category")
-                .where("user.id", "=", filter.userId())
+                .where("accountMember.id", "=", filter.accountMemberId())
                 .and("account.household.id", "=", filter.householdId())
                 .and("amount", ">=", filter.minAmount())
                 .and("amount", "<=", filter.maxAmount())

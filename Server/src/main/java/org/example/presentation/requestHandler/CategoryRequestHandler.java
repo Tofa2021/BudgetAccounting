@@ -2,7 +2,6 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.CategoryService;
 import org.example.domain.model.Category;
-import org.example.dto.CategoryDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -36,29 +35,29 @@ public class CategoryRequestHandler extends AuthorizedRequestHandler {
                 String name = request.getParam("name");
                 String type = request.getParam("type");
 
-                Category category = categoryService.create(householdId, name, type);
-                yield Response.created(dtoMapper.toDTO(category, CategoryDTO.class));
+                Category category = categoryService.create(householdId, name, type, userId);
+                yield Response.created(dtoMapper.toCategoryDTO(category));
             }
 
             case GET_CATEGORIES -> {
                 Long householdId = request.getParam("householdId");
 
-                List<Category> categories = categoryService.getAllByHouseholdId(householdId);
-                yield Response.success(dtoMapper.toDTOs(categories, CategoryDTO.class));
+                List<Category> categories = categoryService.getAllByHouseholdId(householdId, userId);
+                yield Response.success(dtoMapper.toCategoryDTOs(categories));
             }
 
             case GET_INCOME_CATEGORIES -> {
                 Long householdId = request.getParam("householdId");
 
-                List<Category> categories = categoryService.getIncomeCategory(householdId);
-                yield Response.success(dtoMapper.toDTOs(categories, CategoryDTO.class));
+                List<Category> categories = categoryService.getIncomeCategories(householdId, userId);
+                yield Response.success(dtoMapper.toCategoryDTOs(categories));
             }
 
             case GET_EXPENSE_CATEGORIES -> {
                 Long householdId = request.getParam("householdId");
 
-                List<Category> categories = categoryService.getExpenseCategory(householdId);
-                yield Response.success(dtoMapper.toDTOs(categories, CategoryDTO.class));
+                List<Category> categories = categoryService.getExpenseCategories(householdId, userId);
+                yield Response.success(dtoMapper.toCategoryDTOs(categories));
             }
 
             case UPDATE_CATEGORY -> {
@@ -66,14 +65,14 @@ public class CategoryRequestHandler extends AuthorizedRequestHandler {
                 String name = request.getParam("name");
                 String type = request.getParam("type");
 
-                categoryService.update(id, name, type);
+                categoryService.update(id, name, type, userId);
                 yield Response.noContent();
             }
 
             case DELETE_CATEGORY -> {
                 Long id = request.getParam("id");
 
-                categoryService.delete(id);
+                categoryService.delete(id, userId);
                 yield Response.noContent();
             }
 

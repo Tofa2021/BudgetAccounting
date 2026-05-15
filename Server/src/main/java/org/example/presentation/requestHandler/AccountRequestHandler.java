@@ -2,7 +2,6 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.AccountService;
 import org.example.domain.model.Account;
-import org.example.dto.AccountDTO;
 import org.example.enums.Currency;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
@@ -37,21 +36,21 @@ public class AccountRequestHandler extends AuthorizedRequestHandler {
                 Currency currency = request.getParam("currency");
 
                 Account newAccount = accountService.create(householdId, name, currency, userId);
-                yield Response.created(dtoMapper.toDTO(newAccount, AccountDTO.class));
+                yield Response.created(dtoMapper.toAccountDTO(newAccount));
             }
 
             case GET_ACCOUNT -> {
                 Long id = request.getParam("id");
 
                 Account account = accountService.getAccount(id, userId);
-                yield Response.success(dtoMapper.toDTO(account, AccountDTO.class));
+                yield Response.success(dtoMapper.toAccountDTO(account));
             }
 
             case GET_MY_ACCOUNTS_IN_HOUSEHOLD -> {
                 Long householdId = request.getParam("householdId");
 
                 List<Account> accounts = accountService.getAccounts(householdId, userId);
-                yield Response.success(dtoMapper.toDTOs(accounts, AccountDTO.class));
+                yield Response.success(dtoMapper.toAccountDTOs(accounts));
             }
 
             case UPDATE_ACCOUNT -> {
@@ -59,14 +58,14 @@ public class AccountRequestHandler extends AuthorizedRequestHandler {
                 String name = request.getParam("name");
                 Currency currency = request.getParam("currency");
 
-                accountService.update(id, name, currency);
+                accountService.update(id, name, currency, userId);
                 yield Response.noContent();
             }
 
             case DELETE_ACCOUNT -> {
                 Long id = request.getParam("id");
 
-                accountService.delete(id);
+                accountService.delete(id, userId);
                 yield Response.noContent();
             }
 

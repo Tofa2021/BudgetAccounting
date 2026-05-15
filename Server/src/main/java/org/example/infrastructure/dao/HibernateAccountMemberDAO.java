@@ -6,6 +6,7 @@ import org.example.domain.model.AccountMemberRole;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HibernateAccountMemberDAO extends HibernateDAO<AccountMember, Long> implements AccountMemberDAO {
     public HibernateAccountMemberDAO(HibernatePersistenceManager transactionManager) {

@@ -3,7 +3,6 @@ package org.example.presentation.requestHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.example.application.service.UserService;
 import org.example.domain.model.User;
-import org.example.dto.UserDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -38,15 +37,15 @@ public class UserRequestHandler extends AuthorizedRequestHandler {
             }
 
             case GET_USER -> {
-                Long id = request.getParam("id");
+                String username = request.getParam("username");
 
-                User user = userService.get(id);
-                yield Response.success(dtoMapper.toDTO(user, UserDTO.class));
+                User user = userService.getByUsername(username);
+                yield Response.success(dtoMapper.toUserPublicDTO(user));
             }
 
             case GET_ME -> {
-                User user = userService.get(userId);
-                yield Response.success(dtoMapper.toDTO(user, UserDTO.class));
+                User user = userService.getMe(userId);
+                yield Response.success(dtoMapper.toUserDTO(user));
             }
 
             case UPDATE_USER -> {

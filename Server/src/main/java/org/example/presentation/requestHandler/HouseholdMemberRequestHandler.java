@@ -2,7 +2,6 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.HouseholdMemberService;
 import org.example.domain.model.HouseholdMember;
-import org.example.dto.HouseholdMemberDTO;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -28,24 +27,25 @@ public class HouseholdMemberRequestHandler extends AuthorizedRequestHandler {
         return switch (request.action()) {
             case CREATE_HOUSEHOLD_MEMBER -> {
                 Long householdId = request.getParam("householdId");
+                Long toCreateUserId = request.getParam("userId");
                 String role = request.getParam("role");
 
-                HouseholdMember member = householdMemberService.create(householdId, role, userId);
-                yield Response.created(dtoMapper.toDTO(member, HouseholdMemberDTO.class));
+                HouseholdMember member = householdMemberService.create(householdId, toCreateUserId, role, userId);
+                yield Response.created(dtoMapper.toHouseholdMemberDTO(member));
             }
 
             case UPDATE_HOUSEHOLD_MEMBER_ROLE -> {
                 Long id = request.getParam("id");
                 String role = request.getParam("role");
 
-                householdMemberService.updateRole(id, role);
+                householdMemberService.updateRole(id, role, userId);
                 yield Response.noContent();
             }
 
             case DELETE_HOUSEHOLD_MEMBER -> {
                 Long id = request.getParam("id");
 
-                householdMemberService.delete(id);
+                householdMemberService.delete(id, userId);
                 yield Response.noContent();
             }
 

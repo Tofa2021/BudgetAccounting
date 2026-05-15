@@ -3,10 +3,14 @@ package org.example.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.dao.*;
-import org.example.domain.exception.already_exists.HouseholdMemberAlreadyExistsExceptionException;
+import org.example.domain.exception.LastRoleException;
+import org.example.domain.exception.not_found.HouseholdMemberNotFoundException;
 import org.example.domain.exception.not_found.HouseholdNotFoundException;
 import org.example.domain.exception.not_found.UserNotFoundException;
-import org.example.domain.model.*;
+import org.example.domain.model.Household;
+import org.example.domain.model.HouseholdMember;
+import org.example.domain.model.HouseholdMemberRole;
+import org.example.domain.model.User;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,8 +19,9 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
-public class HouseholdService { // TODO check rights
+public class HouseholdService {
     private final PersistenceManager persistenceManager;
+    private final HouseholdPermissionChecker householdPermissionChecker;
     private final HouseholdDAO householdDAO;
     private final HouseholdMemberDAO householdMemberDAO;
     private final UserDAO userDAO;
@@ -43,7 +48,7 @@ public class HouseholdService { // TODO check rights
 
     private List<HouseholdMember> createMembers(Map<Long, String> additionalMemberMap, Household household, User owner) {
         List<HouseholdMember> members = new ArrayList<>();
-        members.add(createMember(owner, household, HouseholdMemberRole.ADMIN));
+        members.add(createMember(owner, household, HouseholdMemberRole.OWNER));
         members.addAll(createAdditionalMembers(additionalMemberMap, household));
         return members;
     }
@@ -53,9 +58,7 @@ public class HouseholdService { // TODO check rights
             Household household,
             HouseholdMemberRole role
     ) {
-        if (householdMemberDAO.existsByUserIdAndHouseholdId(user.getId(), household.getId())) {
-            throw new HouseholdMemberAlreadyExistsExceptionException(user.getId(), household.getId());
-        }
+        householdPermissionChecker.checkNoMembership(household.getId(), user.getId());
 
         HouseholdMember member = new HouseholdMember();
         member.setRole(role);
@@ -82,31 +85,44 @@ public class HouseholdService { // TODO check rights
         return members;
     }
 
-    public Household get(Long id) {
+    public Household get(Long id, Long userId) {
         log.debug("Getting household with id = {}", id);
 
-        return persistenceManager.executeReadOnly(() -> {
-            Household household = householdDAO.findByIdWithRelations(id).orElseThrow(() -> new HouseholdNotFoundException(id));
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(id, userId);
+
+            Household household = householdDAO.findByIdWithRelations(id)
+                    .orElseThrow(() -> new HouseholdNotFoundException(id));
             log.info("Household gotten with id = {}", id);
             return household;
         });
     }
 
-    public BigDecimal getAmount(Long id) {
+    public BigDecimal getAmount(Long id, Long userId) {
         log.debug("Getting amount for household with id = {}", id);
 
-        return persistenceManager.executeReadOnly(() -> {
-            List<Account> accounts = accountDAO.getAllByHouseholdId(id);
-            BigDecimal amount = accounts.stream().map(Account::getAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-            log.info("Amount gotten amount = {} for householdId = {}", amount, id);
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            HouseholdMemberRole role = householdMemberDAO.findRoleByHouseholdIdAndUserId(id, userId)
+                    .orElseThrow(() -> new HouseholdMemberNotFoundException(userId, id));
+
+            BigDecimal amount;
+            if (role == HouseholdMemberRole.MEMBER) {
+                amount = accountDAO.getMemberAccountAmount(id, userId);
+            } else {
+                amount = accountDAO.getHouseholdAccountAmount(id);
+            }
+
+            log.info("Amount gotten amount = {} for householdId = {} memberRole = {}", amount, id, role);
             return amount;
         });
     }
 
-    public void update(Long id, String name) {
+    public void update(Long id, String name, Long userId) {
         log.debug("Updating household with id = {} newName = {}", id, name);
 
         persistenceManager.executeTransaction(() -> {
+            householdPermissionChecker.checkRole(id, userId, HouseholdMemberRole.OWNER, HouseholdMemberRole.MANAGER);
+
             Household household = householdDAO.findById(id)
                     .orElseThrow(() -> new HouseholdNotFoundException(id));
 
@@ -118,10 +134,17 @@ public class HouseholdService { // TODO check rights
         });
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, Long userId) {
         log.debug("Deleting household with id = {}", id);
 
         persistenceManager.executeTransaction(() -> {
+            householdPermissionChecker.checkRole(id, userId, HouseholdMemberRole.OWNER);
+
+            long ownersCount = householdMemberDAO.countByHouseholdIdAndRole(id, HouseholdMemberRole.OWNER);
+            if (ownersCount == 1) {
+                throw new LastRoleException(id, HouseholdMemberRole.OWNER);
+            }
+
             householdDAO.deleteById(id);
             log.info("Household deleted with id = {}", id);
         });
