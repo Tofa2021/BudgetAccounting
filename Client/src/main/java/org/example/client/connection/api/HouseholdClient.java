@@ -24,7 +24,7 @@ public class HouseholdClient extends BaseClient {
 
     public Result<HouseholdDTO> create(String name, Map<Long, String> startMembers) {
         return sendRequest(
-                RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.CREATE_HOUSEHOLD,
                 Map.of(
                         "name", name,
                         "startMembers", startMembers
@@ -34,7 +34,7 @@ public class HouseholdClient extends BaseClient {
 
     public Result<HouseholdDTO> get(Long id) {
         return sendRequest(
-                RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.GET_HOUSEHOLD,
                 Map.of(
                         "id", id
                 )
@@ -43,7 +43,7 @@ public class HouseholdClient extends BaseClient {
 
     public Result<Void> update(Long id, String name) {
         return sendRequest(
-                RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.UPDATE_HOUSEHOLD,
                 Map.of(
                         "id", id,
                         "name", name
@@ -53,7 +53,7 @@ public class HouseholdClient extends BaseClient {
 
     public Result<Void> delete(Long id) {
         return sendRequest(
-                RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.DELETE_HOUSEHOLD,
                 Map.of(
                         "id", id
                 )

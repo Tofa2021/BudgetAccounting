@@ -20,7 +20,7 @@ public class UserRequestHandler extends AuthorizedRequestHandler {
                 RequestAction.GET_USER,
                 RequestAction.GET_ME,
                 RequestAction.UPDATE_USER,
-                RequestAction.DELETE_USER
+                RequestAction.DELETE_MY_USER
         );
         this.dtoMapper = dtoMapper;
         this.userService = userService;
@@ -56,7 +56,7 @@ public class UserRequestHandler extends AuthorizedRequestHandler {
                 yield Response.noContent();
             }
 
-            case DELETE_USER -> {
+            case DELETE_MY_USER -> {
                 userService.delete(userId);
                 yield Response.noContent();
             }

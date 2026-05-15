@@ -18,7 +18,7 @@ public class AccountClient extends BaseClient {
         return sendRequest(
                 RequestAction.CREATE_ACCOUNT,
                 Map.of(
-                        "accountName", accountName,
+                        "name", accountName,
                         "currency", currency,
                         "householdId", householdId
                 )
@@ -44,7 +44,7 @@ public class AccountClient extends BaseClient {
                 RequestAction.UPDATE_ACCOUNT,
                 Map.of(
                         "id", id,
-                        "newName", newName,
+                        "name", newName,
                         "currency", newCurrency
                 )
         );

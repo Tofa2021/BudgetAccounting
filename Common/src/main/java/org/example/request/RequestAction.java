@@ -42,7 +42,7 @@ public enum RequestAction {
     GET_USER,
     GET_ME,
     UPDATE_USER,
-    DELETE_USER,
+    DELETE_MY_USER,
     REFRESH_TOKENS,
 
 }

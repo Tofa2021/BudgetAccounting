@@ -57,7 +57,7 @@ public class OperationViewModel extends BaseViewModel {
 
     public void loadRecentOperations(int days) {
         Instant dateFrom = Instant.now().minus(days, ChronoUnit.DAYS);
-        var result = operationClient.getHouseholdRecentOperations(sessionContext.getCurrentHousehold().getId(), dateFrom);
+        var result = operationClient.getHouseholdOperations(sessionContext.getCurrentHousehold().getId(), dateFrom);
         if (result.isSuccess()) {
             operations.setAll(result.getData());
         }

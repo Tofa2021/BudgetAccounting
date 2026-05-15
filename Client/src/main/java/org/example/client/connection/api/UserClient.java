@@ -3,6 +3,7 @@ package org.example.client.connection.api;
 import org.example.client.Result;
 import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.UserDTO;
+import org.example.dto.UserPublicDTO;
 import org.example.request.RequestAction;
 
 import java.util.Map;
@@ -12,11 +13,11 @@ public class UserClient extends BaseClient {
         super(serverInteractionManager);
     }
 
-    public Result<UserDTO> get(Long id) {
+    public Result<UserPublicDTO> getByUsername(String username) {
         return sendRequest(
                 RequestAction.GET_USER,
                 Map.of(
-                        "id", id
+                        "username", username
                 )
         );
     }
@@ -40,7 +41,7 @@ public class UserClient extends BaseClient {
 
     public Result<UserDTO> delete() {
         return sendRequest(
-                RequestAction.DELETE_USER,
+                RequestAction.DELETE_MY_USER,
                 Map.of()
         );
     }

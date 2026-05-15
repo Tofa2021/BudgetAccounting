@@ -12,11 +12,12 @@ public class HouseholdMemberClient extends BaseClient {
         super(serverInteractionManager);
     }
 
-    public Result<HouseholdMemberDTO> create(Long householdId, String role) {
+    public Result<HouseholdMemberDTO> create(Long householdId, String role, Long toCreateUserId) {
         return sendRequest(
                 RequestAction.CREATE_HOUSEHOLD_MEMBER,
                 Map.of(
                         "householdId", householdId,
+                        "userId", toCreateUserId,
                         "role", role
 
                 )

@@ -42,38 +42,61 @@ public class OperationClient extends BaseClient {
     }
 
     public Result<List<OperationDTO>> getFilteredOperations(
-            Long accountMemberId,
             Long householdId,
+            Long accountId,
+            Long creatorUserId,
             Long categoryId,
-            String type,
+            String operationType,
             BigDecimal minAmount,
             BigDecimal maxAmount,
             Instant dateTo,
             Instant dateFrom,
-            Integer limit
+            Integer limit,
+            String sortBy,
+            String sortDirection
     ) {
         return sendRequest(
                 RequestAction.GET_FILTERED_OPERATIONS,
-                Map.of(
-                        "householdId", householdId,
-                        "accountMemberId", accountMemberId,
-                        "categoryId", categoryId,
-                        "type", type,
-                        "minAmount", minAmount,
-                        "maxAmount", maxAmount,
-                        "dateTo", dateTo,
-                        "dateFrom", dateFrom,
-                        "limit", limit
+                Map.ofEntries(
+                        Map.entry("householdId", householdId),
+                        Map.entry("accountId", accountId),
+                        Map.entry("creatorUserId", creatorUserId),
+                        Map.entry("categoryId", categoryId),
+                        Map.entry("operationType", operationType),
+                        Map.entry("minAmount", minAmount),
+                        Map.entry("maxAmount", maxAmount),
+                        Map.entry("dateTo", dateTo),
+                        Map.entry("dateFrom", dateFrom),
+                        Map.entry("limit", limit),
+                        Map.entry("sortBy", sortBy),
+                        Map.entry("sortDirection", sortDirection)
                 )
         );
     }
 
-    public Result<List<OperationDTO>> getHouseholdRecentOperations(Long householdId, Instant dateFrom) {
+    public Result<List<OperationDTO>> getHouseholdOperations(Long householdId, Instant dateFrom) {
         return sendRequest(
-                RequestAction.GET_FILTERED_OPERATIONS,
+                RequestAction.GET_HOUSEHOLD_OPERATIONS,
                 Map.of(
-                        "householdId", householdId,
-                        "dateFrom", dateFrom
+                        "householdId", householdId
+                )
+        );
+    }
+
+    public Result<List<OperationDTO>> getAccountOperations(Long accountId) {
+        return sendRequest(
+                RequestAction.GET_ACCOUNT_OPERATIONS,
+                Map.of(
+                        "accountId", accountId
+                )
+        );
+    }
+
+    public Result<List<OperationDTO>> getMyOperations(Long householdID) {
+        return sendRequest(
+                RequestAction.GET_MY_OPERATIONS,
+                Map.of(
+                        "householdID", householdID
                 )
         );
     }

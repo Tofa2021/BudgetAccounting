@@ -35,10 +35,10 @@ public class AccountMemberRequestHandler extends AuthorizedRequestHandler {
             }
 
             case UPDATE_ACCOUNT_MEMBER_ROLE -> {
-                Long memberId = request.getParam("memberId");
+                Long id = request.getParam("id");
                 String role = request.getParam("role");
 
-                accountMemberService.updateRole(memberId, role, userId);
+                accountMemberService.updateRole(id, role, userId);
                 yield Response.noContent();
             }
 

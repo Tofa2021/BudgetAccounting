@@ -44,5 +44,12 @@ public class AuthClient extends BaseClient {
         );
     }
 
-    // TODO Refresh tokens
+    public Result<Pair<String, String>> refreshTokens(String refreshToken) {
+        return sendRequest(
+                RequestAction.REFRESH_TOKENS,
+                Map.of(
+                        "refreshToken", refreshToken
+                )
+        );
+    }
 }
