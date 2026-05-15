@@ -21,11 +21,6 @@ public class HqlQueryBuilder<T> {
         return new HqlQueryBuilder<>(resultClass);
     }
 
-    public HqlQueryBuilder<T> select(String tableName) {
-        hql.append("SELECT o FROM ").append(tableName).append(" o");
-        return this;
-    }
-
     public HqlQueryBuilder<T> selectDistinct() {
         hql.append("SELECT DISTINCT o FROM ").append(resultClass.getSimpleName()).append(" o");
         return this;
@@ -33,6 +28,16 @@ public class HqlQueryBuilder<T> {
 
     public HqlQueryBuilder<T> select() {
         hql.append("SELECT o FROM ").append(resultClass.getSimpleName()).append(" o");
+        return this;
+    }
+
+    public HqlQueryBuilder<T> select(String columnName) {
+        hql.append("SELECT o.").append(columnName).append(" FROM ").append(resultClass.getSimpleName()).append(" o");
+        return this;
+    }
+
+    public HqlQueryBuilder<T> selectSum(String tableName, String columnName) {
+        hql.append("SELECT SUM(o.").append(columnName).append(") FROM ").append(tableName).append(" o");
         return this;
     }
 

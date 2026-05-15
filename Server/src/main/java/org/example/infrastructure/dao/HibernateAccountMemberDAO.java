@@ -45,4 +45,67 @@ public class HibernateAccountMemberDAO extends HibernateDAO<AccountMember, Long>
                 .buildCount(getCurrentSession())
                 .getSingleResultOrNull();
     }
+
+    @Override
+    public Optional<AccountMember> findByAccountIdAndUserId(Long accountId, Long userId) {
+        return HqlQueryBuilder.builder(AccountMember.class)
+                .select()
+                .where("account.id", "=", accountId)
+                .and("householdMember.user.id", "=", userId)
+                .build(getCurrentSession())
+                .uniqueResultOptional();
+    }
+
+    @Override
+    public Optional<AccountMember> findByAccountIdAndUserIdWithRelations(Long accountId, Long userId) {
+        return HqlQueryBuilder.builder(AccountMember.class)
+                .select()
+                .leftJoinFetch("account")
+                .leftJoinFetch("householdMember")
+                .leftJoinFetch("householdMember.user")
+                .where("account.id", "=", accountId)
+                .and("householdMember.user.id", "=", userId)
+                .build(getCurrentSession())
+                .uniqueResultOptional();
+    }
+
+    @Override
+    public Optional<AccountMemberRole> findRoleByAccountIdAndUserId(Long accountId, Long userId) {
+        return HqlQueryBuilder.builder(AccountMemberRole.class)
+                .select("role")
+                .where("account.id", "=", accountId)
+                .and("householdMember.user.id", "=", userId)
+                .build(getCurrentSession())
+                .uniqueResultOptional();
+    }
+
+    @Override
+    public List<AccountMember> getAllByHouseholdIdAndUserId(Long householdId, Long userId) {
+        return HqlQueryBuilder.builder(AccountMember.class)
+                .select()
+                .where("account.household.id", "=", householdId)
+                .and("householdMember.user.id", "=", userId)
+                .build(getCurrentSession())
+                .list();
+    }
+
+    @Override
+    public List<Long> getIdsByUserIdAndHouseholdId(Long userId, Long householdId) {
+        return HqlQueryBuilder.builder(Long.class)
+                .select("account.id")
+                .where("householdMember.user.id", "=", userId)
+                .and("account.household.id", "=", householdId)
+                .build(getCurrentSession())
+                .list();
+    }
+
+    @Override
+    public boolean existsByAccountIdAndHouseholdMemberId(Long accountId, Long householdMemberId) {
+        return HqlQueryBuilder.builder(AccountMember.class)
+                .selectCount()
+                .where("account.id", "=", accountId)
+                .and("householdMember.id", "=", householdMemberId)
+                .buildCount(getCurrentSession())
+                .getSingleResultOrNull() > 0;
+    }
 }

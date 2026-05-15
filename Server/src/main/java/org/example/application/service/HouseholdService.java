@@ -107,9 +107,9 @@ public class HouseholdService {
 
             BigDecimal amount;
             if (role == HouseholdMemberRole.MEMBER) {
-                amount = accountDAO.getMemberAccountAmount(id, userId);
+                amount = accountDAO.getMemberAccountsAmount(id, userId);
             } else {
-                amount = accountDAO.getHouseholdAccountAmount(id);
+                amount = accountDAO.getHouseholdAccountsAmount(id);
             }
 
             log.info("Amount gotten amount = {} for householdId = {} memberRole = {}", amount, id, role);

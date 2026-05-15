@@ -13,9 +13,9 @@ public interface AccountDAO extends DAO<Account, Long> {
 
     List<Account> getAllByHouseholdIdWithRelations(Long householdId);
 
-    BigDecimal getMemberAccountAmount(Long householdId, Long userId);
+    BigDecimal getMemberAccountsAmount(Long householdId, Long userId);
 
-    BigDecimal getHouseholdAccountAmount(Long householdId);
+    BigDecimal getHouseholdAccountsAmount(Long householdId);
 
     List<Account> getMemberAccountsWithRelations(Long householdId, Long userId);
 

@@ -5,11 +5,7 @@ import org.example.domain.model.Operation;
 import java.util.List;
 
 public interface OperationDAO extends DAO<Operation, Long> {
-    List<Operation> find(OperationFilter filter);
-
     List<Operation> findWithRelations(OperationFilter filter);
-
-    List<Operation> getAllByAccountMemberIdsWithRelations(List<Long> accountMemberIds);
 
     List<Operation> getAllByAccountIdWithRelations(Long accountId);
 
