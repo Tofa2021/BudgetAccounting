@@ -30,29 +30,40 @@ public class Main {
 
         TokenProvider tokenProvider = new JwtProvider();
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        HouseholdPermissionChecker householdPermissionChecker = new HouseholdPermissionChecker(householdMemberDAO);
+        AccountPermissionChecker accountPermissionChecker = new AccountPermissionChecker(accountMemberDAO);
 
         AccountMemberService accountMemberService = new AccountMemberService(
                 transactionManager,
+                accountPermissionChecker,
                 accountMemberDAO,
                 accountDAO,
                 householdMemberDAO
         );
         AccountService accountService = new AccountService(
                 transactionManager,
+                householdPermissionChecker,
                 accountDAO,
                 accountMemberDAO,
                 householdDAO,
                 householdMemberDAO
         );
-        CategoryService categoryService = new CategoryService(transactionManager, categoryDAO, householdDAO);
+        CategoryService categoryService = new CategoryService(
+                transactionManager,
+                householdPermissionChecker,
+                categoryDAO,
+                householdDAO
+        );
         HouseholdMemberService householdMemberService = new HouseholdMemberService(
                 transactionManager,
+                householdPermissionChecker,
                 householdMemberDAO,
                 householdDAO,
                 userDAO
         );
         HouseholdService householdService = new HouseholdService(
                 transactionManager,
+                householdPermissionChecker,
                 householdDAO,
                 householdMemberDAO,
                 userDAO,
@@ -60,6 +71,8 @@ public class Main {
         );
         OperationService operationService = new OperationService(
                 transactionManager,
+                householdPermissionChecker,
+                accountPermissionChecker,
                 operationDAO,
                 categoryDAO,
                 accountDAO,
