@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx"
+            fx:controller="org.example.client.view.MainView"
+            stylesheets="/css/styles.css"
+            styleClass="main-container">
+
+    <!-- Top: Header + Navigation -->
+    <top>
+        <VBox>
+            <fx:include fx:id="header" source="../component/HeaderView.fxml"/>
+            <fx:include fx:id="navigation" source="../component/NavigationView.fxml"/>
+        </VBox>
+    </top>
+
+    <!-- Center Content -->
+    <center>
+        <ScrollPane styleClass="content-scroll" fitToWidth="true">
+            <VBox styleClass="content-container">
+
+                <!-- Family Title -->
+                <VBox alignment="CENTER">
+                    <Label styleClass="family-title" text="Семья"/>
+                </VBox>
+
+                <!-- Stats Row -->
+                <HBox spacing="20" alignment="CENTER">
+                    <!-- Income Card -->
+                    <VBox styleClass="card" spacing="13" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" style="-fx-padding: 0 0 0 15">
+                            <Label styleClass="card-title" text="Доходы"/>
+                        </VBox>
+                        <Label fx:id="incomeAmount" styleClass="income-amount" text="3 254,20"/>
+                        <VBox spacing="13" style="-fx-padding: 0 0 0 15">
+                            <Label styleClass="card-title" text="Топ категорий" style="-fx-font-size: 12px"/>
+                            <VBox fx:id="incomeCategoriesContainer" spacing="12"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Expense Card -->
+                    <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER" style="-fx-padding: 0 0 0 15">
+                            <Label styleClass="card-title" text="Расходы"/>
+                        </VBox>
+                        <Label fx:id="expenseAmount" styleClass="expense-amount" text="-2 022,42"/>
+                        <VBox spacing="13" style="-fx-padding: 0 0 0 15">
+                            <Label styleClass="card-title" text="Топ категорий" style="-fx-font-size: 12px"/>
+                            <VBox fx:id="expenseCategoriesContainer" spacing="12"/>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Trends Card -->
+                    <VBox styleClass="card" spacing="15" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER">
+                            <Label styleClass="card-title" text="Тренды"/>
+                        </VBox>
+                        <VBox fx:id="trendsContainer" styleClass="trends-container"/>
+                    </VBox>
+
+                    <!-- Members Card -->
+                    <VBox styleClass="card" spacing="6" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 0 10">
+                            <Label styleClass="card-title" text="Участники"/>
+                        </VBox>
+                        <VBox fx:id="membersContainer" spacing="4" style="-fx-padding: 0 0 14 10"/>
+                        <Button fx:id="inviteButton" styleClass="invite-button" text="Пригласить"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Operations and Limits Row -->
+                <HBox spacing="20" alignment="CENTER">
+                    <!-- Operations Table -->
+                    <VBox styleClass="card" spacing="10" HBox.hgrow="ALWAYS">
+                        <VBox alignment="CENTER">
+                            <Label styleClass="card-title" text="Последние операции"/>
+                        </VBox>
+                        <VBox fx:id="operationsContainer" styleClass="operations-table"/>
+                    </VBox>
+
+                    <!-- Limits Card -->
+                    <VBox styleClass="card" spacing="11">
+                        <VBox alignment="CENTER">
+                            <Label styleClass="card-title" text="Лимиты"/>
+                        </VBox>
+                        <VBox fx:id="limitsContainer" spacing="12" style="-fx-padding: 0 0 48 0"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
