@@ -1,32 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      xmlns="http://javafx.com/javafx"
-      fx:controller="org.example.client.view.RegistrationView"
-      spacing="20"
-      alignment="CENTER"
-      styleClass="main-background">
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
 
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
-
-    <Label text="Регистрация" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-
-    <VBox>
-        <TextField fx:id="usernameField" promptText="Имя пользователя" maxWidth="400"/>
-        <PasswordField fx:id="passwordField" promptText="Пароль" maxWidth="400"/>
-        <PasswordField fx:id="confirmationPasswordField" promptText="Подтвердите пароль" maxWidth="400"/>
-        <Label fx:id="errorLabel" disable="true" styleClass="error-label"/>
-        <Button fx:id="signUpButton" text="Войти" onAction="#handleSignUpButton" styleClass="primary-button"/>
-
-        <HBox>
-            <Label text="Уже есть аккаунт? "/>
-            <Hyperlink fx:id="signInLinkButton" text="Войти" onAction="#handleSignInLink"/>
-        </HBox>
-    </VBox>
-</VBox>
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.RegistrationView">
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" styleClass="image-background" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0" />
+      <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="7.0" layoutY="60.0" prefHeight="80.0" prefWidth="1960.0" styleClass="header" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label styleClass="h1" text="BudgetAccounting">
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </Label>
+         </children>
+      </HBox>
+      <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="360.0" spacing="30.0" styleClass="form" StackPane.alignment="TOP_CENTER">
+               <children>
+                  <Label styleClass="h3" text="Регистрация">
+                     <font>
+                        <Font name="System Bold" size="16.0" />
+                     </font>
+                  </Label>
+                  <VBox spacing="16.0">
+                     <children>
+                        <VBox spacing="4.0">
+                           <children>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="h5" text="Имя пользователя">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <SVGPath content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z" styleClass="required" />
+                                 </children>
+                              </HBox>
+                              <TextField fx:id="usernameField" promptText="Введите имя пользователя">
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </TextField>
+                           </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                           <children>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="h5" text="Пароль">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <SVGPath content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z" styleClass="required" />
+                                 </children>
+                              </HBox>
+                              <PasswordField fx:id="passwordField" promptText="Введите пароль">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" />
+                                 </padding>
+                              </PasswordField>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="10.0" layoutY="87.0" spacing="4.0">
+                           <children>
+                              <HBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="h5" text="Подтврждение пароля">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <SVGPath content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z" styleClass="required" />
+                                 </children>
+                              </HBox>
+                              <PasswordField fx:id="confirmationPasswordField" promptText="Повторите пароль">
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" />
+                                 </padding>
+                              </PasswordField>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <Label fx:id="errorLabel" managed="false" styleClass="error-label" text="Ошибка ошибка ошибка ошибка ошибка ошибка ошибка ошибка ошибка ошибка ошибка" visible="false" wrapText="true" />
+                  <VBox spacing="10.0">
+                     <children>
+                        <Button fx:id="signUpButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleSignUpButton" text="Зарегистрироваться">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label alignment="CENTER" text="Уже есть аккаунт?" />
+                              <Hyperlink fx:id="signInLink" onAction="#handleSignInLink" text="Войти" underline="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+               <StackPane.margin>
+                  <Insets top="140.0" />
+               </StackPane.margin>
+            </VBox>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>

@@ -98,6 +98,17 @@ public class HouseholdService {
         });
     }
 
+    public List<Household> getUserHouseholds(Long userId) {
+        log.debug("Getting households by userId = {}", userId);
+
+        return persistenceManager.executeReadOnly(() -> {
+            List<Household> households = householdDAO.getAllByUserId(userId);
+
+            log.debug("Households gotten with userId = {} count = {}", userId, households.size());
+            return households;
+        });
+    }
+
     public BigDecimal getAmount(Long id, Long userId) {
         log.debug("Getting amount for household with id = {}", id);
 

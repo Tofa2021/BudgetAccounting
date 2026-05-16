@@ -12,7 +12,7 @@ public class ViewModelFactory {
     private final SessionContext sessionContext;
 
     public AuthViewModel createAuthViewModel() {
-        return new AuthViewModel(clientAPIFactory.createAuthClient(), clientAPIFactory.createUserClient(), screenLoader, sessionContext);
+        return new AuthViewModel(clientAPIFactory.createAuthClient(), clientAPIFactory.createUserClient(), clientAPIFactory.createHouseholdClient(), screenLoader, sessionContext);
     }
 
     public RegistrationViewModel createRegistrationViewModel() {
@@ -20,6 +20,29 @@ public class ViewModelFactory {
     }
 
     public OperationViewModel createOperationViewModel() {
-        return new OperationViewModel(clientAPIFactory.createOperationClient(), sessionContext);
+        return new OperationViewModel(screenLoader, clientAPIFactory.createOperationClient(), clientAPIFactory.createHouseholdClient(), sessionContext);
+    }
+
+    public MainViewModel createMainViewModel() {
+        return new MainViewModel();
+    }
+
+    public NavigationViewModel createNavigationViewModel() {
+        return new NavigationViewModel(screenLoader);
+    }
+
+    public HeaderViewModel createHeaderViewModel() {
+        return new HeaderViewModel(screenLoader, clientAPIFactory.createHouseholdClient(), sessionContext, clientAPIFactory.createAuthClient());
+    }
+
+    public CreatingOperationViewModel createCreatingOperationViewModel() {
+        return new CreatingOperationViewModel(
+                screenLoader,
+                sessionContext,
+                clientAPIFactory.createOperationClient(),
+                clientAPIFactory.createAccount(),
+                clientAPIFactory.createCategory(),
+                clientAPIFactory.createHouseholdClient()
+        );
     }
 }

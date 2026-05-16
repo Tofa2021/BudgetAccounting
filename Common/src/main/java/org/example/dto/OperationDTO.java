@@ -2,12 +2,14 @@ package org.example.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class OperationDTO implements DTO, Serializable {
     private Long id;
@@ -17,6 +19,8 @@ public class OperationDTO implements DTO, Serializable {
     private Instant dateTime;
     private Long accountMemberId;
     private Long categoryId;
+    private String categoryName;
+    private String type;
 }
 
 

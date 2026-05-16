@@ -9,6 +9,7 @@ import org.example.request.RequestAction;
 import org.example.response.Response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class HouseholdRequestHandler extends AuthorizedRequestHandler {
@@ -20,6 +21,7 @@ public class HouseholdRequestHandler extends AuthorizedRequestHandler {
                 RequestAction.CREATE_HOUSEHOLD,
                 RequestAction.GET_HOUSEHOLD,
                 RequestAction.GET_HOUSEHOLD_AMOUNT,
+                RequestAction.GET_MY_HOUSEHOLDS,
                 RequestAction.UPDATE_HOUSEHOLD,
                 RequestAction.DELETE_HOUSEHOLD
         );
@@ -43,6 +45,11 @@ public class HouseholdRequestHandler extends AuthorizedRequestHandler {
 
                 Household household = householdService.get(id, userId);
                 yield Response.success(dtoMapper.toHouseholdDTO(household));
+            }
+
+            case GET_MY_HOUSEHOLDS -> {
+                List<Household> households = householdService.getUserHouseholds(userId);
+                yield Response.success(dtoMapper.toHouseholdDTOs(households));
             }
 
             case GET_HOUSEHOLD_AMOUNT -> {

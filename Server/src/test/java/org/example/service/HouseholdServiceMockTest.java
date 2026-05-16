@@ -57,21 +57,21 @@ public class HouseholdServiceMockTest {
         double expectedAmount = 100.;
         Household budget = new Household(1L, expectedAmount, user);
 
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         double actualAmount = householdService.getAmount(user.getId());
 
         Assertions.assertEquals(expectedAmount, actualAmount);
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
     public void getAmount_budgetNotFound_throwsException() {
         User user = new User(1L, "user", "123", Set.of());
 
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
             householdService.getAmount(user.getId());
@@ -79,7 +79,7 @@ public class HouseholdServiceMockTest {
 
         Mockito.verify(sessionManager).openSession();
         Mockito.verify(session).close();
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class HouseholdServiceMockTest {
 
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
         Mockito.when(hibernateUserDAO.findById(session, user.getId())).thenReturn(Optional.of(user));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         householdService.processIncreaseOperation(request, user.getId());
 
@@ -106,7 +106,7 @@ public class HouseholdServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateUserDAO).findById(session, user.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(session).persist(Mockito.any(IncreaseOperation.class));
     }
 
@@ -123,7 +123,7 @@ public class HouseholdServiceMockTest {
 
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
         Mockito.when(hibernateUserDAO.findById(session, user.getId())).thenReturn(Optional.of(user));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
             householdService.processIncreaseOperation(request, user.getId());
@@ -136,7 +136,7 @@ public class HouseholdServiceMockTest {
         Mockito.verify(transaction, Mockito.never()).commit();
 
         Mockito.verify(hibernateUserDAO).findById(session, user.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(session, Mockito.never()).persist(Mockito.any(IncreaseOperation.class));
     }
 
@@ -179,7 +179,7 @@ public class HouseholdServiceMockTest {
 
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
         Mockito.when(hibernateUserDAO.findById(session, user.getId())).thenReturn(Optional.of(user));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         householdService.processDecreaseOperation(request, user.getId());
 
@@ -190,7 +190,7 @@ public class HouseholdServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateUserDAO).findById(session, user.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(session).persist(Mockito.any(DecreaseOperation.class));
     }
 
@@ -207,7 +207,7 @@ public class HouseholdServiceMockTest {
 
         Mockito.when(session.beginTransaction()).thenReturn(transaction);
         Mockito.when(hibernateUserDAO.findById(session, user.getId())).thenReturn(Optional.of(user));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
             householdService.processDecreaseOperation(request, user.getId());
@@ -220,7 +220,7 @@ public class HouseholdServiceMockTest {
         Mockito.verify(transaction, Mockito.never()).commit();
 
         Mockito.verify(hibernateUserDAO).findById(session, user.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(session, Mockito.never()).persist(Mockito.any(DecreaseOperation.class));
     }
 

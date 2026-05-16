@@ -23,6 +23,10 @@ public class ViewLoader {
         register(AuthView.class, viewModelFactory::createAuthViewModel);
         register(RegistrationView.class, viewModelFactory::createRegistrationViewModel);
         register(OperationView.class, viewModelFactory::createOperationViewModel);
+        register(MainView.class, viewModelFactory::createMainViewModel);
+        register(NavigationView.class, viewModelFactory::createNavigationViewModel);
+        register(HeaderView.class, viewModelFactory::createHeaderViewModel);
+        register(CreatingOperationView.class, viewModelFactory::createCreatingOperationViewModel);
     }
 
     private <V extends BaseView<VM>, VM extends BaseViewModel> void register(
@@ -50,6 +54,7 @@ public class ViewLoader {
 
             BaseViewModel viewModel = supplier.get();
             controller.setViewModel(viewModel);
+            viewModel.onViewShown();
 
             return parent;
         } catch (IOException e) {

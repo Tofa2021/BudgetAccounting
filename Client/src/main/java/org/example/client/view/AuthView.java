@@ -31,6 +31,7 @@ public class AuthView extends BaseView<AuthViewModel> {
         usernameField.textProperty().bindBidirectional(this.viewModel.getUsernameInput());
         passwordField.textProperty().bindBidirectional(this.viewModel.getPasswordInput());
         errorLabel.textProperty().bindBidirectional(this.viewModel.getErrorMessage());
+        errorLabel.managedProperty().bind(this.viewModel.getErrorMessage().isNotEmpty());
         errorLabel.visibleProperty().bind(this.viewModel.getErrorMessage().isNotEmpty());
     }
 

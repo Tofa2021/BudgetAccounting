@@ -30,6 +30,7 @@ public class RegistrationView extends BaseView<RegistrationViewModel> {
         passwordField.textProperty().bindBidirectional(viewModel.getPasswordInput());
         confirmationPasswordField.textProperty().bindBidirectional(viewModel.getConfirmationPasswordInput());
         errorLabel.textProperty().bindBidirectional(viewModel.getErrorMessage());
+        errorLabel.managedProperty().bind(viewModel.getErrorMessage().isNotEmpty());
         errorLabel.visibleProperty().bind(viewModel.getErrorMessage().isNotEmpty());
     }
 

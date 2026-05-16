@@ -42,6 +42,12 @@ public class RegistrationViewModel extends BaseViewModel {
             return;
         }
 
+        String confirmationPassword = confirmationPasswordInput.get();
+        if (!confirmationPassword.equals(password)) {
+            errorMessage.set("Пароли должны совпадать");
+            return;
+        }
+
         Result<Pair<String, String>> result = authClient.signUp(username, password);
         if (!result.isSuccess()) {
             errorMessage.setValue(result.getErrorMessage());
@@ -53,7 +59,7 @@ public class RegistrationViewModel extends BaseViewModel {
         sessionContext.setRefreshToken(tokens.getSecond());
         sessionContext.setCurrentUser(getMe());
 
-        screenLoader.load(Screen.HOUSEHOLDS);
+        screenLoader.load(Screen.OPERATIONS);
     }
 
     private UserDTO getMe() {

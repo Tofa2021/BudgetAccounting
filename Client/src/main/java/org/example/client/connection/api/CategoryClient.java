@@ -5,6 +5,7 @@ import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.CategoryDTO;
 import org.example.request.RequestAction;
 
+import java.util.List;
 import java.util.Map;
 
 public class CategoryClient extends BaseClient {
@@ -23,7 +24,16 @@ public class CategoryClient extends BaseClient {
         );
     }
 
-    public Result<CategoryDTO> getAll(Long householdId) {
+    public Result<List<CategoryDTO>> getAll(Long householdId) {
+        return sendRequest(
+                RequestAction.GET_CATEGORIES,
+                Map.of(
+                        "householdId", householdId
+                )
+        );
+    }
+
+    public Result<List<CategoryDTO>> getIncomeCategories(Long householdId) {
         return sendRequest(
                 RequestAction.CREATE_CATEGORY,
                 Map.of(
@@ -32,16 +42,7 @@ public class CategoryClient extends BaseClient {
         );
     }
 
-    public Result<CategoryDTO> getIncomeCategory(Long householdId) {
-        return sendRequest(
-                RequestAction.CREATE_CATEGORY,
-                Map.of(
-                        "householdId", householdId
-                )
-        );
-    }
-
-    public Result<CategoryDTO> getExpenseCategory(Long householdId) {
+    public Result<List<CategoryDTO>> getExpenseCategories(Long householdId) {
         return sendRequest(
                 RequestAction.CREATE_CATEGORY,
                 Map.of(

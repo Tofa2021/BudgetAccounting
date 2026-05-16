@@ -47,12 +47,13 @@ public class HibernateHouseholdMemberDAO extends HibernateDAO<HouseholdMember, L
 
     @Override
     public Optional<HouseholdMemberRole> findRoleByHouseholdIdAndUserId(Long householdId, Long userId) {
-        return HqlQueryBuilder
-                .builder(HouseholdMemberRole.class)
-                .select("role")
-                .where("household.id", "=", householdId)
-                .and("user.id", "=", userId)
-                .build(getCurrentSession())
+        String hql = "SELECT hm.role FROM HouseholdMember hm " +
+                "WHERE hm.household.id = :householdId AND hm.user.id = :userId";
+
+        return getCurrentSession()
+                .createQuery(hql, HouseholdMemberRole.class)
+                .setParameter("householdId", householdId)
+                .setParameter("userId", userId)
                 .uniqueResultOptional();
     }
 }

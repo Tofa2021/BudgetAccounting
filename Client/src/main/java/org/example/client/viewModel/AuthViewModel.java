@@ -8,16 +8,21 @@ import org.example.Pair;
 import org.example.client.Result;
 import org.example.client.SessionContext;
 import org.example.client.connection.api.AuthClient;
+import org.example.client.connection.api.HouseholdClient;
 import org.example.client.connection.api.UserClient;
 import org.example.client.screen.Screen;
 import org.example.client.screen.ScreenLoader;
+import org.example.dto.HouseholdDTO;
 import org.example.dto.UserDTO;
+
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 public class AuthViewModel extends BaseViewModel {
     private final AuthClient authClient;
     private final UserClient userClient;
+    private final HouseholdClient householdClient;
     private final ScreenLoader screenLoader;
     private final SessionContext sessionContext;
 
@@ -51,8 +56,9 @@ public class AuthViewModel extends BaseViewModel {
         sessionContext.setAccessToken(tokens.getFirst());
         sessionContext.setRefreshToken(tokens.getSecond());
         sessionContext.setCurrentUser(getMe());
+        sessionContext.getCurrentHousehold().set(getMyHousehold());
 
-        screenLoader.load(Screen.HOUSEHOLDS);
+        screenLoader.load(Screen.OPERATIONS);
     }
 
     private UserDTO getMe() {
@@ -63,6 +69,16 @@ public class AuthViewModel extends BaseViewModel {
         }
 
         return result.getData();
+    }
+
+    private HouseholdDTO getMyHousehold() {
+        Result<List<HouseholdDTO>> result = householdClient.getMyHouseholds();
+        if (!result.isSuccess()) {
+            errorMessage.set(result.getErrorMessage());
+            return null;
+        }
+
+        return result.getData().getFirst();
     }
 
     public void linkSignUp() {

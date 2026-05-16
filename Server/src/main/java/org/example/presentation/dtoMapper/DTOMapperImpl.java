@@ -22,7 +22,9 @@ public class DTOMapperImpl implements DTOMapper {
                 operation.getAmount(),
                 operation.getDateTime(),
                 operation.getAccountMember().getId(),
-                operation.getCategory().getId()
+                operation.getCategory().getId(),
+                operation.getCategory().getName(),
+                operation.getCategory().getType().name()
         );
     }
 

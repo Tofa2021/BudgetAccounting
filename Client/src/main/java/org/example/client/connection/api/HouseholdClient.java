@@ -6,6 +6,7 @@ import org.example.dto.HouseholdDTO;
 import org.example.request.RequestAction;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class HouseholdClient extends BaseClient {
@@ -38,6 +39,13 @@ public class HouseholdClient extends BaseClient {
                 Map.of(
                         "id", id
                 )
+        );
+    }
+
+    public Result<List<HouseholdDTO>> getMyHouseholds() {
+        return sendRequest(
+                RequestAction.GET_MY_HOUSEHOLDS,
+                Map.of()
         );
     }
 

@@ -74,7 +74,7 @@ public class OperationClient extends BaseClient {
         );
     }
 
-    public Result<List<OperationDTO>> getHouseholdOperations(Long householdId, Instant dateFrom) {
+    public Result<List<OperationDTO>> getHouseholdOperations(Long householdId) {
         return sendRequest(
                 RequestAction.GET_HOUSEHOLD_OPERATIONS,
                 Map.of(

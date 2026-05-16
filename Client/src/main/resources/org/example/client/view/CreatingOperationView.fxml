@@ -1,14 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
-
+<?import javafx.scene.shape.SVGPath?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="718.0" prefWidth="1336.0" styleClass="image-background"
+            stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25"
+            fx:controller="org.example.client.view.CreatingOperationView">
+    <children>
+        <VBox layoutX="519.0" layoutY="50.0" prefWidth="366.0" spacing="30.0" styleClass="form">
+            <children>
+                <Label styleClass="h3" text="Создание операции"/>
+                <HBox spacing="10.0">
+                    <children>
+                        <Button fx:id="incomeButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleIncomeButton" styleClass="selected-operation-button" text="Доход"
+                                HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="expenseButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleExpenseButton" styleClass="operation-button" text="Расход"
+                                HBox.hgrow="ALWAYS"/>
+                    </children>
+                </HBox>
+                <VBox spacing="16.0">
+                    <children>
+                        <VBox>
+                            <children>
+                                <HBox spacing="5.0">
+                                    <children>
+                                        <Label styleClass="h5" text="Счет"/>
+                                        <SVGPath
+                                                content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z"
+                                                styleClass="required"/>
+                                    </children>
+                                </HBox>
+                                <ComboBox fx:id="accountComboBox" maxWidth="1.7976931348623157E308"
+                                          promptText="Выберите счет"/>
+                            </children>
+                        </VBox>
+                        <VBox>
+                            <children>
+                                <HBox spacing="5.0">
+                                    <children>
+                                        <Label styleClass="h5" text="Сумма"/>
+                                        <SVGPath
+                                                content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z"
+                                                styleClass="required"/>
+                                    </children>
+                                </HBox>
+                                <TextField fx:id="amountTextField" promptText="Введите сумму"/>
+                            </children>
+                        </VBox>
+                        <VBox>
+                            <children>
+                                <Label styleClass="h5" text="Описание"/>
+                                <TextField fx:id="descriptionTextField" promptText="Введите описание"/>
+                            </children>
+                        </VBox>
+                        <VBox>
+                            <children>
+                                <HBox spacing="5.0">
+                                    <children>
+                                        <Label styleClass="h5" text="Категория"/>
+                                        <SVGPath
+                                                content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z"
+                                                styleClass="required"/>
+                                    </children>
+                                </HBox>
+                                <ComboBox fx:id="categoryComboBox" maxWidth="1.7976931348623157E308"
+                                          promptText="Выберите категорию"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+                <Label fx:id="errorLabel" managed="false" styleClass="error-label" text="Ошибка" visible="false"
+                       wrapText="true"/>
+                <Button fx:id="createButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                        onAction="#handleCreateButton" text="Создать"/>
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>

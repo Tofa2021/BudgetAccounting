@@ -71,11 +71,12 @@ public class HibernateAccountMemberDAO extends HibernateDAO<AccountMember, Long>
 
     @Override
     public Optional<AccountMemberRole> findRoleByAccountIdAndUserId(Long accountId, Long userId) {
-        return HqlQueryBuilder.builder(AccountMemberRole.class)
-                .select("role")
-                .where("account.id", "=", accountId)
-                .and("householdMember.user.id", "=", userId)
-                .build(getCurrentSession())
+        String hql = "SELECT a.role FROM AccountMember a WHERE a.account.id = :accountId AND a.householdMember.user.id = :userId";
+
+        return getCurrentSession()
+                .createQuery(hql, AccountMemberRole.class)
+                .setParameter("accountId", accountId)
+                .setParameter("userId", userId)
                 .uniqueResultOptional();
     }
 

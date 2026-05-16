@@ -138,7 +138,7 @@ public class OperationServiceMockTest {
         Operation operation = new IncreaseOperation(1L, 100., Instant.now(), user, OperationCategory.SALARY);
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.delete(request);
 
@@ -148,7 +148,7 @@ public class OperationServiceMockTest {
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
         Mockito.verify(hibernateOperationDAO).findById(session, request.getModelId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(hibernateOperationDAO).deleteById(session, request.getModelId());
     }
 
@@ -161,7 +161,7 @@ public class OperationServiceMockTest {
         Operation operation = new DecreaseOperation(1L, 100., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.delete(request);
 
@@ -171,7 +171,7 @@ public class OperationServiceMockTest {
         Mockito.verify(session).close();
         Mockito.verify(transaction).commit();
         Mockito.verify(hibernateOperationDAO).findById(session, request.getModelId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
         Mockito.verify(hibernateOperationDAO).deleteById(session, request.getModelId());
     }
 
@@ -199,7 +199,7 @@ public class OperationServiceMockTest {
         Operation operation = new DecreaseOperation(1L, 100., Instant.now(), user, DecreaseOperationCategory.FOOD);
 
         Mockito.when(hibernateOperationDAO.findById(session, request.getModelId())).thenReturn(Optional.of(operation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
             operationService.delete(request);
@@ -210,7 +210,7 @@ public class OperationServiceMockTest {
         Mockito.verify(session).close();
         Mockito.verify(transaction, Mockito.never()).commit();
         Mockito.verify(hibernateOperationDAO).findById(session, request.getModelId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
@@ -235,7 +235,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.update(request);
 
@@ -249,7 +249,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
 
         Mockito.verify(hibernateOperationDAO).update(session, existingOperation);
     }
@@ -276,7 +276,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.update(request);
 
@@ -290,7 +290,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
 
         Mockito.verify(hibernateOperationDAO).update(session, existingOperation);
     }
@@ -317,7 +317,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.update(request);
 
@@ -331,7 +331,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
 
         Mockito.verify(hibernateOperationDAO).update(session, existingOperation);
     }
@@ -358,7 +358,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         operationService.update(request);
 
@@ -372,7 +372,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).commit();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
 
         Mockito.verify(hibernateOperationDAO).update(session, existingOperation);
     }
@@ -429,7 +429,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.empty());
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(BudgetNotFoundException.class, () -> {
             operationService.update(request);
@@ -445,7 +445,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction, Mockito.never()).commit();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
@@ -471,7 +471,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             operationService.update(request);
@@ -488,7 +488,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).rollback();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
@@ -514,7 +514,7 @@ public class OperationServiceMockTest {
         UpdateRequest<OperationDTO> request = new UpdateRequest<>(RequestAction.UPDATE_OPERATION, "token", updateOperation);
 
         Mockito.when(hibernateOperationDAO.findById(session, updateOperation.getId())).thenReturn(Optional.of(existingOperation));
-        Mockito.when(hibernateBudgetDAO.findByUserId(session, user.getId())).thenReturn(Optional.of(budget));
+        Mockito.when(hibernateBudgetDAO.getAllByUserId(session, user.getId())).thenReturn(Optional.of(budget));
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             operationService.update(request);
@@ -531,7 +531,7 @@ public class OperationServiceMockTest {
         Mockito.verify(transaction).rollback();
 
         Mockito.verify(hibernateOperationDAO).findById(session, updateOperation.getId());
-        Mockito.verify(hibernateBudgetDAO).findByUserId(session, user.getId());
+        Mockito.verify(hibernateBudgetDAO).getAllByUserId(session, user.getId());
     }
 
     @Test
