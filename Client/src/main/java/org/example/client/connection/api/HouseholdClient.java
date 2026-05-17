@@ -3,6 +3,7 @@ package org.example.client.connection.api;
 import org.example.client.Result;
 import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.HouseholdDTO;
+import org.example.enums.Currency;
 import org.example.request.RequestAction;
 
 import java.math.BigDecimal;
@@ -14,7 +15,7 @@ public class HouseholdClient extends BaseClient {
         super(serverInteractionManager);
     }
 
-    public Result<BigDecimal> getAmount(Long id) {
+    public Result<Map<Currency, BigDecimal>> getAmount(Long id) {
         return sendRequest(
                 RequestAction.GET_HOUSEHOLD_AMOUNT,
                 Map.of(

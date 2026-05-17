@@ -11,6 +11,7 @@ import org.example.domain.model.Household;
 import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.User;
+import org.example.enums.Currency;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -109,22 +110,22 @@ public class HouseholdService {
         });
     }
 
-    public BigDecimal getAmount(Long id, Long userId) {
+    public Map<Currency, BigDecimal> getAmount(Long id, Long userId) {
         log.debug("Getting amount for household with id = {}", id);
 
         return persistenceManager.executeReadOnlyTransaction(() -> {
             HouseholdMemberRole role = householdMemberDAO.findRoleByHouseholdIdAndUserId(id, userId)
                     .orElseThrow(() -> new HouseholdMemberNotFoundException(userId, id));
 
-            BigDecimal amount;
+            Map<Currency, BigDecimal> amounts;
             if (role == HouseholdMemberRole.MEMBER) {
-                amount = accountDAO.getMemberAccountsAmount(id, userId);
+                amounts = accountDAO.getMemberAccountsAmount(id, userId);
             } else {
-                amount = accountDAO.getHouseholdAccountsAmount(id);
+                amounts = accountDAO.getHouseholdAccountsAmount(id);
             }
 
-            log.info("Amount gotten amount = {} for householdId = {} memberRole = {}", amount, id, role);
-            return amount;
+            log.info("Amount gotten amount = {} for householdId = {} memberRole = {}", amounts, id, role);
+            return amounts;
         });
     }
 

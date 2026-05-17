@@ -2,11 +2,14 @@ package org.example.infrastructure.dao;
 
 import org.example.domain.dao.AccountDAO;
 import org.example.domain.model.Account;
+import org.example.enums.Currency;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 import org.hibernate.query.Query;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class HibernateAccountDAO extends HibernateDAO<Account, Long> implements AccountDAO {
@@ -49,25 +52,49 @@ public class HibernateAccountDAO extends HibernateDAO<Account, Long> implements 
     }
 
     @Override
-    public BigDecimal getMemberAccountsAmount(Long householdId, Long userId) {
-        String hql = "SELECT COALESCE(SUM(a.amount), 0) FROM Account a WHERE a.household.id = :householdId " +
-                "AND EXISTS (SELECT 1 FROM AccountMember am WHERE am.account.id = a.id AND am.householdMember.user.id = :userId)";
+    public Map<Currency, BigDecimal> getMemberAccountsAmount(Long householdId, Long userId) {
+        String hql = "SELECT a.currency, COALESCE(SUM(a.amount), 0) FROM Account a " +
+                "WHERE a.household.id = :householdId " +
+                "AND EXISTS (SELECT 1 FROM AccountMember am " +
+                "            WHERE am.account.id = a.id " +
+                "            AND am.householdMember.user.id = :userId) " +
+                "GROUP BY a.currency";
 
-        Query<BigDecimal> query = getCurrentSession().createQuery(hql, BigDecimal.class);
+        Query<Object[]> query = getCurrentSession().createQuery(hql, Object[].class);
         query.setParameter("householdId", householdId);
         query.setParameter("userId", userId);
 
-        return query.getSingleResult();
+        List<Object[]> results = query.getResultList();
+        Map<Currency, BigDecimal> balanceMap = new HashMap<>();
+
+        for (Object[] row : results) {
+            Currency currency = (Currency) row[0];
+            BigDecimal amount = (BigDecimal) row[1];
+            balanceMap.put(currency, amount);
+        }
+
+        return balanceMap;
     }
 
     @Override
-    public BigDecimal getHouseholdAccountsAmount(Long householdId) {
-        String hql = "SELECT COALESCE(SUM(a.amount), 0) FROM Account a WHERE a.household.id = :householdId";
+    public Map<Currency, BigDecimal> getHouseholdAccountsAmount(Long householdId) {
+        String hql = "SELECT a.currency, COALESCE(SUM(a.amount), 0) FROM Account a " +
+                "WHERE a.household.id = :householdId " +
+                "GROUP BY a.currency";
 
-        Query<BigDecimal> query = getCurrentSession().createQuery(hql, BigDecimal.class);
+        Query<Object[]> query = getCurrentSession().createQuery(hql, Object[].class);
         query.setParameter("householdId", householdId);
 
-        return query.getSingleResult();
+        List<Object[]> results = query.getResultList();
+        Map<Currency, BigDecimal> balanceMap = new HashMap<>();
+
+        for (Object[] row : results) {
+            Currency currency = (Currency) row[0];
+            BigDecimal amount = (BigDecimal) row[1];
+            balanceMap.put(currency, amount);
+        }
+
+        return balanceMap;
     }
 
     @Override

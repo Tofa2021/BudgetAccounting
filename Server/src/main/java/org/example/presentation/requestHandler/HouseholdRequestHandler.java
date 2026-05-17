@@ -2,6 +2,7 @@ package org.example.presentation.requestHandler;
 
 import org.example.application.service.HouseholdService;
 import org.example.domain.model.Household;
+import org.example.enums.Currency;
 import org.example.presentation.dtoMapper.DTOMapper;
 import org.example.presentation.requestHandler.interfaces.AuthorizedRequestHandler;
 import org.example.request.Request;
@@ -55,7 +56,7 @@ public class HouseholdRequestHandler extends AuthorizedRequestHandler {
             case GET_HOUSEHOLD_AMOUNT -> {
                 Long id = request.getParam("id");
 
-                BigDecimal amount = householdService.getAmount(id, userId);
+                Map<Currency, BigDecimal> amount = householdService.getAmount(id, userId);
                 yield Response.success(amount);
             }
 
