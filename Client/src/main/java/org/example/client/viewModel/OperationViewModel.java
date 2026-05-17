@@ -29,6 +29,10 @@ public class OperationViewModel extends BaseViewModel {
     }
 
     public void refreshOperations() {
+        if (sessionContext.getCurrentHousehold().get() == null) {
+            return;
+        }
+
         var result = operationClient.getHouseholdOperations(sessionContext.getCurrentHousehold().get().getId());
         if (result.isSuccess()) {
             operations.setAll(result.getData().stream()

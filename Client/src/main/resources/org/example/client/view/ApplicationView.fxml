@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.ApplicationView">
+    <children>
+        <BorderPane fx:id="mainRoot">
+            <top>
+                
+            </top>
+        </BorderPane>
+        <VBox alignment="BOTTOM_RIGHT" fillWidth="false" mouseTransparent="true">
+            <children>
+                <VBox fx:id="notificationRoot" spacing="20.0" />
+            </children>
+        </VBox>
+    </children>
+</StackPane>

@@ -1,60 +1,101 @@
 package org.example.client.viewModel;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.client.Result;
 import org.example.client.SessionContext;
 import org.example.client.connection.api.AuthClient;
 import org.example.client.connection.api.HouseholdClient;
+import org.example.client.screen.Screen;
 import org.example.client.screen.ScreenLoader;
+import org.example.enums.Currency;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class HeaderViewModel extends BaseViewModel {
     private final ScreenLoader screenLoader;
-    private final HouseholdClient householdClient;
     private final SessionContext sessionContext;
     private final AuthClient authClient;
+    private final HouseholdClient householdClient;
     @Getter
-    private final StringProperty totalAmount = new SimpleStringProperty("0 BYN");
+    private final ObservableList<String> currencyAmounts = FXCollections.observableArrayList();
     @Getter
-    private final StringProperty userName = new SimpleStringProperty();
+    private final StringProperty selectedCurrencyAmount = new SimpleStringProperty("Нет домохозяйства");
+    @Getter
+    private final StringProperty username = new SimpleStringProperty("Войти");
+    @Getter
+    private final BooleanProperty profileButtonDisabled = new SimpleBooleanProperty(true);
+    @Getter
+    private final BooleanProperty currencyAmountComboBoxVisible = new SimpleBooleanProperty(false);
 
     @Override
     public void onViewShown() {
-        userName.set(sessionContext.getCurrentUser().getUsername());
-        System.err.println(userName.get());
-        Result<BigDecimal> amountResult = householdClient.getAmount(sessionContext.getCurrentHousehold().get().getId());
-        if (amountResult.isSuccess()) {
-            totalAmount.set(amountResult.getData() + " BYN");
-        }
-        sessionContext.getCurrentHousehold().addListener((obs, old, newHousehold) -> {
-            if (newHousehold != null) {
-                updateTotalAmount();
-            }
-        });
+        sessionContext.getCurrentHousehold().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        updateCurrencyAmounts();
+                    }
+                }
+        );
+
+        sessionContext.getCurrentUser().addListener(
+                (observable, oldValue, newValue) -> {
+                    if (newValue != null) {
+                        setAuthorizedState(newValue.getUsername());
+                    }
+                }
+        );
     }
 
-    private void updateTotalAmount() {
-        if (sessionContext.getCurrentHousehold() != null) {
-            Result<BigDecimal> amountResult = householdClient.getAmount(sessionContext.getCurrentHousehold().get().getId());
-            if (amountResult.isSuccess() && amountResult.getData() != null) {
-                totalAmount.set(String.format("%.2f BYN", amountResult.getData()));
-            } else {
-                totalAmount.set("0.00 BYN");
-            }
-        } else {
-            totalAmount.set("0.00 BYN");
+    private void updateCurrencyAmounts() {
+        if (sessionContext.getCurrentHousehold().get() == null) {
+            selectedCurrencyAmount.set("Нет домохозяйства");
+            return;
         }
+
+
+        Result<Map<Currency, BigDecimal>> amountResult = householdClient.getAmount(sessionContext.getCurrentHousehold().get().getId());
+        if (amountResult.isSuccess()) {
+            Map<Currency, BigDecimal> amounts = amountResult.getData();
+            List<String> strings = amounts.entrySet()
+                    .stream()
+                    .map(entry -> convertCurrencyAmount(entry.getKey(), entry.getValue()))
+                    .toList();
+            currencyAmounts.setAll(strings);
+            selectedCurrencyAmount.set(strings.getFirst());
+        }
+        showError(amountResult.getErrorMessage());
+    }
+
+    private String convertCurrencyAmount(Currency currency, BigDecimal amount) {
+        return String.format("%.2f %s", amount, currency.getCode());
     }
 
     public void logout() {
-        screenLoader.logout();
-        authClient.logout(sessionContext.getRefreshToken());
-        sessionContext.setRefreshToken("");
-        sessionContext.setAccessToken("");
+        authClient.logout(sessionContext.getRefreshToken().get());
+        sessionContext.clear();
+        screenLoader.load(Screen.AUTH);
+        setUnauthorizedState();
+    }
+
+    private void setUnauthorizedState() {
+        currencyAmountComboBoxVisible.set(false);
+        profileButtonDisabled.set(true);
+        username.set("Войти");
+    }
+
+    private void setAuthorizedState(String username) {
+        currencyAmountComboBoxVisible.set(true);
+        profileButtonDisabled.set(false);
+        this.username.set(username);
     }
 }

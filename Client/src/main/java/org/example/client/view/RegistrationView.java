@@ -52,7 +52,7 @@ public class RegistrationView extends BaseView<RegistrationViewModel> {
             }
         });
 
-        passwordField.setOnKeyPressed(event -> {
+        confirmationPasswordField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 handleSignUpButton();
             }

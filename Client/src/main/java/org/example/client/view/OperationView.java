@@ -148,7 +148,6 @@ public class OperationView extends BaseView<OperationViewModel> {
                     LocalTime time = LocalTime.parse(timeField.getText().trim(), DateTimeFormatter.ofPattern("HH:mm"));
                     Instant instant = LocalDateTime.of(date, time).atZone(ZoneId.systemDefault()).toInstant();
 
-                    // Создаем копию DTO, сохраняя старые ID (чтобы не мутировать исходный объект раньше времени)
                     return new OperationDTO(
                             operation.getId(),
                             operation.getAccountId(),
@@ -156,7 +155,7 @@ public class OperationView extends BaseView<OperationViewModel> {
                             amount,
                             instant,
                             operation.getAccountMemberId(),
-                            operation.getCategoryId(), // В реальной системе тут может потребоваться ID новой категории
+                            operation.getCategoryId(),
                             category.isEmpty() ? null : category,
                             type
                     );

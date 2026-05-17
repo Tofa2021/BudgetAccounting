@@ -16,16 +16,7 @@
 
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.AuthView">
     <children>
-        <HBox prefHeight="100.0" prefWidth="200.0" styleClass="image-background" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0" />
-        <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="7.0" layoutY="60.0" prefHeight="80.0" prefWidth="1960.0" styleClass="header" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
-            <children>
-                <Label styleClass="h1" text="BudgetAccounting">
-                    <padding>
-                        <Insets left="20.0" />
-                    </padding>
-                </Label>
-            </children>
-        </HBox>
+        <HBox prefHeight="100.0" prefWidth="200.0" styleClass="image-background" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0" />
         <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <VBox maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="360.0" spacing="30.0" styleClass="form" StackPane.alignment="TOP_CENTER">
@@ -104,7 +95,7 @@
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                     </padding>
                     <StackPane.margin>
-                        <Insets top="140.0" />
+                        <Insets top="40.0" />
                     </StackPane.margin>
                 </VBox>
             </children>

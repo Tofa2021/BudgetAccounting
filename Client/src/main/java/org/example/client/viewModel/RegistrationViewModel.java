@@ -55,11 +55,11 @@ public class RegistrationViewModel extends BaseViewModel {
         }
 
         Pair<String, String> tokens = result.getData();
-        sessionContext.setAccessToken(tokens.getFirst());
-        sessionContext.setRefreshToken(tokens.getSecond());
-        sessionContext.setCurrentUser(getMe());
+        sessionContext.getAccessToken().set(tokens.getFirst());
+        sessionContext.getRefreshToken().set(tokens.getSecond());
+        sessionContext.getCurrentUser().set(getMe());
 
-        screenLoader.load(Screen.OPERATIONS);
+        screenLoader.load(Screen.HOUSEHOLDS);
     }
 
     private UserDTO getMe() {

@@ -1,3 +1,25 @@
+/*
+Primary-600: #57B714
+Primary-400: #80D048
+Primary-200: #B7E398
+
+Secondary-600: #249FFB
+Secondary-400: #45ADFC
+Secondary-200: #93CFFD
+
+Neutral-700: #5F5F5F
+Neutral-400: #BBBBBB
+Neutral-300: #EBEBEB
+Neutral-200: #F4F4F4
+
+Text-light: #FAFAFA
+Text-dark: #1A1A1A
+Text-grey: #A4A4A4
+
+Error-color: #F42D00
+*/
+
+
 .root {
     -fx-font-family: "System";
 }
@@ -83,6 +105,9 @@
     -fx-background-size: cover;
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-clip: true;
 }
 
 .header {
@@ -95,15 +120,14 @@
     -fx-background-radius: 10;
 }
 
+.content-background {
+    -fx-background-color: #F4F4F4;
+    -fx-background-radius: 10;
+}
+
 .error-label {
     -fx-text-fill: #F42D00;
     -fx-font-size: 12;
-}
-
-.total-amount {
-    -fx-text-fill: #45ADFC;
-    -fx-font-size: 16;
-    -fx-font-weight: bold;
 }
 
 .profile-button {
@@ -136,6 +160,7 @@
 }
 
 .navigation {
+    -fx-background-color: #F4F4F4;
     -fx-padding: 10;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
@@ -261,4 +286,23 @@
 .selected-operation-button:disabled:hover {
     -fx-background-color: #45ADFC;
     -fx-cursor: default;
+}
+
+.amount-combo-box {
+    -fx-padding: 2;
+}
+
+.amount-combo-box .list-cell {
+    -fx-text-fill: #45ADFC;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.border-pane .center {
+    -fx-alignment: center;
+}
+
+.border-pane .center .stack-pane {
+    -fx-alignment: center;
+    -fx-max-width: 1200px;
 }

@@ -53,9 +53,9 @@ public class AuthViewModel extends BaseViewModel {
         }
 
         Pair<String, String> tokens = result.getData();
-        sessionContext.setAccessToken(tokens.getFirst());
-        sessionContext.setRefreshToken(tokens.getSecond());
-        sessionContext.setCurrentUser(getMe());
+        sessionContext.getAccessToken().set(tokens.getFirst());
+        sessionContext.getRefreshToken().set(tokens.getSecond());
+        sessionContext.getCurrentUser().set(getMe());
         sessionContext.getCurrentHousehold().set(getMyHousehold());
 
         screenLoader.load(Screen.OPERATIONS);
@@ -75,6 +75,12 @@ public class AuthViewModel extends BaseViewModel {
         Result<List<HouseholdDTO>> result = householdClient.getMyHouseholds();
         if (!result.isSuccess()) {
             errorMessage.set(result.getErrorMessage());
+            return null;
+        }
+
+        // TODO replace on uncoverResult
+        List<HouseholdDTO> households = result.getData();
+        if (households.isEmpty()) {
             return null;
         }
 

@@ -8,6 +8,7 @@ import org.example.client.viewModel.NavigationViewModel;
 public class NavigationView extends BaseView<NavigationViewModel> {
     private static final String SELECTED_BUTTON_STYLE = "selected-navigation-button";
     private static final String BUTTON_STYLE = "navigation-button";
+
     @FXML
     private Button mainButton;
     @FXML
@@ -23,9 +24,13 @@ public class NavigationView extends BaseView<NavigationViewModel> {
 
     @Override
     protected void onViewModelSet() {
-        viewModel.getCurrentScreen().addListener((obs, old, newScreen) -> {
-            updateButtonActiveState(newScreen);
+        viewModel.getCurrentScreen().addListener((obs, oldScreen, newScreen) -> {
+            if (newScreen != null) {
+                updateButtonActiveState(newScreen);
+            }
         });
+
+        updateButtonActiveState(viewModel.getCurrentScreen().get());
     }
 
     private void updateButtonActiveState(Screen activeScreen) {

@@ -33,7 +33,7 @@ public class ServerInteractionManager {
 
     public Response putRequest(Request request) {
         try {
-            RequestEnvelope requestEnvelope = new RequestEnvelope(sessionContext.getAccessToken(), request);
+            RequestEnvelope requestEnvelope = new RequestEnvelope(sessionContext.getAccessToken().get(), request);
             serverConnection.putRequest(requestEnvelope);
             Response response = responseQueue.take();
             System.out.println(request.action() + " " + response.status());

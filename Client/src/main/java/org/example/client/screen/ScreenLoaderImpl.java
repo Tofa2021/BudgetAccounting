@@ -1,74 +1,68 @@
 package org.example.client.screen;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import lombok.Getter;
+import org.example.Pair;
+import org.example.client.view.ApplicationView;
+import org.example.client.view.BaseView;
 import org.example.client.view.ViewLoader;
 
 public class ScreenLoaderImpl implements ScreenLoader {
+    @Getter
+    private final ObjectProperty<Screen> currentScreen = new SimpleObjectProperty<>();
     private Stage primaryStage;
     private Scene scene;
-    private BorderPane rootLayout;
+    private ApplicationView applicationView;
     private ViewLoader viewLoader;
-    private Screen currentScreen;
-
-    private boolean isLoggedIn = false;
 
     public void init(Stage primaryStage, ViewLoader viewLoader) {
         this.primaryStage = primaryStage;
+        this.primaryStage.setMaximized(true);
         this.viewLoader = viewLoader;
-        this.rootLayout = new BorderPane();
 
-        this.scene = new Scene(rootLayout, 1200, 800);
+        var loaded = viewLoader.loadApplicationView();
+        this.applicationView = loaded.getSecond();
+        Parent parent = loaded.getFirst();
+
+        setupHeader();
+        setupNavigation();
+
+        this.scene = new Scene(parent, 1200, 800);
         this.primaryStage.setScene(scene);
+        applicationView.show();
     }
 
     public void load(Screen screen) {
-        Parent view = viewLoader.loadView(screen.getFxmlPath());
+        Pair<Parent, ? extends BaseView<?>> loaded = viewLoader.loadBoundView(screen.getFxmlPath());
+        Parent parent = loaded.getFirst();
+        BaseView<?> view = loaded.getSecond();
 
-        if (requiresAuth(screen)) {
-            if (!isLoggedIn) {
-                setupHeader();
-                setupNavigation();
-                isLoggedIn = true;
-            }
-            rootLayout.setCenter(view);
-        } else {
-            rootLayout.setTop(null);
-            rootLayout.setLeft(null);
-            rootLayout.setCenter(view);
-        }
+        // TODO if long loading add icon loading
+
+        view.setApplicationView(applicationView);
+        applicationView.setContent(parent);
+        view.show();
 
         primaryStage.setTitle("Budget Accounting - " + screen.name());
-        currentScreen = screen;
+        currentScreen.set(screen);
         primaryStage.show();
     }
 
-    private boolean requiresAuth(Screen screen) {
-        return screen != Screen.AUTH && screen != Screen.REGISTRATION;
-    }
-
     private void setupHeader() {
-        Parent headerParent = viewLoader.loadView("/org/example/client/component/HeaderView.fxml");
-        rootLayout.setTop(headerParent);
+        Pair<Parent, ? extends BaseView<?>> loaded = viewLoader.loadBoundView("/org/example/client/component/HeaderView.fxml");
+        loaded.getSecond().setApplicationView(applicationView);
+        applicationView.setHeader(loaded.getFirst());
+        loaded.getSecond().show();
     }
 
     private void setupNavigation() {
-        Parent navigationParent = viewLoader.loadView("/org/example/client/component/NavigationView.fxml");
-        rootLayout.setLeft(navigationParent);
-    }
-
-    @Override
-    public Screen getCurrentScreen() {
-        return currentScreen;
-    }
-
-    @Override
-    public void logout() {
-        isLoggedIn = false;
-        rootLayout.setTop(null);
-        rootLayout.setLeft(null);
-        load(Screen.AUTH);
+        Pair<Parent, ? extends BaseView<?>> loaded = viewLoader.loadBoundView("/org/example/client/component/NavigationView.fxml");
+        loaded.getSecond().setApplicationView(applicationView);
+        applicationView.setNavigation(loaded.getFirst());
+        loaded.getSecond().show();
     }
 }
