@@ -48,10 +48,10 @@ public class NavigationView extends BaseView<NavigationViewModel> {
 
         return switch (screen) {
             case MAIN -> mainButton;
-            case OPERATIONS -> operationButton;
+            case OPERATIONS, CREATING_OPERATION -> operationButton;
             case ACCOUNTS -> accountButton;
             case GRAPHICS -> graphicsButton;
-            case HOUSEHOLDS -> householdButton;
+            case HOUSEHOLDS, CREATING_HOUSEHOLD -> householdButton;
             case SETTINGS -> settingsButton;
             default -> null;
         };

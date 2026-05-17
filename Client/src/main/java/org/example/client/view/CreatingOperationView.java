@@ -149,7 +149,6 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
 
 
     public void handleIncomeButton() {
-        System.err.println("Тык в income Button");
         expenseButton.getStyleClass().clear();
         incomeButton.getStyleClass().clear();
 
@@ -160,13 +159,10 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
         expenseButton.getStyleClass().add(BUTTON_STYLE);
         expenseButton.setDisable(false);
 
-        System.err.println("incomeButton have css " + incomeButton.getStyleClass());
-        System.err.println("expenseButton have css " + expenseButton.getStyleClass());
         viewModel.onIncomeButtonAction();
     }
 
     public void handleExpenseButton() {
-        System.err.println("Тык в expense Button");
         expenseButton.getStyleClass().clear();
         incomeButton.getStyleClass().clear();
 
@@ -176,9 +172,6 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
         incomeButton.getStyleClass().add(OPERATION_BUTTON_STYLE);
         incomeButton.getStyleClass().add(BUTTON_STYLE);
         incomeButton.setDisable(false);
-
-        System.err.println("incomeButton have css " + incomeButton.getStyleClass());
-        System.err.println("expenseButton have css " + expenseButton.getStyleClass());
 
         viewModel.onExpenseButtonAction();
     }

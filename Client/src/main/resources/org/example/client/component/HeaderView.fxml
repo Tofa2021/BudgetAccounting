@@ -23,7 +23,7 @@
             </Region>
          
                       <HBox alignment="CENTER_LEFT" spacing="20">
-               <ComboBox fx:id="currencyAmountComboBox" prefWidth="250.0" styleClass="amount-combo-box">
+               <ComboBox fx:id="currencyAmountComboBox" styleClass="amount-combo-box">
                   <cursor>
                      <Cursor fx:constant="HAND" />
                   </cursor>

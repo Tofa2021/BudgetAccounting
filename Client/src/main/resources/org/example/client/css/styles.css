@@ -326,6 +326,8 @@ Error-color: #F42D00
 
 .amount-combo-box {
     -fx-padding: 2;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .amount-combo-box .list-cell {
