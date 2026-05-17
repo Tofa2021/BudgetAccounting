@@ -10,8 +10,13 @@
         <property name="hibernate.connection.password">mypassword</property>
 
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
         <property name="hibernate.show_sql">false</property>
-        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.format_sql">false</property>
+        <property name="hibernate.use_sql_comments">false</property>
+
+        <property name="hibernate.c3p0.unreturnedConnectionTimeout">0</property>
+
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <property name="hibernate.jdbc.time_zone">UTC</property>
@@ -20,8 +25,11 @@
         <property name="hibernate.c3p0.max_size">20</property>
         <property name="hibernate.c3p0.timeout">300</property>
         <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
 
         <property name="hibernate.current_session_context_class">thread</property>
+
+        <property name="hibernate.jdbc.log.warnings">false</property>
 
         <mapping class="org.example.domain.model.User"/>
         <mapping class="org.example.domain.model.Operation"/>
