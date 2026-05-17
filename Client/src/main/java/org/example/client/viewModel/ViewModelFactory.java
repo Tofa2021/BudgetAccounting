@@ -49,4 +49,8 @@ public class ViewModelFactory {
     public ApplicationViewModel createApplicationViewModel() {
         return new ApplicationViewModel(screenLoader);
     }
+
+    public CreatingHouseholdViewModel createCreatingHouseholdViewModel() {
+        return new CreatingHouseholdViewModel(screenLoader, clientAPIFactory.createHouseholdClient());
+    }
 }

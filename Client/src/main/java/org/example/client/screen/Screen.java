@@ -18,7 +18,7 @@ public enum Screen {
     PLANNING("/org/example/client/view/PlanningView.fxml"),
     REPORTS("/org/example/client/view/ReportsView.fxml"),
     SETTINGS("/org/example/client/view/SettingsView.fxml"),
-    CREATING_HOUSEHOLD("/org/example/client/view/CreatingHousehold.fxml"),
+    CREATING_HOUSEHOLD("/org/example/client/view/CreatingHouseholdView.fxml"),
     ;
 
     private final String fxmlPath;

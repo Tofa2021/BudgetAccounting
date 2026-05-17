@@ -19,7 +19,10 @@ public class HeaderView extends BaseView<HeaderViewModel> {
         userNameLabel.textProperty().bind(viewModel.getUsername());
         profileButton.disableProperty().bind(viewModel.getProfileButtonDisabled());
         currencyAmountComboBox.setItems(viewModel.getCurrencyAmounts());
-        currencyAmountComboBox.valueProperty().bindBidirectional(viewModel.getSelectedCurrencyAmount());
+        viewModel.getSelectedCurrencyAmount().addListener((observable, oldValue, newValue) -> {
+            currencyAmountComboBox.valueProperty().set(newValue);
+            currencyAmountComboBox.getParent().requestLayout();
+        });
         currencyAmountComboBox.visibleProperty().bind(viewModel.getCurrencyAmountComboBoxVisible());
     }
 

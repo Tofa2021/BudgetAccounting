@@ -1,12 +1,18 @@
 package org.example.presentation.dtoMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.domain.model.*;
 import org.example.dto.*;
 
 import java.util.List;
 
+@Slf4j
 public class DTOMapperImpl implements DTOMapper {
     private List<Long> convertToIdList(List<? extends BaseModel> elements) {
+        if (elements == null || elements.isEmpty()) {
+            return List.of();
+        }
+
         return elements
                 .stream()
                 .map(BaseModel::getId)
