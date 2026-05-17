@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Currency {
     BYN("BYN", "Белорусский рубль"),
+    USD("USD", "Американский доллар"),
     ;
 
     private final String code;

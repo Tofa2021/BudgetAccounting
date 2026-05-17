@@ -3,6 +3,7 @@ package org.example.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.enums.Currency;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class OperationDTO implements DTO, Serializable {
     private Long categoryId;
     private String categoryName;
     private String type;
+    private Currency currency;
 }
 
 

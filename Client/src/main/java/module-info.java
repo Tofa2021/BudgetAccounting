@@ -10,6 +10,8 @@ module org.example.client {
     requires static lombok;
     requires jdk.compiler;
     requires java.desktop;
+    requires jdk.jshell;
+    requires jdk.sctp;
 
     exports org.example.client;
     opens org.example.client to javafx.fxml;

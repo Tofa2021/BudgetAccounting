@@ -1,6 +1,7 @@
 package org.example.client.view;
 
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.example.client.Utils;
 import org.example.client.viewModel.OperationViewModel;
 import org.example.dto.OperationDTO;
 
@@ -17,10 +19,17 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 
 public class OperationView extends BaseView<OperationViewModel> {
-
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
+    @FXML
+    private VBox incomes;
+    @FXML
+    private VBox expenses;
+    @FXML
+    private VBox profits;
+    @FXML
+    private VBox amountOperations;
     @FXML
     private ListView<OperationDTO> operationsList;
     @FXML
@@ -29,17 +38,90 @@ public class OperationView extends BaseView<OperationViewModel> {
     @Override
     protected void onViewModelSet() {
         setupListView();
-        bindOperations();
+        bind();
         setupContextMenu();
     }
 
     private void setupListView() {
         operationsList.setCellFactory(listView -> new OperationCell());
-        operationsList.setPlaceholder(new Label("📭 Нет операций\nНажмите + чтобы добавить"));
+        operationsList.setPlaceholder(new Label("Нет операций\nНажмите + чтобы добавить"));
     }
 
-    private void bindOperations() {
+    private void bind() {
         operationsList.setItems(viewModel.getOperations());
+
+        viewModel.getIncomes().addListener((ListChangeListener<? super String>) c -> {
+            updateIncomes();
+        });
+
+        viewModel.getExpenses().addListener((ListChangeListener<? super String>) c -> {
+            updateExpenses();
+        });
+
+        viewModel.getProfits().addListener((ListChangeListener<? super String>) c -> {
+            updateProfits();
+        });
+
+        viewModel.getAmountOperations().addListener((ListChangeListener<? super String>) c -> {
+            updateAmountOperations();
+        });
+    }
+
+    private void updateIncomes() {
+        incomes.getChildren().clear();
+        for (String text : viewModel.getIncomes()) {
+            addIncomeLabel(text);
+        }
+    }
+
+    private void updateExpenses() {
+        expenses.getChildren().clear();
+        for (String text : viewModel.getExpenses()) {
+            addExpenseLabel(text);
+        }
+    }
+
+    private void updateProfits() {
+        profits.getChildren().clear();
+        for (String text : viewModel.getProfits()) {
+            addProfitLabel(text);
+        }
+    }
+
+    private void updateAmountOperations() {
+        amountOperations.getChildren().clear();
+        for (String text : viewModel.getAmountOperations()) {
+            addAmountOperationsLabel(text);
+        }
+    }
+
+    private void addIncomeLabel(String text) {
+        Label label = createLabel(text, "green-bold-16-text");
+        incomes.getChildren().add(label);
+    }
+
+    private void addExpenseLabel(String text) {
+        Label label = createLabel(text, "red-bold-16-text");
+        expenses.getChildren().add(label);
+    }
+
+    private void addProfitLabel(String text) {
+        Label label = createLabel(text, "blue-bold-16-text");
+        profits.getChildren().add(label);
+    }
+
+    private void addAmountOperationsLabel(String text) {
+        Label label = createLabel(text, "grey-bold-16-text");
+        amountOperations.getChildren().add(label);
+    }
+
+    private Label createLabel(String text, String styleClass) {
+        Label label = new Label(text);
+        label.getStyleClass().add(styleClass);
+        label.prefWidth(222);
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setAlignment(Pos.CENTER);
+        return label;
     }
 
     private void setupContextMenu() {
@@ -125,19 +207,18 @@ public class OperationView extends BaseView<OperationViewModel> {
 
         dialog.getDialogPane().setContent(form);
 
-        // Конвертер результата: собирает данные в НОВЫЙ объект, не ломая старый
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == saveButton) {
                 try {
                     String description = descriptionField.getText().trim();
                     if (description.isEmpty()) {
-                        Platform.runLater(() -> showTemporaryMessage("Введите описание", "error"));
+                        Platform.runLater(() -> showError("Введите описание"));
                         return null;
                     }
 
                     BigDecimal amount = new BigDecimal(amountField.getText().trim());
                     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-                        Platform.runLater(() -> showTemporaryMessage("Сумма должна быть больше 0", "error"));
+                        Platform.runLater(() -> showError("Сумма должна быть больше 0"));
                         return null;
                     }
 
@@ -157,10 +238,11 @@ public class OperationView extends BaseView<OperationViewModel> {
                             operation.getAccountMemberId(),
                             operation.getCategoryId(),
                             category.isEmpty() ? null : category,
-                            type
+                            type,
+                            operation.getCurrency()
                     );
                 } catch (Exception e) {
-                    Platform.runLater(() -> showTemporaryMessage("Ошибка ввода данных: " + e.getMessage(), "error"));
+                    Platform.runLater(() -> showError("Ошибка ввода данных: " + e.getMessage()));
                     return null;
                 }
             }
@@ -169,7 +251,7 @@ public class OperationView extends BaseView<OperationViewModel> {
 
         dialog.showAndWait().ifPresent(updatedDto -> {
             viewModel.update(updatedDto);
-            showTemporaryMessage("✓ Операция обновлена", "success");
+            showSuccess("Операция обновлена");
         });
     }
 
@@ -191,47 +273,11 @@ public class OperationView extends BaseView<OperationViewModel> {
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 viewModel.delete(operation);
-                showTemporaryMessage("✓ Операция удалена", "success");
+                showSuccess("Операция удалена");
             }
         });
     }
 
-    private void showTemporaryMessage(String message, String type) {
-        Tooltip tooltip = new Tooltip(message);
-
-        String color;
-        switch (type) {
-            case "success":
-                color = "#4caf50";
-                break;
-            case "error":
-                color = "#f44336";
-                break;
-            default:
-                color = "#2196f3";
-        }
-
-        tooltip.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-font-size: 12px;");
-
-        if (operationsList.getScene() != null) {
-            tooltip.show(operationsList,
-                    operationsList.getScene().getWindow().getX() + 200,
-                    operationsList.getScene().getWindow().getY() + 100);
-
-            // Безопасное скрытие через фоновый поток и Platform.runLater
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                // Перенаправляем задачу закрытия обратно в UI-поток
-                Platform.runLater(tooltip::hide);
-            }).start();
-        }
-    }
-
-    // Вспомогательный класс для работы с датой/временем
     private static class LocalDateTimeHolder {
         LocalDate date;
         LocalTime time;
@@ -257,7 +303,6 @@ public class OperationView extends BaseView<OperationViewModel> {
         }
     }
 
-    // Ячейка для отображения операции
     private class OperationCell extends ListCell<OperationDTO> {
         private final HBox card = new HBox();
         private final VBox leftContent = new VBox();
@@ -315,19 +360,15 @@ public class OperationView extends BaseView<OperationViewModel> {
                 return;
             }
 
-            // Тип
             String type = operation.getType();
             typeLabel.setText(type != null ? type : "");
 
-            // Категория
             String category = operation.getCategoryName();
             categoryLabel.setText(category != null ? category : "Без категории");
 
-            // Описание
             String description = operation.getDescription();
             descriptionLabel.setText(description != null && !description.isEmpty() ? description : "—");
 
-            // Дата и время
             if (operation.getDateTime() != null) {
                 var dateTime = operation.getDateTime().atZone(ZoneId.systemDefault());
                 dateLabel.setText(dateFormatter.format(dateTime));
@@ -337,21 +378,16 @@ public class OperationView extends BaseView<OperationViewModel> {
                 timeLabel.setText("—");
             }
 
-            // Сумма
-            BigDecimal amount = operation.getAmount();
-            String formattedAmount = String.format("%.2f BYN", amount.abs());
+            String formattedAmount = Utils.convertBigDecimalToString(operation.getAmount(), operation.getType(), operation.getCurrency());
 
             if ("INCOME".equals(type)) {
-                amountLabel.setText("+" + formattedAmount);
                 amountLabel.getStyleClass().removeAll("expense", "income");
                 amountLabel.getStyleClass().add("income");
             } else if ("EXPENSE".equals(type)) {
-                amountLabel.setText("-" + formattedAmount);
                 amountLabel.getStyleClass().removeAll("expense", "income");
                 amountLabel.getStyleClass().add("expense");
-            } else {
-                amountLabel.setText(formattedAmount);
             }
+            amountLabel.setText(formattedAmount);
 
             setGraphic(card);
         }

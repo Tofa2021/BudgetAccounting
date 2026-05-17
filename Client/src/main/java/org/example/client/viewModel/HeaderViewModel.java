@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.client.Result;
 import org.example.client.SessionContext;
+import org.example.client.Utils;
 import org.example.client.connection.api.AuthClient;
 import org.example.client.connection.api.HouseholdClient;
 import org.example.client.screen.Screen;
@@ -29,7 +30,7 @@ public class HeaderViewModel extends BaseViewModel {
     @Getter
     private final ObservableList<String> currencyAmounts = FXCollections.observableArrayList();
     @Getter
-    private final StringProperty selectedCurrencyAmount = new SimpleStringProperty("Нет домохозяйства");
+    private final StringProperty selectedCurrencyAmount = new SimpleStringProperty();
     @Getter
     private final StringProperty username = new SimpleStringProperty("Войти");
     @Getter
@@ -77,25 +78,28 @@ public class HeaderViewModel extends BaseViewModel {
     }
 
     private String convertCurrencyAmount(Currency currency, BigDecimal amount) {
-        return String.format("%.2f %s", amount, currency.getCode());
+        String amountString = Utils.convertBigDecimalToString(amount);
+        return String.format("%s %s", amountString, currency.getCode());
     }
 
     public void logout() {
         authClient.logout(sessionContext.getRefreshToken().get());
-        sessionContext.clear();
-        screenLoader.load(Screen.AUTH);
         setUnauthorizedState();
+        screenLoader.load(Screen.AUTH);
+        sessionContext.clear();
     }
 
     private void setUnauthorizedState() {
         currencyAmountComboBoxVisible.set(false);
         profileButtonDisabled.set(true);
+        currencyAmounts.clear();
         username.set("Войти");
     }
 
     private void setAuthorizedState(String username) {
         currencyAmountComboBoxVisible.set(true);
         profileButtonDisabled.set(false);
+        updateCurrencyAmounts();
         this.username.set(username);
     }
 }

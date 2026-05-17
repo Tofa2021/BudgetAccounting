@@ -1,31 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.OperationView">
-   <children>
-      <VBox layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="40.0" styleClass="content-background" stylesheets="@../css/styles.css" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <HBox>
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="787.0" prefWidth="1257.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.OperationView">
+    <children>
+        <VBox layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1326.0" spacing="40.0" styleClass="content-background" stylesheets="@../css/styles.css" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER" prefHeight="40.0" prefWidth="893.0">
+                    <children>
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="39.0" prefWidth="243.0" text="Добавить операцию" />
+                        <Region HBox.hgrow="ALWAYS">
+                     <HBox.margin>
+                        <Insets top="20.0" />
+                     </HBox.margin>
+                  </Region>
+                        <HBox alignment="CENTER" maxHeight="60.0" minHeight="32" prefHeight="32.0" prefWidth="243.0" spacing="10.0" styleClass="search-line">
+                            <children>
+                                <TextField fx:id="searchTextField" prefHeight="0.0" prefWidth="155.0" promptText="Поиск..." styleClass="search-text-field" />
+                                <HBox alignment="CENTER" spacing="8.0">
+                                    <children>
+                                        <SVGPath content="M6.5 13C4.68333 13 3.146 12.3707 1.888 11.112C0.63 9.85333 0.000667196 8.316 5.29101e-07 6.5C-0.000666138 4.684 0.628667 3.14667 1.888 1.888C3.14733 0.629333 4.68467 0 6.5 0C8.31533 0 9.853 0.629333 11.113 1.888C12.373 3.14667 13.002 4.684 13 6.5C13 7.23333 12.8833 7.925 12.65 8.575C12.4167 9.225 12.1 9.8 11.7 10.3L17.3 15.9C17.4833 16.0833 17.575 16.3167 17.575 16.6C17.575 16.8833 17.4833 17.1167 17.3 17.3C17.1167 17.4833 16.8833 17.575 16.6 17.575C16.3167 17.575 16.0833 17.4833 15.9 17.3L10.3 11.7C9.8 12.1 9.225 12.4167 8.575 12.65C7.925 12.8833 7.23333 13 6.5 13ZM6.5 11C7.75 11 8.81267 10.5627 9.688 9.688C10.5633 8.81333 11.0007 7.75067 11 6.5C10.9993 5.24933 10.562 4.187 9.688 3.313C8.814 2.439 7.75133 2.00133 6.5 2C5.24867 1.99867 4.18633 2.43633 3.313 3.313C2.43967 4.18967 2.002 5.252 2 6.5C1.998 7.748 2.43567 8.81067 3.313 9.688C4.19033 10.5653 5.25267 11.0027 6.5 11Z" />
+                                        <Button prefHeight="20.0" prefWidth="20.0" scaleX="0.8" scaleY="0.8" styleClass="round-button, dark-light-round-button">
+                                            <graphic>
+                                                <SVGPath fx:id="filterScene" content="M0 1.5C0 1.10218 0.158035 0.720644 0.43934 0.43934C0.720644 0.158035 1.10218 0 1.5 0H16.5C16.8978 0 17.2794 0.158035 17.5607 0.43934C17.842 0.720644 18 1.10218 18 1.5V3.586C17.9999 4.11639 17.7891 4.62501 17.414 5L12 10.414V17.838C12 18.0255 11.9521 18.2099 11.8608 18.3737C11.7695 18.5375 11.6379 18.6753 11.4783 18.7739C11.3188 18.8724 11.1368 18.9286 10.9494 18.9371C10.7621 18.9455 10.5757 18.9059 10.408 18.822L6.691 16.964C6.48337 16.8602 6.30875 16.7006 6.1867 16.5031C6.06466 16.3057 6.00001 16.0781 6 15.846V10.414L0.586 5C0.210901 4.62501 0.000113275 4.11639 0 3.586V1.5ZM2 2V3.586L7.56 9.146C7.69945 9.28527 7.81008 9.45066 7.88558 9.63272C7.96108 9.81477 7.99996 10.0099 8 10.207V15.382L10 16.382V10.207C10 9.809 10.158 9.427 10.44 9.147L16 3.585V2H2Z" />
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+            <HBox prefHeight="70.0" VBox.vgrow="ALWAYS">
                <children>
-                  <Button fx:id="addButton" mnemonicParsing="false" onAction="#handleAddButton" text="Добавить операцию" />
-                  <Region HBox.hgrow="ALWAYS" />
-                  <TextField promptText="Поиск..." />
+                  <VBox alignment="CENTER">
+                     <children>
+                        <VBox fx:id="incomes" prefWidth="222.0">
+                           <children>
+                              <Label fx:id="incomeLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="green-bold-16-text" text="Label" />
+                           </children>
+                        </VBox>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="Доходы" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="green-border" />
+                        <String fx:value="border-radius-10" />
+                        <String fx:value="border-width-2" />
+                     </styleClass>
+                     <padding>
+                        <Insets bottom="2.0" left="4.0" right="4.0" top="2.0" />
+                     </padding>
+                  </VBox>
+                  <Region maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefWidth="222.0">
+                     <children>
+                        <VBox fx:id="expenses">
+                           <children>
+                              <Label fx:id="expenseLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" prefWidth="222.0" styleClass="red-bold-16-text" text="Label" />
+                           </children>
+                        </VBox>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Расходы" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="red-border" />
+                        <String fx:value="border-radius-10" />
+                        <String fx:value="border-width-2" />
+                     </styleClass>
+                  </VBox>
+                  <Region layoutX="250.0" layoutY="10.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="CENTER" layoutX="1488.0" layoutY="10.0" prefWidth="222.0">
+                     <children>
+                        <VBox fx:id="profits">
+                           <children>
+                              <Label fx:id="profitLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" prefWidth="222.0" styleClass="blue-bold-16-text" text="Label" />
+                           </children>
+                        </VBox>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Прибыль" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="blue-border" />
+                        <String fx:value="border-radius-10" />
+                        <String fx:value="border-width-2" />
+                     </styleClass>
+                  </VBox>
+                  <Region layoutX="1210.0" layoutY="10.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <VBox alignment="CENTER" layoutX="1488.0" layoutY="10.0" prefWidth="222.0">
+                     <children>
+                        <VBox fx:id="amountOperations">
+                           <children>
+                              <Label fx:id="amountOperationsLabel" alignment="CENTER" maxHeight="1.7976931348623157E308" prefWidth="222.0" styleClass="grey-bold-16-text" text="Label" />
+                           </children>
+                        </VBox>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Количество операций" />
+                     </children>
+                     <styleClass>
+                        <String fx:value="grey-border" />
+                        <String fx:value="border-width-2" />
+                        <String fx:value="border-radius-10" />
+                     </styleClass>
+                  </VBox>
                </children>
             </HBox>
-            <ListView fx:id="operationsList" prefHeight="547.0" prefWidth="893.0" styleClass="operations-list" />
-         </children>
-         <padding>
-            <Insets bottom="20.0" left="100.0" right="100.0" top="20.0" />
-         </padding>
-      </VBox>
-   </children>
+                <ListView fx:id="operationsList" prefHeight="547.0" prefWidth="893.0" styleClass="operations-list" />
+            </children>
+            <padding>
+                <Insets bottom="20.0" left="100.0" right="100.0" top="20.0" />
+            </padding>
+        </VBox>
+    </children>
 </AnchorPane>
