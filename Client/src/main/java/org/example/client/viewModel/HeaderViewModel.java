@@ -58,15 +58,24 @@ public class HeaderViewModel extends BaseViewModel {
     }
 
     private void updateCurrencyAmounts() {
+        selectedCurrencyAmount.set("");
+        currencyAmounts.clear();
+
         if (sessionContext.getCurrentHousehold().get() == null) {
+            currencyAmounts.add("Нет домохозяйства");
             selectedCurrencyAmount.set("Нет домохозяйства");
             return;
         }
 
-
         Result<Map<Currency, BigDecimal>> amountResult = householdClient.getAmount(sessionContext.getCurrentHousehold().get().getId());
         if (amountResult.isSuccess()) {
             Map<Currency, BigDecimal> amounts = amountResult.getData();
+            if (amounts.isEmpty()) {
+                currencyAmounts.add("0");
+                selectedCurrencyAmount.set("0");
+                return;
+            }
+
             List<String> strings = amounts.entrySet()
                     .stream()
                     .map(entry -> convertCurrencyAmount(entry.getKey(), entry.getValue()))
