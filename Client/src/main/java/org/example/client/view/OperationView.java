@@ -34,6 +34,8 @@ public class OperationView extends BaseView<OperationViewModel> {
     private ListView<OperationDTO> operationsList;
     @FXML
     private Button addButton;
+    @FXML
+    private TextField searchTextField;
 
     @Override
     public void onViewModelSet() {
@@ -44,7 +46,7 @@ public class OperationView extends BaseView<OperationViewModel> {
 
     private void setupListView() {
         operationsList.setCellFactory(listView -> new OperationCell());
-        operationsList.setPlaceholder(new Label("Нет операций\nНажмите + чтобы добавить"));
+        operationsList.setPlaceholder(new Label("Нет операций Нажмите + чтобы добавить"));
     }
 
     private void bind() {
@@ -64,6 +66,18 @@ public class OperationView extends BaseView<OperationViewModel> {
 
         getViewModel().getAmountOperations().addListener((ListChangeListener<? super String>) c -> {
             updateAmountOperations();
+        });
+
+        getViewModel().getSearchText().bindBidirectional(searchTextField.textProperty());
+
+        searchTextField.setOnAction(event -> {
+            getViewModel().searchOperations();
+        });
+
+        searchTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                getViewModel().searchOperations();
+            }
         });
     }
 
@@ -150,7 +164,7 @@ public class OperationView extends BaseView<OperationViewModel> {
 
     @FXML
     private void handleAddButton() {
-        getViewModel().handleCreatOperationButton();
+        getViewModel().handleCreateOperationButton();
     }
 
     private void showEditDialog(OperationDTO operation) {

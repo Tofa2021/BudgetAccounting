@@ -1,5 +1,7 @@
 package org.example.client.viewModel;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -15,7 +17,10 @@ import org.example.dto.OperationDTO;
 import org.example.enums.Currency;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,7 +39,9 @@ public class OperationViewModel extends BaseViewModel {
     private final ObservableList<String> profits = FXCollections.observableArrayList();
     @Getter
     private final ObservableList<String> amountOperations = FXCollections.observableArrayList();
-    private Map<Currency, List<OperationDTO>> groupedByCurrency = new HashMap<>();
+    @Getter
+    private final StringProperty searchText = new SimpleStringProperty();
+    private List<OperationDTO> allOperations = new ArrayList<>();
 
     @Override
     public void onViewShown() {
@@ -46,10 +53,12 @@ public class OperationViewModel extends BaseViewModel {
                 }
             }
             if (needRecalc) {
-                processOperations();
+                updateAdditionalInformation();
             }
         });
+
         refreshOperations();
+        operations.setAll(allOperations);
     }
 
     public void refreshOperations() {
@@ -62,16 +71,13 @@ public class OperationViewModel extends BaseViewModel {
             showError(result.getErrorMessage());
         }
 
-        List<OperationDTO> operations = result.getData();
-        groupedByCurrency = operations.stream()
-                .collect(Collectors.groupingBy(OperationDTO::getCurrency));
-        this.operations.setAll(operations.stream()
-                .sorted(Comparator.comparing(OperationDTO::getDateTime))
-                .toList()
-                .reversed());
+        allOperations = result.getData();
     }
 
-    private void processOperations() {
+    private void updateAdditionalInformation() {
+        Map<Currency, List<OperationDTO>> groupedByCurrency = operations.stream()
+                .collect(Collectors.groupingBy(OperationDTO::getCurrency));
+
         List<String> incomeStrings = new ArrayList<>();
         List<String> expenseStrings = new ArrayList<>();
         List<String> profitStrings = new ArrayList<>();
@@ -112,34 +118,52 @@ public class OperationViewModel extends BaseViewModel {
 
     public void delete(OperationDTO operationDTO) {
         var result = operationClient.delete(operationDTO.getId());
-        if (result.isSuccess()) {
-            operations.remove(operationDTO);
+        if (!result.isSuccess()) {
+            showError(result.getErrorMessage());
+        }
 
-            var householdDTOResult = householdClient.get(sessionContext.getCurrentHousehold().get().getId());
-            if (householdDTOResult.isSuccess()) {
-                sessionContext.getCurrentHousehold().set(householdDTOResult.getData());
-            }
+        allOperations.remove(operationDTO);
+        operations.remove(operationDTO);
+
+        //TODO update household amount
+        var householdDTOResult = householdClient.get(sessionContext.getCurrentHousehold().get().getId());
+        if (householdDTOResult.isSuccess()) {
+            sessionContext.getCurrentHousehold().set(householdDTOResult.getData());
         }
     }
 
     public void update(OperationDTO operationDTO) {
-        if (operationClient.update(operationDTO).isSuccess()) {
-            operations.stream()
-                    .filter(operationDTO1 -> Objects.equals(operationDTO1.getId(), operationDTO.getId()))
-                    .findFirst()
-                    .ifPresent(oldOperation -> {
-                        int index = operations.indexOf(oldOperation);
-                        operations.set(index, operationDTO);
-                    });
+        var result = operationClient.update(operationDTO);
+        if (!result.isSuccess()) {
+            showError(result.getErrorMessage());
+        }
 
-            var householdDTOResult = householdClient.get(sessionContext.getCurrentHousehold().get().getId());
-            if (householdDTOResult.isSuccess()) {
-                sessionContext.getCurrentHousehold().set(householdDTOResult.getData());
-            }
+        operations.stream()
+                .filter(operationDTO1 -> Objects.equals(operationDTO1.getId(), operationDTO.getId()))
+                .findFirst()
+                .ifPresent(oldOperation -> {
+                    int index = operations.indexOf(oldOperation);
+                    operations.set(index, operationDTO);
+                });
+
+        //TODO update household amount
+        var householdDTOResult = householdClient.get(sessionContext.getCurrentHousehold().get().getId());
+        if (householdDTOResult.isSuccess()) {
+            sessionContext.getCurrentHousehold().set(householdDTOResult.getData());
         }
     }
 
-    public void handleCreatOperationButton() {
+    public void handleCreateOperationButton() {
         screenLoader.load(Screen.CREATING_OPERATION);
+    }
+
+    public void searchOperations() {
+        String search = searchText.get().toLowerCase();
+
+        List<OperationDTO> searchedOperations = allOperations.stream()
+                .filter(operationDTO -> operationDTO.getDescription().toLowerCase().contains(search))
+                .toList();
+
+        operations.setAll(searchedOperations);
     }
 }

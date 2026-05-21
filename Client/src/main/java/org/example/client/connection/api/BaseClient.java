@@ -12,7 +12,7 @@ import java.util.Map;
 public abstract class BaseClient {
     private final ServerInteractionManager serverInteractionManager;
 
-    protected <T> Result<T> sendRequest(RequestAction action, Map<String, Object> params) {
+    public <T> Result<T> sendRequest(RequestAction action, Map<String, Object> params) {
         return serverInteractionManager.processRequest(new Request(action, params));
     }
 }

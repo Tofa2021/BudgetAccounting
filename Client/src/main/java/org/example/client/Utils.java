@@ -7,22 +7,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 public class Utils {
-    public static String convertBigDecimalToString(BigDecimal amount, String type) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-        symbols.setGroupingSeparator(' ');
-        symbols.setDecimalSeparator('.');
-        symbols.setDecimalSeparator(',');
-
-        DecimalFormat formatter = new DecimalFormat("#,###.00", symbols);
-        String formatted = formatter.format(amount.abs());
-
-        if (type.equals("EXPENSE")) {
-            return "-" + formatted;
-        }
-        return formatted;
-    }
 
     public static String convertBigDecimalToString(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            return "0,00";
+        }
+
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator(' ');
         symbols.setDecimalSeparator('.');
@@ -31,6 +21,15 @@ public class Utils {
         DecimalFormat formatter = new DecimalFormat("#,###.00", symbols);
 
         return formatter.format(amount.abs());
+    }
+    
+    public static String convertBigDecimalToString(BigDecimal amount, String type) {
+        String converted = convertBigDecimalToString(amount);
+
+        if (type.equals("EXPENSE")) {
+            return "-" + converted;
+        }
+        return converted;
     }
 
     public static String convertBigDecimalToString(BigDecimal amount, String type, Currency currency) {
