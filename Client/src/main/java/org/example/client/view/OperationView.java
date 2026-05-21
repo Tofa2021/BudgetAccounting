@@ -36,7 +36,7 @@ public class OperationView extends BaseView<OperationViewModel> {
     private Button addButton;
 
     @Override
-    protected void onViewModelSet() {
+    public void onViewModelSet() {
         setupListView();
         bind();
         setupContextMenu();
@@ -48,49 +48,49 @@ public class OperationView extends BaseView<OperationViewModel> {
     }
 
     private void bind() {
-        operationsList.setItems(viewModel.getOperations());
+        operationsList.setItems(getViewModel().getOperations());
 
-        viewModel.getIncomes().addListener((ListChangeListener<? super String>) c -> {
+        getViewModel().getIncomes().addListener((ListChangeListener<? super String>) c -> {
             updateIncomes();
         });
 
-        viewModel.getExpenses().addListener((ListChangeListener<? super String>) c -> {
+        getViewModel().getExpenses().addListener((ListChangeListener<? super String>) c -> {
             updateExpenses();
         });
 
-        viewModel.getProfits().addListener((ListChangeListener<? super String>) c -> {
+        getViewModel().getProfits().addListener((ListChangeListener<? super String>) c -> {
             updateProfits();
         });
 
-        viewModel.getAmountOperations().addListener((ListChangeListener<? super String>) c -> {
+        getViewModel().getAmountOperations().addListener((ListChangeListener<? super String>) c -> {
             updateAmountOperations();
         });
     }
 
     private void updateIncomes() {
         incomes.getChildren().clear();
-        for (String text : viewModel.getIncomes()) {
+        for (String text : getViewModel().getIncomes()) {
             addIncomeLabel(text);
         }
     }
 
     private void updateExpenses() {
         expenses.getChildren().clear();
-        for (String text : viewModel.getExpenses()) {
+        for (String text : getViewModel().getExpenses()) {
             addExpenseLabel(text);
         }
     }
 
     private void updateProfits() {
         profits.getChildren().clear();
-        for (String text : viewModel.getProfits()) {
+        for (String text : getViewModel().getProfits()) {
             addProfitLabel(text);
         }
     }
 
     private void updateAmountOperations() {
         amountOperations.getChildren().clear();
-        for (String text : viewModel.getAmountOperations()) {
+        for (String text : getViewModel().getAmountOperations()) {
             addAmountOperationsLabel(text);
         }
     }
@@ -150,7 +150,7 @@ public class OperationView extends BaseView<OperationViewModel> {
 
     @FXML
     private void handleAddButton() {
-        viewModel.handleCreatOperationButton();
+        getViewModel().handleCreatOperationButton();
     }
 
     private void showEditDialog(OperationDTO operation) {
@@ -250,7 +250,7 @@ public class OperationView extends BaseView<OperationViewModel> {
         });
 
         dialog.showAndWait().ifPresent(updatedDto -> {
-            viewModel.update(updatedDto);
+            getViewModel().update(updatedDto);
             showSuccess("Операция обновлена");
         });
     }
@@ -272,7 +272,7 @@ public class OperationView extends BaseView<OperationViewModel> {
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                viewModel.delete(operation);
+                getViewModel().delete(operation);
                 showSuccess("Операция удалена");
             }
         });

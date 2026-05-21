@@ -33,7 +33,7 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
     public Label errorLabel;
 
     @Override
-    protected void onViewModelSet() {
+    public void onViewModelSet() {
         incomeButton.getStyleClass().add(SELECTED_OPERATION_BUTTON_STYLE);
         incomeButton.getStyleClass().remove(OPERATION_BUTTON_STYLE);
         incomeButton.setDisable(true);
@@ -58,9 +58,9 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
             }
         });
 
-        accountComboBox.itemsProperty().bind(viewModel.getAccounts());
+        accountComboBox.itemsProperty().bind(getViewModel().getAccounts());
 
-        accountComboBox.valueProperty().bindBidirectional(viewModel.getSelectedAccount());
+        accountComboBox.valueProperty().bindBidirectional(getViewModel().getSelectedAccount());
     }
 
     private void setupCategoryComboBox() {
@@ -77,16 +77,16 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
             }
         });
 
-        categoryComboBox.itemsProperty().bind(viewModel.getCategories());
+        categoryComboBox.itemsProperty().bind(getViewModel().getCategories());
 
-        categoryComboBox.valueProperty().bindBidirectional(viewModel.getSelectedCategory());
+        categoryComboBox.valueProperty().bindBidirectional(getViewModel().getSelectedCategory());
     }
 
     private void setupBindings() {
-        descriptionTextField.textProperty().bindBidirectional(viewModel.getDescription());
-        errorLabel.textProperty().bind(viewModel.getErrorMessage());
-        errorLabel.managedProperty().bind(viewModel.getErrorMessage().isNotEmpty());
-        errorLabel.visibleProperty().bind(viewModel.getErrorMessage().isNotEmpty());
+        descriptionTextField.textProperty().bindBidirectional(getViewModel().getDescription());
+        errorLabel.textProperty().bind(getViewModel().getErrorMessage());
+        errorLabel.managedProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
+        errorLabel.visibleProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
     }
 
     private void setupAmountField() {
@@ -97,28 +97,28 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
                     try {
                         double amount = Double.parseDouble(normalizedValue);
                         if (amount > 0) {
-                            viewModel.getAmount().set(amount);
+                            getViewModel().getAmount().set(amount);
                             amountTextField.setStyle("");
                         } else {
-                            viewModel.getAmount().set(0);
+                            getViewModel().getAmount().set(0);
                             amountTextField.setStyle("-fx-border-color: #f44336;");
                         }
                     } catch (NumberFormatException e) {
-                        viewModel.getAmount().set(0);
+                        getViewModel().getAmount().set(0);
                         amountTextField.setStyle("-fx-border-color: #f44336;");
                     }
                 } else if (!newValue.isEmpty()) {
                     Platform.runLater(() -> amountTextField.setText(old));
                 }
             } else {
-                viewModel.getAmount().set(0);
+                getViewModel().getAmount().set(0);
                 if (newValue != null && newValue.isEmpty()) {
                     amountTextField.setStyle("");
                 }
             }
         });
 
-        amountTextField.textProperty().bindBidirectional(viewModel.getAmountText());
+        amountTextField.textProperty().bindBidirectional(getViewModel().getAmountText());
     }
 
     private void setupValidation() {
@@ -159,7 +159,7 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
         expenseButton.getStyleClass().add(BUTTON_STYLE);
         expenseButton.setDisable(false);
 
-        viewModel.onIncomeButtonAction();
+        getViewModel().onIncomeButtonAction();
     }
 
     public void handleExpenseButton() {
@@ -173,34 +173,34 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
         incomeButton.getStyleClass().add(BUTTON_STYLE);
         incomeButton.setDisable(false);
 
-        viewModel.onExpenseButtonAction();
+        getViewModel().onExpenseButtonAction();
     }
 
     public void handleCreateButton() {
-        if (viewModel.getAmount().get() <= 0) {
-            viewModel.getErrorMessage().set("Введите корректную сумму");
+        if (getViewModel().getAmount().get() <= 0) {
+            getViewModel().getErrorMessage().set("Введите корректную сумму");
             amountTextField.requestFocus();
             return;
         }
-        if (viewModel.getDescription().get() == null || viewModel.getDescription().get().trim().isEmpty()) {
-            viewModel.getErrorMessage().set("Введите описание операции");
+        if (getViewModel().getDescription().get() == null || getViewModel().getDescription().get().trim().isEmpty()) {
+            getViewModel().getErrorMessage().set("Введите описание операции");
             descriptionTextField.requestFocus();
             return;
         }
 
-        if (viewModel.getSelectedAccount().get() == null) {
-            viewModel.getErrorMessage().set("Выберите счет");
+        if (getViewModel().getSelectedAccount().get() == null) {
+            getViewModel().getErrorMessage().set("Выберите счет");
             accountComboBox.requestFocus();
             return;
         }
 
-        if (viewModel.getSelectedCategory().get() == null) {
-            viewModel.getErrorMessage().set("Выберите категорию");
+        if (getViewModel().getSelectedCategory().get() == null) {
+            getViewModel().getErrorMessage().set("Выберите категорию");
             categoryComboBox.requestFocus();
             return;
         }
 
-        viewModel.getErrorMessage().set("");
-        viewModel.createOperation();
+        getViewModel().getErrorMessage().set("");
+        getViewModel().createOperation();
     }
 }

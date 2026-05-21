@@ -25,13 +25,13 @@ public class RegistrationView extends BaseView<RegistrationViewModel> {
     private Hyperlink signInLink;
 
     @Override
-    protected void onViewModelSet() {
-        usernameField.textProperty().bindBidirectional(viewModel.getUsernameInput());
-        passwordField.textProperty().bindBidirectional(viewModel.getPasswordInput());
-        confirmationPasswordField.textProperty().bindBidirectional(viewModel.getConfirmationPasswordInput());
-        errorLabel.textProperty().bindBidirectional(viewModel.getErrorMessage());
-        errorLabel.managedProperty().bind(viewModel.getErrorMessage().isNotEmpty());
-        errorLabel.visibleProperty().bind(viewModel.getErrorMessage().isNotEmpty());
+    public void onViewModelSet() {
+        usernameField.textProperty().bindBidirectional(getViewModel().getUsernameInput());
+        passwordField.textProperty().bindBidirectional(getViewModel().getPasswordInput());
+        confirmationPasswordField.textProperty().bindBidirectional(getViewModel().getConfirmationPasswordInput());
+        errorLabel.textProperty().bindBidirectional(getViewModel().getErrorMessage());
+        errorLabel.managedProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
+        errorLabel.visibleProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
     }
 
     @FXML
@@ -61,11 +61,11 @@ public class RegistrationView extends BaseView<RegistrationViewModel> {
 
     @FXML
     private void handleSignUpButton() {
-        viewModel.signUp();
+        getViewModel().signUp();
     }
 
     @FXML
     private void handleSignInLink() {
-        viewModel.linkSignIn();
+        getViewModel().linkSignIn();
     }
 }

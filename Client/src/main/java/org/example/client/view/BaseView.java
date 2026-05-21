@@ -1,12 +1,14 @@
 package org.example.client.view;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.example.client.viewModel.BaseViewModel;
 
+@Getter
 public abstract class BaseView<T extends BaseViewModel> implements FXMLLoadable {
-    protected T viewModel;
     @Setter
-    protected ApplicationView applicationView;
+    private ApplicationView applicationView;
+    private T viewModel;
 
     public void show() {
         viewModel.onViewShown();
@@ -14,25 +16,25 @@ public abstract class BaseView<T extends BaseViewModel> implements FXMLLoadable 
 
     public void setViewModel(T viewModel) {
         this.viewModel = viewModel;
-        applicationView.bindViewModel(viewModel);
+        this.applicationView.bindViewModel(viewModel);
         onViewModelSet();
     }
 
-    protected abstract void onViewModelSet();
+    public abstract void onViewModelSet();
 
-    protected void showError(String message) {
+    public void showError(String message) {
         if (applicationView != null) {
             applicationView.showError(message);
         }
     }
 
-    protected void showSuccess(String message) {
+    public void showSuccess(String message) {
         if (applicationView != null) {
             applicationView.showSuccess(message);
         }
     }
 
-    protected void showInfo(String message) {
+    public void showInfo(String message) {
         if (applicationView != null) {
             applicationView.showInfo(message);
         }

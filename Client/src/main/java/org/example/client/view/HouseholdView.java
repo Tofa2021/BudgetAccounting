@@ -17,7 +17,7 @@ public class HouseholdView extends BaseView<HouseholdViewModel> {
     public Button createHouseholdButton;
 
     @Override
-    protected void onViewModelSet() {
+    public void onViewModelSet() {
         setupListView();
         bindHouseholds();
     }
@@ -34,19 +34,19 @@ public class HouseholdView extends BaseView<HouseholdViewModel> {
         listView.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     if (newValue != null) {
-                        viewModel.selectHousehold(newValue);
+                        getViewModel().selectHousehold(newValue);
                     }
                 }
         );
     }
 
     private void bindHouseholds() {
-        listView.setItems(viewModel.getHouseholds());
+        listView.setItems(getViewModel().getHouseholds());
     }
 
     @FXML
     private void handleCreateHouseholdButton() {
-        viewModel.handleCreateHouseholdButton();
+        getViewModel().handleCreateHouseholdButton();
     }
 
     private static class HouseholdCell extends ListCell<HouseholdDTO> {

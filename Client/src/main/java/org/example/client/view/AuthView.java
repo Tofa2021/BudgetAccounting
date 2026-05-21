@@ -27,12 +27,12 @@ public class AuthView extends BaseView<AuthViewModel> {
     }
 
     @Override
-    protected void onViewModelSet() {
-        usernameField.textProperty().bindBidirectional(this.viewModel.getUsernameInput());
-        passwordField.textProperty().bindBidirectional(this.viewModel.getPasswordInput());
-        errorLabel.textProperty().bindBidirectional(this.viewModel.getErrorMessage());
-        errorLabel.managedProperty().bind(this.viewModel.getErrorMessage().isNotEmpty());
-        errorLabel.visibleProperty().bind(this.viewModel.getErrorMessage().isNotEmpty());
+    public void onViewModelSet() {
+        usernameField.textProperty().bindBidirectional(getViewModel().getUsernameInput());
+        passwordField.textProperty().bindBidirectional(getViewModel().getPasswordInput());
+        errorLabel.textProperty().bindBidirectional(getViewModel().getErrorMessage());
+        errorLabel.managedProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
+        errorLabel.visibleProperty().bind(getViewModel().getErrorMessage().isNotEmpty());
     }
 
     private void setupEnterKeyNavigation() {
@@ -51,11 +51,11 @@ public class AuthView extends BaseView<AuthViewModel> {
 
     @FXML
     private void handleSignInButton() {
-        this.viewModel.signIn();
+        getViewModel().signIn();
     }
 
     @FXML
     private void handleSignUpLink() {
-        this.viewModel.linkSignUp();
+        getViewModel().linkSignUp();
     }
 }

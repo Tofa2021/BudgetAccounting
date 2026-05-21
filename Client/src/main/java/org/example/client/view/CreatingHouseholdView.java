@@ -12,12 +12,12 @@ public class CreatingHouseholdView extends BaseView<CreatingHouseholdViewModel> 
     private TextField nameTextField;
 
     @Override
-    protected void onViewModelSet() {
-        nameTextField.textProperty().bindBidirectional(viewModel.getHouseholdName());
+    public void onViewModelSet() {
+        nameTextField.textProperty().bindBidirectional(getViewModel().getHouseholdName());
     }
 
     @FXML
     private void handleCreateButton() {
-        viewModel.handleCreateButton();
+        getViewModel().handleCreateButton();
     }
 }

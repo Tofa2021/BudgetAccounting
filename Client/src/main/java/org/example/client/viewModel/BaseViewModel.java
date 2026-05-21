@@ -17,15 +17,15 @@ public abstract class BaseViewModel {
 
     public abstract void onViewShown();
 
-    protected void showError(String message) {
+    public void showError(String message) {
         errorMessage.set(message);
     }
 
-    protected void showSuccess(String message) {
+    public void showSuccess(String message) {
         successMessage.set(message);
     }
 
-    protected void showInfo(String message) {
+    public void showInfo(String message) {
         infoMessage.set(message);
     }
 
@@ -35,7 +35,7 @@ public abstract class BaseViewModel {
         infoMessage.set(null);
     }
 
-    protected <R> R uncoverResult(Result<R> result) {
+    public <R> R uncoverResult(Result<R> result) {
         if (!result.isSuccess()) {
             showError(result.getErrorMessage());
             return null; // TODO точно null возвращать

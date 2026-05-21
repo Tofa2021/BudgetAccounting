@@ -15,18 +15,18 @@ public class HeaderView extends BaseView<HeaderViewModel> {
     private Button profileButton;
 
     @Override
-    protected void onViewModelSet() {
-        userNameLabel.textProperty().bind(viewModel.getUsername());
-        profileButton.disableProperty().bind(viewModel.getProfileButtonDisabled());
-        currencyAmountComboBox.setItems(viewModel.getCurrencyAmounts());
-        viewModel.getSelectedCurrencyAmount().addListener((observable, oldValue, newValue) -> {
+    public void onViewModelSet() {
+        userNameLabel.textProperty().bind(getViewModel().getUsername());
+        profileButton.disableProperty().bind(getViewModel().getProfileButtonDisabled());
+        currencyAmountComboBox.setItems(getViewModel().getCurrencyAmounts());
+        getViewModel().getSelectedCurrencyAmount().addListener((observable, oldValue, newValue) -> {
             currencyAmountComboBox.valueProperty().set(newValue);
             currencyAmountComboBox.getParent().requestLayout();
         });
-        currencyAmountComboBox.visibleProperty().bind(viewModel.getCurrencyAmountComboBoxVisible());
+        currencyAmountComboBox.visibleProperty().bind(getViewModel().getCurrencyAmountComboBoxVisible());
     }
 
     public void handleProfileButton() {
-        viewModel.logout();
+        getViewModel().logout();
     }
 }

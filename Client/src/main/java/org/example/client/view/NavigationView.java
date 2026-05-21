@@ -23,14 +23,14 @@ public class NavigationView extends BaseView<NavigationViewModel> {
     private Button settingsButton;
 
     @Override
-    protected void onViewModelSet() {
-        viewModel.getCurrentScreen().addListener((obs, oldScreen, newScreen) -> {
+    public void onViewModelSet() {
+        getViewModel().getCurrentScreen().addListener((obs, oldScreen, newScreen) -> {
             if (newScreen != null) {
                 updateButtonActiveState(newScreen);
             }
         });
 
-        updateButtonActiveState(viewModel.getCurrentScreen().get());
+        updateButtonActiveState(getViewModel().getCurrentScreen().get());
     }
 
     private void updateButtonActiveState(Screen activeScreen) {
@@ -67,26 +67,26 @@ public class NavigationView extends BaseView<NavigationViewModel> {
     }
 
     public void handleMainButton() {
-        viewModel.navigateTo(Screen.MAIN);
+        getViewModel().navigateTo(Screen.MAIN);
     }
 
     public void handleOperationButton() {
-        viewModel.navigateTo(Screen.OPERATIONS);
+        getViewModel().navigateTo(Screen.OPERATIONS);
     }
 
     public void handleAccountButton() {
-        viewModel.navigateTo(Screen.ACCOUNTS);
+        getViewModel().navigateTo(Screen.ACCOUNTS);
     }
 
     public void handleGraphicsButton() {
-        viewModel.navigateTo(Screen.GRAPHICS);
+        getViewModel().navigateTo(Screen.GRAPHICS);
     }
 
     public void handleHouseholdButton() {
-        viewModel.navigateTo(Screen.HOUSEHOLDS);
+        getViewModel().navigateTo(Screen.HOUSEHOLDS);
     }
 
     public void handleSettingsButton() {
-        viewModel.navigateTo(Screen.SETTINGS);
+        getViewModel().navigateTo(Screen.SETTINGS);
     }
 }
