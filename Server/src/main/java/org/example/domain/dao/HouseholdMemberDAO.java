@@ -16,5 +16,5 @@ public interface HouseholdMemberDAO extends DAO<HouseholdMember, Long> {
 
     Optional<HouseholdMemberRole> findRoleByHouseholdIdAndUserId(Long householdId, Long userId);
 
-    List<HouseholdMember> getAllByHouseholdId(Long householdId);
+    List<HouseholdMember> getAllByHouseholdIdWithRelations(Long householdId);
 }

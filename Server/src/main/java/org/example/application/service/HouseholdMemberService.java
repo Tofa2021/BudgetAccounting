@@ -118,7 +118,7 @@ public class HouseholdMemberService {
         return persistenceManager.executeReadOnly(() -> {
             householdPermissionChecker.checkMembership(householdId, userId);
 
-            List<HouseholdMember> householdMembers = householdMemberDAO.getAllByHouseholdId(householdId);
+            List<HouseholdMember> householdMembers = householdMemberDAO.getAllByHouseholdIdWithRelations(householdId);
             log.info("Household members gotten householdId = {} count = {}", householdId, householdMembers.size());
             return householdMembers;
         });

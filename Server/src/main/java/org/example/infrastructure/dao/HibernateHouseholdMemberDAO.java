@@ -59,11 +59,16 @@ public class HibernateHouseholdMemberDAO extends HibernateDAO<HouseholdMember, L
     }
 
     @Override
-    public List<HouseholdMember> getAllByHouseholdId(Long householdId) {
-        return HqlQueryBuilder.builder(HouseholdMember.class)
-                .select()
-                .where("household.id", "=", householdId)
-                .build(getCurrentSession())
-                .list();
+    public List<HouseholdMember> getAllByHouseholdIdWithRelations(Long householdId) {
+        String hql = "SELECT DISTINCT hm FROM HouseholdMember hm " +
+                "LEFT JOIN FETCH hm.user " +
+                "LEFT JOIN FETCH hm.household " +
+                "LEFT JOIN FETCH hm.accountMembers " +
+                "WHERE hm.household.id = :householdId";
+
+        return getCurrentSession()
+                .createQuery(hql, HouseholdMember.class)
+                .setParameter("householdId", householdId)
+                .getResultList();
     }
 }
