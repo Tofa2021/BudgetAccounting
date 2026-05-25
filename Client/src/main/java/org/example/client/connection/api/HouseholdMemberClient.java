@@ -5,6 +5,7 @@ import org.example.client.connection.ServerInteractionManager;
 import org.example.dto.HouseholdMemberDTO;
 import org.example.request.RequestAction;
 
+import java.util.List;
 import java.util.Map;
 
 public class HouseholdMemberClient extends BaseClient {
@@ -40,7 +41,15 @@ public class HouseholdMemberClient extends BaseClient {
                 RequestAction.DELETE_HOUSEHOLD_MEMBER,
                 Map.of(
                         "id", id
+                )
+        );
+    }
 
+    public Result<List<HouseholdMemberDTO>> getAllByHouseholdId(Long householdId) {
+        return sendRequest(
+                RequestAction.GET_HOUSEHOLD_MEMBERS,
+                Map.of(
+                        "householdId", householdId
                 )
         );
     }

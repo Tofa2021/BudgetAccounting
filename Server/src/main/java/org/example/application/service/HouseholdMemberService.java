@@ -16,6 +16,7 @@ import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.domain.model.User;
 
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -108,6 +109,18 @@ public class HouseholdMemberService {
 
             householdMemberDAO.delete(member);
             log.info("Household member deleted with id = {}", id);
+        });
+    }
+
+    public List<HouseholdMember> getAllByHouseholdId(Long householdId, Long userId) {
+        log.debug("Getting all household members with householdId = {}", householdId);
+
+        return persistenceManager.executeReadOnly(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
+            List<HouseholdMember> householdMembers = householdMemberDAO.getAllByHouseholdId(householdId);
+            log.info("Household members gotten householdId = {} count = {}", householdId, householdMembers.size());
+            return householdMembers;
         });
     }
 

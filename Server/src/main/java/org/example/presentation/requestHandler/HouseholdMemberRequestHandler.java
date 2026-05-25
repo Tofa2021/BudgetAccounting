@@ -8,6 +8,8 @@ import org.example.request.Request;
 import org.example.request.RequestAction;
 import org.example.response.Response;
 
+import java.util.List;
+
 public class HouseholdMemberRequestHandler extends AuthorizedRequestHandler {
     private final DTOMapper dtoMapper;
     private final HouseholdMemberService householdMemberService;
@@ -16,7 +18,8 @@ public class HouseholdMemberRequestHandler extends AuthorizedRequestHandler {
         super(
                 RequestAction.CREATE_HOUSEHOLD_MEMBER,
                 RequestAction.UPDATE_HOUSEHOLD_MEMBER_ROLE,
-                RequestAction.DELETE_HOUSEHOLD_MEMBER
+                RequestAction.DELETE_HOUSEHOLD_MEMBER,
+                RequestAction.GET_HOUSEHOLD_MEMBERS
         );
         this.dtoMapper = dtoMapper;
         this.householdMemberService = householdMemberService;
@@ -47,6 +50,13 @@ public class HouseholdMemberRequestHandler extends AuthorizedRequestHandler {
 
                 householdMemberService.delete(id, userId);
                 yield Response.noContent();
+            }
+
+            case GET_HOUSEHOLD_MEMBERS -> {
+                Long householdId = request.getParam("householdId");
+
+                List<HouseholdMember> members = householdMemberService.getAllByHouseholdId(householdId, userId);
+                yield Response.success(dtoMapper.toHouseholdMemberDTOs(members));
             }
 
             default -> throw new IllegalArgumentException("Cannot handle request with Action = " + request.action());

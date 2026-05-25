@@ -5,6 +5,7 @@ import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
+import java.util.List;
 import java.util.Optional;
 
 public class HibernateHouseholdMemberDAO extends HibernateDAO<HouseholdMember, Long> implements HouseholdMemberDAO {
@@ -55,5 +56,14 @@ public class HibernateHouseholdMemberDAO extends HibernateDAO<HouseholdMember, L
                 .setParameter("householdId", householdId)
                 .setParameter("userId", userId)
                 .uniqueResultOptional();
+    }
+
+    @Override
+    public List<HouseholdMember> getAllByHouseholdId(Long householdId) {
+        return HqlQueryBuilder.builder(HouseholdMember.class)
+                .select()
+                .where("household.id", "=", householdId)
+                .build(getCurrentSession())
+                .list();
     }
 }

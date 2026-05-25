@@ -3,6 +3,7 @@ package org.example.domain.dao;
 import org.example.domain.model.HouseholdMember;
 import org.example.domain.model.HouseholdMemberRole;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface HouseholdMemberDAO extends DAO<HouseholdMember, Long> {
@@ -14,4 +15,6 @@ public interface HouseholdMemberDAO extends DAO<HouseholdMember, Long> {
     long countByHouseholdIdAndRole(Long householdId, HouseholdMemberRole role);
 
     Optional<HouseholdMemberRole> findRoleByHouseholdIdAndUserId(Long householdId, Long userId);
+
+    List<HouseholdMember> getAllByHouseholdId(Long householdId);
 }
