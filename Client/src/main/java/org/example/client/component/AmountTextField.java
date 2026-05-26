@@ -5,6 +5,7 @@ import javafx.beans.property.*;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
 import lombok.Getter;
+import org.example.client.Utils;
 
 public class AmountTextField extends TextField {
     private static final String AMOUNT_PATTERN = "\\d*[\\.\\,]?\\d{0,2}";
@@ -39,6 +40,8 @@ public class AmountTextField extends TextField {
         textProperty().addListener((obs, oldValue, newValue) -> {
             handleInput(oldValue, newValue);
         });
+
+
     }
 
     private void handleInput(String oldValue, String newValue) {
@@ -106,7 +109,7 @@ public class AmountTextField extends TextField {
 
     public void setAmount(double value) {
         if (value > 0) {
-            setText(String.valueOf(value));
+            setText(Utils.convertDoubleToString(value));
             amount.set(value);
             clearErrorStyle();
             errorMessage.set(null);

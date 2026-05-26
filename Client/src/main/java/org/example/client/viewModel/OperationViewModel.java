@@ -319,4 +319,32 @@ public class OperationViewModel extends BaseViewModel {
 
         handleFilter();
     }
+
+    public double handleMinAmountAction() {
+        boolean isMinBigger = false;
+        double min = filterMinAmount.get();
+        double max = filterMaxAmount.get();
+
+        if (max != 0. && min > max) {
+            isMinBigger = true;
+            filterMinAmount.set(max);
+        }
+
+        handleFilter();
+        return isMinBigger ? max : min;
+    }
+
+    public double handleMaxAmountAction() {
+        boolean isMaxSmaller = false;
+        double min = filterMinAmount.get();
+        double max = filterMaxAmount.get();
+
+        if (max < min) {
+            isMaxSmaller = true;
+            filterMaxAmount.set(min);
+        }
+
+        handleFilter();
+        return isMaxSmaller ? min : max;
+    }
 }

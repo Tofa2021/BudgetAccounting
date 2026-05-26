@@ -48,4 +48,14 @@ public class Utils {
         DecimalFormat formatter = new DecimalFormat("# ###", symbols);
         return formatter.format(value);
     }
+
+    public static String convertDoubleToString(double value) {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator(' ');
+
+        DecimalFormat formatter = new DecimalFormat("#,##0.00", symbols);
+
+        return formatter.format(value);
+    }
 }

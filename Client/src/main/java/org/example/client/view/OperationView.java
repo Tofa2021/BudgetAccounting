@@ -154,7 +154,18 @@ public class OperationView extends BaseView<OperationViewModel> {
         operationTypeComboBox.itemsProperty().bind(getViewModel().getOperationTypes());
 
         minAmountTextField.amountProperty().bindBidirectional(getViewModel().getFilterMinAmount());
+        minAmountTextField.setOnAction(event -> {
+            minAmountTextField.getParent().requestFocus();
+            double value = getViewModel().handleMinAmountAction();
+            minAmountTextField.setAmount(value);
+        });
+
         maxAmountTextField.amountProperty().bindBidirectional(getViewModel().getFilterMaxAmount());
+        maxAmountTextField.setOnAction(event -> {
+            maxAmountTextField.getParent().requestFocus();
+            double value = getViewModel().handleMaxAmountAction();
+            maxAmountTextField.setAmount(value);
+        });
     }
 
     private void updateIncomes() {
