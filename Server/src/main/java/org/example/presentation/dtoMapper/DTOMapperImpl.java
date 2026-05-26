@@ -31,7 +31,8 @@ public class DTOMapperImpl implements DTOMapper {
                 operation.getCategory().getId(),
                 operation.getCategory().getName(),
                 operation.getCategory().getType().name(),
-                operation.getAccount().getCurrency()
+                operation.getAccount().getCurrency(),
+                operation.getAccountMember().getHouseholdMember().getId()
         );
     }
 
@@ -85,7 +86,8 @@ public class DTOMapperImpl implements DTOMapper {
                 member.getUser().getId(),
                 member.getHousehold().getId(),
                 convertToIdList(member.getAccountMembers()),
-                member.getRole().name()
+                member.getRole().name(),
+                member.getUser().getUsername()
         );
     }
 

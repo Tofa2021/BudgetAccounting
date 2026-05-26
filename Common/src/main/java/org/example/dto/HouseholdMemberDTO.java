@@ -14,4 +14,5 @@ public class HouseholdMemberDTO implements DTO, Serializable {
     private Long householdId;
     private List<Long> accountMemberIds;
     private String role;
+    private String username;
 }

@@ -1,12 +1,12 @@
 package org.example.client.view;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
+import org.example.client.component.AmountTextField;
 import org.example.client.viewModel.CreatingOperationViewModel;
 import org.example.dto.AccountDTO;
 import org.example.dto.CategoryDTO;
@@ -22,7 +22,7 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
     @FXML
     public ComboBox<AccountDTO> accountComboBox;
     @FXML
-    public TextField amountTextField;
+    public AmountTextField amountTextField;
     @FXML
     public TextField descriptionTextField;
     @FXML
@@ -90,33 +90,7 @@ public class CreatingOperationView extends BaseView<CreatingOperationViewModel> 
     }
 
     private void setupAmountField() {
-        amountTextField.textProperty().addListener((obs, old, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                if (newValue.matches("\\d*[\\.\\,]?\\d{0,2}")) {
-                    String normalizedValue = newValue.replace(",", ".");
-                    try {
-                        double amount = Double.parseDouble(normalizedValue);
-                        if (amount > 0) {
-                            getViewModel().getAmount().set(amount);
-                            amountTextField.setStyle("");
-                        } else {
-                            getViewModel().getAmount().set(0);
-                            amountTextField.setStyle("-fx-border-color: #f44336;");
-                        }
-                    } catch (NumberFormatException e) {
-                        getViewModel().getAmount().set(0);
-                        amountTextField.setStyle("-fx-border-color: #f44336;");
-                    }
-                } else if (!newValue.isEmpty()) {
-                    Platform.runLater(() -> amountTextField.setText(old));
-                }
-            } else {
-                getViewModel().getAmount().set(0);
-                if (newValue != null && newValue.isEmpty()) {
-                    amountTextField.setStyle("");
-                }
-            }
-        });
+        amountTextField.amountProperty().bindBidirectional(getViewModel().getAmount());
 
         amountTextField.textProperty().bindBidirectional(getViewModel().getAmountText());
     }

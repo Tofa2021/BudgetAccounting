@@ -20,9 +20,9 @@ public class Utils {
 
         DecimalFormat formatter = new DecimalFormat("#,###.00", symbols);
 
-        return formatter.format(amount.abs());
+        return formatter.format(amount);
     }
-    
+
     public static String convertBigDecimalToString(BigDecimal amount, String type) {
         String converted = convertBigDecimalToString(amount);
 

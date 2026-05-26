@@ -82,6 +82,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>11.1.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.example</groupId>
             <artifactId>Common</artifactId>
             <version>1.0-SNAPSHOT</version>

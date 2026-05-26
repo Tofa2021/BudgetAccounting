@@ -20,7 +20,7 @@ public class ViewModelFactory {
     }
 
     public OperationViewModel createOperationViewModel() {
-        return new OperationViewModel(screenLoader, clientAPIFactory.createOperationClient(), clientAPIFactory.createHouseholdClient(), sessionContext);
+        return new OperationViewModel(screenLoader, clientAPIFactory.createOperationClient(), clientAPIFactory.createHouseholdClient(), clientAPIFactory.createHouseholdMemberClient(), clientAPIFactory.createAccount(), clientAPIFactory.createCategory(), sessionContext);
     }
 
     public NavigationViewModel createNavigationViewModel() {

@@ -10,8 +10,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import org.example.client.Utils;
+import org.example.client.component.AmountTextField;
 import org.example.client.viewModel.OperationViewModel;
+import org.example.dto.AccountDTO;
+import org.example.dto.CategoryDTO;
+import org.example.dto.HouseholdMemberDTO;
 import org.example.dto.OperationDTO;
 
 import java.math.BigDecimal;
@@ -36,6 +41,24 @@ public class OperationView extends BaseView<OperationViewModel> {
     private Button addButton;
     @FXML
     private TextField searchTextField;
+    @FXML
+    private Button toggleFilterButton;
+    @FXML
+    private Button closeFilterButton;
+    @FXML
+    private VBox filterPanel;
+    @FXML
+    private AmountTextField minAmountTextField;
+    @FXML
+    private AmountTextField maxAmountTextField;
+    @FXML
+    private ComboBox<CategoryDTO> categoryComboBox;
+    @FXML
+    private ComboBox<AccountDTO> accountComboBox;
+    @FXML
+    private ComboBox<HouseholdMemberDTO> creatorComboBox;
+    @FXML
+    private ComboBox<String> operationTypeComboBox;
 
     @Override
     public void onViewModelSet() {
@@ -70,6 +93,8 @@ public class OperationView extends BaseView<OperationViewModel> {
 
         getViewModel().getSearchText().bindBidirectional(searchTextField.textProperty());
 
+        filterPanel.visibleProperty().bind(getViewModel().getFilterPanelVisible());
+
         searchTextField.setOnAction(event -> {
             getViewModel().searchOperations();
         });
@@ -79,6 +104,57 @@ public class OperationView extends BaseView<OperationViewModel> {
                 getViewModel().searchOperations();
             }
         });
+
+        categoryComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(CategoryDTO categoryDTO) {
+                if (categoryDTO == null) return "Все";
+                return categoryDTO.getName();
+            }
+
+            @Override
+            public CategoryDTO fromString(String string) {
+                return null;
+            }
+        });
+        categoryComboBox.valueProperty().bindBidirectional(getViewModel().getFilterCategory());
+        categoryComboBox.itemsProperty().bind(getViewModel().getCategories());
+
+        accountComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(AccountDTO accountDTO) {
+                if (accountDTO == null) return "Все";
+                return accountDTO.getName();
+            }
+
+            @Override
+            public AccountDTO fromString(String string) {
+                return null;
+            }
+        });
+        accountComboBox.valueProperty().bindBidirectional(getViewModel().getFilterAccount());
+        accountComboBox.itemsProperty().bind(getViewModel().getAccounts());
+
+        creatorComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(HouseholdMemberDTO memberDTO) {
+                if (memberDTO == null) return "";
+                return memberDTO.getUsername();
+            }
+
+            @Override
+            public HouseholdMemberDTO fromString(String string) {
+                return null;
+            }
+        });
+        creatorComboBox.valueProperty().bindBidirectional(getViewModel().getFilterCreator());
+        creatorComboBox.itemsProperty().bind(getViewModel().getMembers());
+
+        operationTypeComboBox.valueProperty().bindBidirectional(getViewModel().getFilterOperationType());
+        operationTypeComboBox.itemsProperty().bind(getViewModel().getOperationTypes());
+
+        minAmountTextField.amountProperty().bindBidirectional(getViewModel().getFilterMinAmount());
+        maxAmountTextField.amountProperty().bindBidirectional(getViewModel().getFilterMaxAmount());
     }
 
     private void updateIncomes() {
@@ -167,6 +243,16 @@ public class OperationView extends BaseView<OperationViewModel> {
         getViewModel().handleCreateOperationButton();
     }
 
+    @FXML
+    private void handleFilterButton() {
+        getViewModel().handleToggleFilterButton();
+    }
+
+    @FXML
+    private void handleCloseFilterButton() {
+        getViewModel().handleCloseFilterButton();
+    }
+
     private void showEditDialog(OperationDTO operation) {
         Dialog<OperationDTO> dialog = new Dialog<>();
         dialog.setTitle("Редактирование операции");
@@ -253,7 +339,8 @@ public class OperationView extends BaseView<OperationViewModel> {
                             operation.getCategoryId(),
                             category.isEmpty() ? null : category,
                             type,
-                            operation.getCurrency()
+                            operation.getCurrency(),
+                            operation.getHouseholdMemberId()
                     );
                 } catch (Exception e) {
                     Platform.runLater(() -> showError("Ошибка ввода данных: " + e.getMessage()));
@@ -290,6 +377,16 @@ public class OperationView extends BaseView<OperationViewModel> {
                 showSuccess("Операция удалена");
             }
         });
+    }
+
+    @FXML
+    private void handleFilter() {
+        getViewModel().handleFilter();
+    }
+
+    @FXML
+    private void handleFilterOperationType() {
+        getViewModel().handleFilterOperationType();
     }
 
     private static class LocalDateTimeHolder {

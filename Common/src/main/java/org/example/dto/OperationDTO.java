@@ -23,6 +23,7 @@ public class OperationDTO implements DTO, Serializable {
     private String categoryName;
     private String type;
     private Currency currency;
+    private Long HouseholdMemberId;
 }
 
 

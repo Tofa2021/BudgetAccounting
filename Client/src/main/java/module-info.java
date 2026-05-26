@@ -12,9 +12,13 @@ module org.example.client {
     requires java.desktop;
     requires jdk.jshell;
     requires jdk.sctp;
+    requires org.controlsfx.controls;
 
     exports org.example.client;
     opens org.example.client to javafx.fxml;
+
+    exports org.example.client.component;
+    opens org.example.client.component to javafx.fxml;
 
     exports org.example.client.view;
     opens org.example.client.view to javafx.fxml;

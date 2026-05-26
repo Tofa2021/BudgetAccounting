@@ -392,3 +392,9 @@ Error-color: #F42D00
     -fx-font-weight: bold;
     -fx-text-fill: #5F5F5F;
 }
+
+.filter-panel {
+    -fx-border-color: #5F5F5F;
+    -fx-border-radius: 10;
+    -fx-background-color: #F4F4F4;
+}

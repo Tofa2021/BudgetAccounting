@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
-
+<?import org.example.client.component.AmountTextField?>
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="1051.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.CreatingOperationView">
    <children>
@@ -48,7 +48,7 @@
                                           <SVGPath content="M10.5 6.5H7.2L9.55 8.85L8.85 9.55L6.5 7.2V10.5H5.5V7.15L3.15 9.5L2.45 8.8L4.7 6.5H1.5V5.5H4.8L2.45 3.15L3.15 2.45L5.5 4.8V1.5H6.5V4.7L8.8 2.4L9.5 3.15L7.15 5.5H10.5V6.5Z" styleClass="required" />
                                        </children>
                                     </HBox>
-                                    <TextField fx:id="amountTextField" promptText="Введите сумму" />
+                                    <AmountTextField fx:id="amountTextField" promptText="Введите сумму" />
                                  </children>
                               </VBox>
                               <VBox>
