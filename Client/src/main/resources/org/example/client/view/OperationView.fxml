@@ -114,7 +114,7 @@
                         </VBox>
                     </children>
                 </HBox>
-                <ListView fx:id="operationsList" prefHeight="547.0" prefWidth="893.0" styleClass="operations-list" />
+                <ListView fx:id="operationsList" prefHeight="547.0" prefWidth="893.0" styleClass="transparent-list-view" />
             </children>
             <padding>
                 <Insets bottom="20.0" left="100.0" right="100.0" top="20.0" />

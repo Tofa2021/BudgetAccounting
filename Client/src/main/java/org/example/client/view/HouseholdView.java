@@ -57,7 +57,7 @@ public class HouseholdView extends BaseView<HouseholdViewModel> {
         public HouseholdCell() {
             container.setPadding(new Insets(12, 15, 12, 15));
             container.setSpacing(5);
-            container.getStyleClass().add("operation-card"); // переиспользуем стиль карточки
+            container.getStyleClass().add("operation-card");
 
             nameLabel.getStyleClass().add("h4");
             statsLabel.getStyleClass().add("operation-category");

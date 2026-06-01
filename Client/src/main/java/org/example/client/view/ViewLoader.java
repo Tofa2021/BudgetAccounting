@@ -30,6 +30,7 @@ public class ViewLoader {
         register(CreatingOperationView.class, viewModelFactory::createCreatingOperationViewModel);
         register(HouseholdView.class, viewModelFactory::createHouseholdViewModel);
         register(CreatingHouseholdView.class, viewModelFactory::createCreatingHouseholdViewModel);
+        register(AccountView.class, viewModelFactory::createAccountViewModel);
     }
 
     private <V extends BaseView<VM>, VM extends BaseViewModel> void register(

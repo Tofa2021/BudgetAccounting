@@ -53,4 +53,8 @@ public class ViewModelFactory {
     public CreatingHouseholdViewModel createCreatingHouseholdViewModel() {
         return new CreatingHouseholdViewModel(screenLoader, clientAPIFactory.createHouseholdClient());
     }
+
+    public AccountViewModel createAccountViewModel() {
+        return new AccountViewModel(screenLoader, sessionContext, clientAPIFactory.createAccount());
+    }
 }

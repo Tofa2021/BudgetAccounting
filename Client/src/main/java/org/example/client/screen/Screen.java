@@ -10,7 +10,7 @@ public enum Screen {
     REGISTRATION("/org/example/client/view/RegistrationView.fxml"),
     MAIN("/org/example/client/view/OperationView.fxml"),
     HOUSEHOLDS("/org/example/client/view/HouseholdView.fxml"),
-    ACCOUNTS("/org/example/client/view/AccountsView.fxml"),
+    ACCOUNTS("/org/example/client/view/AccountView.fxml"),
     OPERATIONS("/org/example/client/view/OperationView.fxml"),
     CREATING_OPERATION("/org/example/client/view/CreatingOperationView.fxml"),
     GRAPHICS("/org/example/client/view/GraphicsView.fxml"),
@@ -19,6 +19,7 @@ public enum Screen {
     REPORTS("/org/example/client/view/ReportsView.fxml"),
     SETTINGS("/org/example/client/view/SettingsView.fxml"),
     CREATING_HOUSEHOLD("/org/example/client/view/CreatingHouseholdView.fxml"),
+    CREATING_ACCOUNT("/org/example/client/view/CreatingAccountView.fxml"),
     ;
 
     private final String fxmlPath;

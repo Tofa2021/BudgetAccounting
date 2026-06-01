@@ -206,17 +206,6 @@ Error-color: #F42D00
     -fx-background-color: #f8f9fa;
 }
 
-.operations-list {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.operations-list .list-cell {
-    -fx-background-color: transparent;
-    -fx-padding: 5 0;
-}
-
 .operation-card {
     -fx-background-color: white;
     -fx-background-radius: 10;
@@ -397,4 +386,15 @@ Error-color: #F42D00
     -fx-border-color: #5F5F5F;
     -fx-border-radius: 10;
     -fx-background-color: #F4F4F4;
+}
+
+.transparent-list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.transparent-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 5 0;
 }
