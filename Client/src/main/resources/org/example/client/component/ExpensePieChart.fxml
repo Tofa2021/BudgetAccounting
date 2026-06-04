@@ -19,7 +19,7 @@
         </HBox>
       <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <children>
-              <PieChart fx:id="pieChart" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+              <PieChart fx:id="pieChart" legendVisible="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
             <Label fx:id="placeholder" alignment="CENTER" contentDisplay="CENTER" layoutX="181.0" layoutY="183.0" styleClass="h2" text="Нет данных" />
          </children>
       </Pane>

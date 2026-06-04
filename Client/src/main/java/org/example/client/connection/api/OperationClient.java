@@ -141,4 +141,14 @@ public class OperationClient extends BaseClient {
                 )
         );
     }
+
+    public Result<List<OperationDTO>> getIncomes(Long householdId, Instant dateFrom) {
+        return sendRequest(
+                RequestAction.GET_INCOMES,
+                Map.of(
+                        "householdId", householdId,
+                        "dateFrom", dateFrom
+                )
+        );
+    }
 }

@@ -19,19 +19,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class ExpensePieChartViewModel extends BaseViewModel {
+public class IncomePieChartViewModel extends BaseViewModel {
     private final SessionContext sessionContext;
     private final OperationClient operationClient;
     @Getter
-    private final ObservableList<PieChart.Data> expensePieData = FXCollections.observableArrayList();
+    private final ObservableList<PieChart.Data> incomePieData = FXCollections.observableArrayList();
     @Getter
     private final ObjectProperty<Period> currentPeriod = new SimpleObjectProperty<>();
-    private List<OperationDTO> allExpenses;
+    private List<OperationDTO> allIncomes;
 
     @Override
     public void onViewShown() {
-        refreshAllExpenses();
-        expensePieData.setAll(convertAllToPieData(allExpenses));
+        refreshAllIncomes();
+        incomePieData.setAll(convertAllToPieData(allIncomes));
 
         currentPeriod.addListener((obs, old, period) -> {
             if (period != null) {
@@ -58,17 +58,17 @@ public class ExpensePieChartViewModel extends BaseViewModel {
     }
 
     private void setExpensePieData(List<OperationDTO> operations) {
-        expensePieData.setAll(convertAllToPieData(operations));
+        incomePieData.setAll(convertAllToPieData(operations));
     }
 
     private void refreshDataForPeriod(Period period) {
         if (period == Period.ALL) {
-            setExpensePieData(allExpenses);
+            setExpensePieData(allIncomes);
             return;
         }
 
         Instant dateFrom = calculateDateFrom(period);
-        List<OperationDTO> operations = allExpenses.stream()
+        List<OperationDTO> operations = allIncomes.stream()
                 .filter(o -> o.getDateTime().isAfter(dateFrom))
                 .toList();
         setExpensePieData(operations);
@@ -92,19 +92,19 @@ public class ExpensePieChartViewModel extends BaseViewModel {
         };
     }
 
-    private void refreshAllExpenses() {
+    private void refreshAllIncomes() {
         HouseholdDTO currentHousehold = sessionContext.getCurrentHousehold().get();
         if (currentHousehold == null) {
             showError("Нет домохозяйства");
             return;
         }
 
-        var result = operationClient.getAllExpenses(currentHousehold.getId());
+        var result = operationClient.getIncomes(currentHousehold.getId(), Instant.now().minus(7, ChronoUnit.DAYS));
         if (!result.isSuccess()) {
             showError(result.getErrorMessage());
             return;
         }
 
-        allExpenses = result.getData();
+        allIncomes = result.getData();
     }
 }

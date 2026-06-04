@@ -26,4 +26,8 @@ public class GraphicsView extends BaseView<GraphicsViewModel> {
     public void setExpensePieChart(Parent chartParent) {
         expensePieChartParent.getChildren().add(chartParent);
     }
+
+    public void setIncomePieChart(Parent chartParent) {
+        incomePieChartParent.getChildren().add(chartParent);
+    }
 }

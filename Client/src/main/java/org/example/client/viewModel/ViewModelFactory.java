@@ -73,4 +73,8 @@ public class ViewModelFactory {
     public PeriodSelectorViewModel createPeriodSelectorViewModel() {
         return new PeriodSelectorViewModel();
     }
+
+    public IncomePieChartViewModel createIncomePieChartViewModel() {
+        return new IncomePieChartViewModel(sessionContext, clientAPIFactory.createOperationClient());
+    }
 }

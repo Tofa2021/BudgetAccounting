@@ -35,25 +35,49 @@ public class ViewLoader {
         register(GraphicsView.class, viewModelFactory::createGraphicsViewModel);
         register(ExpensePieChartView.class, viewModelFactory::createExpensePieChartViewModel);
         register(PeriodSelectorView.class, viewModelFactory::createPeriodSelectorViewModel);
+        register(IncomePieChartView.class, viewModelFactory::createIncomePieChartViewModel);
     }
 
     public Pair<Parent, GraphicsView> loadBoundGraphicsViewModel() {
-        Pair<Parent, PeriodSelectorView> selectorPair = loadBoundView("/org/example/client/component/PeriodSelector.fxml");
-        PeriodSelectorView periodSelector = selectorPair.getSecond();
-        periodSelector.show();
+        var expensePieChartPair = loadBoundExpensePieChart();
+        expensePieChartPair.getSecond().show();
 
-        Pair<Parent, ExpensePieChartView> pieChartPair = loadBoundView("/org/example/client/component/ExpensePieChart.fxml");
-        ExpensePieChartView pieChart = pieChartPair.getSecond();
-        pieChart.show();
-
-        pieChart.setPeriodSelector(periodSelector, selectorPair.getFirst());
+        var incomePieChartPair = loadBoundIncomePieChart();
+        incomePieChartPair.getSecond().show();
 
         Pair<Parent, GraphicsView> graphicsViewPair = loadBoundView("/org/example/client/view/GraphicsView.fxml");
         GraphicsView graphicsView = graphicsViewPair.getSecond();
 
-        graphicsView.setExpensePieChart(pieChartPair.getFirst());
+        graphicsView.setExpensePieChart(expensePieChartPair.getFirst());
+        graphicsView.setIncomePieChart(incomePieChartPair.getFirst());
 
         return new Pair<>(graphicsViewPair.getFirst(), graphicsView);
+    }
+
+    private Pair<Parent, IncomePieChartView> loadBoundIncomePieChart() {
+        var selectorPair = loadBoundPeriodSelector();
+        selectorPair.getSecond().show();
+
+        Pair<Parent, IncomePieChartView> pieChartPair = loadBoundView("/org/example/client/component/IncomePieChart.fxml");
+        IncomePieChartView pieChart = pieChartPair.getSecond();
+
+        pieChart.setPeriodSelector(selectorPair.getSecond(), selectorPair.getFirst());
+        return pieChartPair;
+    }
+
+    private Pair<Parent, ExpensePieChartView> loadBoundExpensePieChart() {
+        var selectorPair = loadBoundPeriodSelector();
+        selectorPair.getSecond().show();
+
+        Pair<Parent, ExpensePieChartView> pieChartPair = loadBoundView("/org/example/client/component/ExpensePieChart.fxml");
+        ExpensePieChartView pieChart = pieChartPair.getSecond();
+
+        pieChart.setPeriodSelector(selectorPair.getSecond(), selectorPair.getFirst());
+        return pieChartPair;
+    }
+
+    private Pair<Parent, PeriodSelectorView> loadBoundPeriodSelector() {
+        return loadBoundView("/org/example/client/component/PeriodSelector.fxml");
     }
 
     private <V extends BaseView<VM>, VM extends BaseViewModel> void register(

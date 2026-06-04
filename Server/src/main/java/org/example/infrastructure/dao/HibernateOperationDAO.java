@@ -113,7 +113,7 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
     }
 
     @Override
-    public List<Operation> getAllExpenseOperationWithRelations(Long householdId) {
+    public List<Operation> getAllOperationByTypeWithRelations(Long householdId, OperationType type) {
         String hql = """
                 SELECT DISTINCT o 
                 FROM Operation o 
@@ -125,7 +125,7 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
                 """;
 
         var query = getCurrentSession().createQuery(hql, Operation.class);
-        query.setParameter("categoryType", OperationType.EXPENSE);
+        query.setParameter("categoryType", type);
         query.setParameter("householdId", householdId);
 
         return query.list();

@@ -25,6 +25,7 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
                 RequestAction.GET_ACCOUNT_OPERATIONS,
                 RequestAction.GET_MY_OPERATIONS,
                 RequestAction.GET_EXPENSES,
+                RequestAction.GET_INCOMES,
                 RequestAction.UPDATE_OPERATION,
                 RequestAction.DELETE_OPERATION
         );
@@ -103,6 +104,13 @@ public class OperationRequestHandler extends AuthorizedRequestHandler {
                 Long householdId = request.getParam("householdId");
 
                 List<Operation> operations = operationService.getExpenses(householdId, userId);
+                yield Response.success(dtoMapper.toOperationDTOs(operations));
+            }
+
+            case GET_INCOMES -> {
+                Long householdId = request.getParam("householdId");
+
+                List<Operation> operations = operationService.getIncomes(householdId, userId);
                 yield Response.success(dtoMapper.toOperationDTOs(operations));
             }
 

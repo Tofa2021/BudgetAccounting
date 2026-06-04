@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="1075.0" prefWidth="1920.0" styleClass="background" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.client.view.GraphicsView">
     <children>
-        <VBox layoutX="-300.0" layoutY="-288.6666666666667" prefHeight="200.0" prefWidth="880.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+        <VBox layoutX="-300.0" layoutY="-288.6666666666667" prefHeight="200.0" prefWidth="1900.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
             <children>
                 <HBox spacing="20.0" VBox.vgrow="ALWAYS">
                     <children>

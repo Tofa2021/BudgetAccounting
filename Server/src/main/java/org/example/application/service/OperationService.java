@@ -403,7 +403,17 @@ public class OperationService {
         return persistenceManager.executeReadOnlyTransaction(() -> {
             householdPermissionChecker.checkMembership(householdId, userId);
 
-            return operationDAO.getAllExpenseOperationWithRelations(householdId);
+            return operationDAO.getAllOperationByTypeWithRelations(householdId, OperationType.EXPENSE);
+        });
+    }
+
+    public List<Operation> getIncomes(Long householdId, Long userId) {
+        log.debug("Getting income operations for householdId={}, userId={}", householdId, userId);
+
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
+            return operationDAO.getAllOperationByTypeWithRelations(householdId, OperationType.INCOME);
         });
     }
 }
