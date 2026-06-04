@@ -17,9 +17,9 @@ public enum Status implements Serializable {
     FORBIDDEN(403),
     NOT_FOUND(404),
     INVALID_TOKEN(408),
+    ALREADY_EXISTS(409),
 
     UNKNOWN_SERVER_ERROR(500),
-    ALREADY_EXISTS(500),
     CONNECTION_ERROR(501),
     ;
 

@@ -398,3 +398,8 @@ Error-color: #F42D00
     -fx-background-color: transparent;
     -fx-padding: 5 0;
 }
+
+.green-underline {
+    -fx-background-color: #F4F4F4;
+    -fx-effect: dropshadow(gaussian, #80D048, 0, 0, 0, 3);
+}

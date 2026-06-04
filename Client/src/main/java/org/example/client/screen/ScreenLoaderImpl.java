@@ -37,7 +37,13 @@ public class ScreenLoaderImpl implements ScreenLoader {
     }
 
     public void load(Screen screen) {
-        Pair<Parent, ? extends BaseView<?>> loaded = viewLoader.loadBoundView(screen.getFxmlPath());
+        Pair<Parent, ? extends BaseView<?>> loaded;
+        if (screen == Screen.GRAPHICS) {
+            loaded = viewLoader.loadBoundGraphicsViewModel();
+        } else {
+            loaded = viewLoader.loadBoundView(screen.getFxmlPath());
+        }
+
         Parent parent = loaded.getFirst();
         BaseView<?> view = loaded.getSecond();
 

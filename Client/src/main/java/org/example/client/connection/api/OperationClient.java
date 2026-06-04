@@ -74,6 +74,25 @@ public class OperationClient extends BaseClient {
         );
     }
 
+    public Result<List<OperationDTO>> getExpenses(Long householdId, Instant dateFrom) {
+        return sendRequest(
+                RequestAction.GET_EXPENSES,
+                Map.of(
+                        "householdId", householdId,
+                        "dateFrom", dateFrom
+                )
+        );
+    }
+
+    public Result<List<OperationDTO>> getAllExpenses(Long householdId) {
+        return sendRequest(
+                RequestAction.GET_EXPENSES,
+                Map.of(
+                        "householdId", householdId
+                )
+        );
+    }
+
     public Result<List<OperationDTO>> getHouseholdOperations(Long householdId) {
         return sendRequest(
                 RequestAction.GET_HOUSEHOLD_OPERATIONS,

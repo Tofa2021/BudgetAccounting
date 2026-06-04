@@ -3,6 +3,7 @@ package org.example.infrastructure.dao;
 import org.example.domain.dao.OperationDAO;
 import org.example.domain.dao.OperationFilter;
 import org.example.domain.model.Operation;
+import org.example.domain.model.OperationType;
 import org.example.infrastructure.transaction.HibernatePersistenceManager;
 
 import java.util.List;
@@ -109,5 +110,24 @@ public class HibernateOperationDAO extends HibernateDAO<Operation, Long> impleme
                 .orderByDesc("dateTime")
                 .build(getCurrentSession())
                 .list();
+    }
+
+    @Override
+    public List<Operation> getAllExpenseOperationWithRelations(Long householdId) {
+        String hql = """
+                SELECT DISTINCT o 
+                FROM Operation o 
+                JOIN FETCH o.account a
+                JOIN FETCH o.accountMember am
+                JOIN FETCH o.category c 
+                WHERE c.type = :categoryType
+                AND a.household.id = :householdId
+                """;
+
+        var query = getCurrentSession().createQuery(hql, Operation.class);
+        query.setParameter("categoryType", OperationType.EXPENSE);
+        query.setParameter("householdId", householdId);
+
+        return query.list();
     }
 }

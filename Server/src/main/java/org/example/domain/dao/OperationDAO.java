@@ -12,5 +12,7 @@ public interface OperationDAO extends DAO<Operation, Long> {
     List<Operation> getAllByHouseholdIdWithRelations(Long householdId);
 
     List<Operation> getAllByUserIdAndHouseholdIdWithRelations(Long userId, Long householdId);
+
+    List<Operation> getAllExpenseOperationWithRelations(Long householdId);
 }
 

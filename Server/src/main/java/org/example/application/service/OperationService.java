@@ -396,4 +396,14 @@ public class OperationService {
             log.info("Operation deleted with id = {}", id);
         });
     }
+
+    public List<Operation> getExpenses(Long householdId, Long userId) {
+        log.debug("Getting expense operations for householdId={}, userId={}", householdId, userId);
+
+        return persistenceManager.executeReadOnlyTransaction(() -> {
+            householdPermissionChecker.checkMembership(householdId, userId);
+
+            return operationDAO.getAllExpenseOperationWithRelations(householdId);
+        });
+    }
 }

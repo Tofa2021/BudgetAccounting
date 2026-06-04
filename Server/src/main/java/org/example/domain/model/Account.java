@@ -49,7 +49,7 @@ public class Account implements BaseModel, Serializable {
     public void decrease(BigDecimal amount) {
         BigDecimal result = this.amount.subtract(amount);
         if (result.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Amount cannot be negative");
+            throw new IllegalArgumentException("Final account amount cannot be negative");
         }
         this.amount = result;
     }

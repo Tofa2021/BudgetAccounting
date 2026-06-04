@@ -57,4 +57,20 @@ public class ViewModelFactory {
     public AccountViewModel createAccountViewModel() {
         return new AccountViewModel(screenLoader, sessionContext, clientAPIFactory.createAccount());
     }
+
+    public CreatingAccountViewModel createCreatingAccountViewModel() {
+        return new CreatingAccountViewModel(screenLoader, sessionContext, clientAPIFactory.createAccount());
+    }
+
+    public GraphicsViewModel createGraphicsViewModel() {
+        return new GraphicsViewModel();
+    }
+
+    public ExpensePieChartViewModel createExpensePieChartViewModel() {
+        return new ExpensePieChartViewModel(sessionContext, clientAPIFactory.createOperationClient());
+    }
+
+    public PeriodSelectorViewModel createPeriodSelectorViewModel() {
+        return new PeriodSelectorViewModel();
+    }
 }

@@ -31,6 +31,29 @@ public class ViewLoader {
         register(HouseholdView.class, viewModelFactory::createHouseholdViewModel);
         register(CreatingHouseholdView.class, viewModelFactory::createCreatingHouseholdViewModel);
         register(AccountView.class, viewModelFactory::createAccountViewModel);
+        register(CreatingAccountView.class, viewModelFactory::createCreatingAccountViewModel);
+        register(GraphicsView.class, viewModelFactory::createGraphicsViewModel);
+        register(ExpensePieChartView.class, viewModelFactory::createExpensePieChartViewModel);
+        register(PeriodSelectorView.class, viewModelFactory::createPeriodSelectorViewModel);
+    }
+
+    public Pair<Parent, GraphicsView> loadBoundGraphicsViewModel() {
+        Pair<Parent, PeriodSelectorView> selectorPair = loadBoundView("/org/example/client/component/PeriodSelector.fxml");
+        PeriodSelectorView periodSelector = selectorPair.getSecond();
+        periodSelector.show();
+
+        Pair<Parent, ExpensePieChartView> pieChartPair = loadBoundView("/org/example/client/component/ExpensePieChart.fxml");
+        ExpensePieChartView pieChart = pieChartPair.getSecond();
+        pieChart.show();
+
+        pieChart.setPeriodSelector(periodSelector, selectorPair.getFirst());
+
+        Pair<Parent, GraphicsView> graphicsViewPair = loadBoundView("/org/example/client/view/GraphicsView.fxml");
+        GraphicsView graphicsView = graphicsViewPair.getSecond();
+
+        graphicsView.setExpensePieChart(pieChartPair.getFirst());
+
+        return new Pair<>(graphicsViewPair.getFirst(), graphicsView);
     }
 
     private <V extends BaseView<VM>, VM extends BaseViewModel> void register(
