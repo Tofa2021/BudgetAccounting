@@ -77,4 +77,12 @@ public class ViewModelFactory {
     public IncomePieChartViewModel createIncomePieChartViewModel() {
         return new IncomePieChartViewModel(sessionContext, clientAPIFactory.createOperationClient());
     }
+
+    public BudgetLineChartViewModel createBudgetLineChartViewModel() {
+        return new BudgetLineChartViewModel(sessionContext, clientAPIFactory.createOperationClient());
+    }
+
+    public IncomeExpenseBarChartViewModel createIncomeExpenseBarChartViewModel() {
+        return new IncomeExpenseBarChartViewModel(sessionContext, clientAPIFactory.createOperationClient());
+    }
 }

@@ -36,6 +36,8 @@ public class ViewLoader {
         register(ExpensePieChartView.class, viewModelFactory::createExpensePieChartViewModel);
         register(PeriodSelectorView.class, viewModelFactory::createPeriodSelectorViewModel);
         register(IncomePieChartView.class, viewModelFactory::createIncomePieChartViewModel);
+        register(BudgetLineChartView.class, viewModelFactory::createBudgetLineChartViewModel);
+        register(IncomeExpenseBarChartView.class, viewModelFactory::createIncomeExpenseBarChartViewModel);
     }
 
     public Pair<Parent, GraphicsView> loadBoundGraphicsViewModel() {
@@ -45,13 +47,36 @@ public class ViewLoader {
         var incomePieChartPair = loadBoundIncomePieChart();
         incomePieChartPair.getSecond().show();
 
+        var lineChartPair = loadBoundBudgetLineChart();
+        lineChartPair.getSecond().show();
+
+        var barChartPair = loadBoundIncomeExpenseBarChart();
+        barChartPair.getSecond().show();
+
         Pair<Parent, GraphicsView> graphicsViewPair = loadBoundView("/org/example/client/view/GraphicsView.fxml");
         GraphicsView graphicsView = graphicsViewPair.getSecond();
 
         graphicsView.setExpensePieChart(expensePieChartPair.getFirst());
         graphicsView.setIncomePieChart(incomePieChartPair.getFirst());
+        graphicsView.setLineChart(lineChartPair.getFirst());
+        graphicsView.setBarChart(barChartPair.getFirst());
 
         return new Pair<>(graphicsViewPair.getFirst(), graphicsView);
+    }
+
+    private Pair<Parent, IncomeExpenseBarChartView> loadBoundIncomeExpenseBarChart() {
+        return loadBoundView("/org/example/client/component/IncomeExpenseBarChart.fxml");
+    }
+
+    private Pair<Parent, BudgetLineChartView> loadBoundBudgetLineChart() {
+        var selectorPair = loadBoundPeriodSelector();
+        selectorPair.getSecond().show();
+
+        Pair<Parent, BudgetLineChartView> lineChartPair = loadBoundView("/org/example/client/component/BudgetLineChart.fxml");
+        BudgetLineChartView lineChart = lineChartPair.getSecond();
+
+        lineChart.setPeriodSelector(selectorPair.getSecond(), selectorPair.getFirst());
+        return lineChartPair;
     }
 
     private Pair<Parent, IncomePieChartView> loadBoundIncomePieChart() {

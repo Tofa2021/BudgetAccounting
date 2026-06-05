@@ -16,7 +16,7 @@ public class GraphicsView extends BaseView<GraphicsViewModel> {
     private VBox lineChartParent;
 
     @FXML
-    private VBox barParent;
+    private VBox barChartParent;
 
     @Override
     public void onViewModelSet() {
@@ -29,5 +29,13 @@ public class GraphicsView extends BaseView<GraphicsViewModel> {
 
     public void setIncomePieChart(Parent chartParent) {
         incomePieChartParent.getChildren().add(chartParent);
+    }
+
+    public void setLineChart(Parent chartParent) {
+        lineChartParent.getChildren().add(chartParent);
+    }
+
+    public void setBarChart(Parent chartParent) {
+        barChartParent.getChildren().add(chartParent);
     }
 }

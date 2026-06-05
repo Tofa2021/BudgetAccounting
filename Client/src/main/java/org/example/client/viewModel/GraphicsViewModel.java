@@ -8,6 +8,4 @@ public class GraphicsViewModel extends BaseViewModel {
     public void onViewShown() {
 
     }
-
-
 }

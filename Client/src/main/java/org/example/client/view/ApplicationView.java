@@ -226,8 +226,7 @@ public class ApplicationView implements FXMLLoadable {
     public void show() {
         viewModel.onViewShown();
     }
-
-
+    
     private enum NotificationType {
         ERROR,
         SUCCESS,

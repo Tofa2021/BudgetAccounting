@@ -19,7 +19,6 @@ Text-grey: #A4A4A4
 Error-color: #F42D00
 */
 
-
 .root {
     -fx-font-family: "System";
 }
@@ -402,4 +401,12 @@ Error-color: #F42D00
 .green-underline {
     -fx-background-color: #F4F4F4;
     -fx-effect: dropshadow(gaussian, #80D048, 0, 0, 0, 3);
+}
+
+.default-color1.chart-bar {
+    -fx-bar-fill: #F42D00;
+}
+
+.default-color0.chart-bar {
+    -fx-bar-fill: #57B714;
 }
